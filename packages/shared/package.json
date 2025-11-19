@@ -1,0 +1,49 @@
+{
+  "name": "@startername/shared",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./constants/*": {
+      "types": "./dist/constants/*.d.ts",
+      "default": "./dist/constants/*.js"
+    },
+    "./enums/*": {
+      "types": "./dist/enums/*.d.ts",
+      "default": "./dist/enums/*.js"
+    },
+    "./contract/*": {
+      "types": "./dist/contract/*.d.ts",
+      "default": "./dist/contract/*.js"
+    },
+    "./helpers/*": {
+      "types": "./dist/helpers/*.d.ts",
+      "default": "./dist/helpers/*.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsdown"
+  },
+  "devDependencies": {
+    "tsdown": "catalog:",
+    "@trivago/prettier-plugin-sort-imports": "catalog:",
+    "prettier": "catalog:"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@orpc/contract": "catalog:",
+    "dotenv": "catalog:",
+    "lodash": "catalog:",
+    "better-auth": "catalog:",
+    "zod": "catalog:"
+  }
+}

@@ -1,0 +1,69 @@
+name: Pull Request | Server
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+        paths:
+            - ".github/workflows/pull-request-coordinator.yml"
+            - "bun.lockb"
+            - "apps/server/**/*.ts"
+            - "apps/server/package.json"
+            - "apps/server/tsconfig.json"
+            - "apps/server/.eslintrc*"
+
+jobs:
+    validate:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./apps/server
+        strategy:
+            matrix:
+                bun-version: ['latest']
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup Bun ${{ matrix.bun-version }}
+              uses: oven-sh/setup-bun@v1
+              with:
+                  bun-version: ${{ matrix.bun-version }}
+
+            - name: Install dependencies (Server)
+              run: bun install
+
+            - name: Restore mongodb-memory-server cache
+              uses: actions/cache@v4
+              with:
+                  # cache the downloaded mongod binaries between runs
+                  path: .cache/mongodb-binaries
+                  key: mongo-binaries-${{ runner.os }}-${{ hashFiles('package.json') }}
+                  restore-keys: mongo-binaries-${{ runner.os }}-
+
+            - name: Pre-download mongodb-memory-server binary
+              run: |
+                  mkdir -p .cache/mongodb-binaries
+                  # Use absolute path so tests and processes can see the cache dir
+                  export MONGOMS_DOWNLOAD_DIR=$(pwd)/.cache/mongodb-binaries
+                  # Trigger a download of the mongo binary used by mongodb-memory-server
+                  # Run with node (Node is available on the runner). If the require fails
+                  # we don't fail the job here because tests may re-trigger download or use
+                  # an existing binary.
+                  node -e "process.env.MONGOMS_DOWNLOAD_DIR=process.env.MONGOMS_DOWNLOAD_DIR; require('mongodb-memory-server').MongoMemoryServer.create().then(s=>s.stop()).catch(()=>{})"
+
+            - name: Type check
+              run: bun run check-types
+
+            - name: Lint
+              run: bun run lint
+
+            - name: Test
+              run: bun run test
+              env:
+                  CI: true
+                  # point mongodb-memory-server to the cached binary dir so downloads are reused
+                  MONGOMS_DOWNLOAD_DIR: ${{ github.workspace }}/apps/server/.cache/mongodb-binaries
+
+            - name: Build
+              run: bun run build
+

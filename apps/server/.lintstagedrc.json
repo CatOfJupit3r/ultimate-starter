@@ -1,0 +1,4 @@
+{
+  "*.ts": ["eslint --fix", "prettier --write", "bash -c 'bun run check-types'"],
+  "*.js": ["eslint --fix", "prettier --write"]
+}

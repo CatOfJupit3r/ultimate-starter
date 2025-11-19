@@ -1,0 +1,57 @@
+diff --git a/node_modules/better-auth/dist/shared/better-auth.Cg1dmr5y.cjs b/node_modules/better-auth/dist/shared/better-auth.Cg1dmr5y.cjs
+index 5cfadd1..2bc85f3 100644
+--- a/node_modules/better-auth/dist/shared/better-auth.Cg1dmr5y.cjs
++++ b/node_modules/better-auth/dist/shared/better-auth.Cg1dmr5y.cjs
+@@ -42,16 +42,12 @@ const mongodbAdapter = (db, config) => {
+             return data;
+           }
+           if (Array.isArray(data)) {
+-            return data.map((v) => new mongodb.ObjectId());
++            return data.map((v) => new mongodb.ObjectId().toString());
+           }
+-          if (typeof data === "string") {
+-            try {
+-              return new mongodb.ObjectId(data);
+-            } catch (error) {
+-              return new mongodb.ObjectId();
+-            }
++          if (typeof data === mongodb.ObjectId) {
++            return data.toString();
+           }
+-          return new mongodb.ObjectId();
++          return new mongodb.ObjectId().toString();
+         }
+         return data;
+       },
+@@ -87,19 +83,15 @@ const mongodbAdapter = (db, config) => {
+         if (field === "id" || field === "_id" || schema[model].fields[field]?.references?.field === "id") {
+           if (typeof value !== "string") {
+             if (value instanceof mongodb.ObjectId) {
+-              return value;
++              return value.toString();
+             }
+             if (Array.isArray(value)) {
+               return value.map((v) => {
+                 if (typeof v === "string") {
+-                  try {
+-                    return new mongodb.ObjectId(v);
+-                  } catch (e) {
+-                    return v;
+-                  }
++                  return v;
+                 }
+                 if (v instanceof mongodb.ObjectId) {
+-                  return v;
++                  return v.toString();
+                 }
+                 throw new Error("Invalid id value");
+               });
+@@ -107,7 +99,7 @@ const mongodbAdapter = (db, config) => {
+             throw new Error("Invalid id value");
+           }
+           try {
+-            return new mongodb.ObjectId(value);
++            return new mongodb.ObjectId(value).toString();
+           } catch (e) {
+             return value;
+           }

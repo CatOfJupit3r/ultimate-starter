@@ -1,0 +1,50 @@
+name: Pull Request | Web
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+        paths:
+            - ".github/workflows/pull-request-web.yml"
+            - "bun.lockb"
+            - "apps/web/**/*.ts"
+            - "apps/web/**/*.tsx"
+            - "apps/web/package.json"
+            - "apps/web/tsconfig.json"
+            - "apps/web/.eslintrc*"
+
+jobs:
+    validate:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./apps/web
+        strategy:
+            matrix:
+                bun-version: ['1.2.21', 'latest']
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup Bun ${{ matrix.bun-version }}
+              uses: oven-sh/setup-bun@v1
+              with:
+                  bun-version: ${{ matrix.bun-version }}
+
+            - name: Install dependencies (web)
+              run: bun install
+
+            - name: Type check
+              run: bun run check-types
+
+            - name: Lint
+              run: bun run lint
+
+            - name: Test
+              run: bun run test
+              env:
+                CI: true
+                
+            - name: Build
+              run: bun run build
+              env:
+                VITE_SERVER_URL: http://localhost:3000
