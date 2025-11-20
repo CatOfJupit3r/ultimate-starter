@@ -13,6 +13,7 @@ import Header from '@~/components/header';
 import { ThemeProvider } from '@~/components/theme-provider';
 import ToasterContainer from '@~/components/toastifications/toaster-container';
 import { meQueryOptions } from '@~/features/user';
+import { seo } from '@~/utils/seo';
 import type { tanstackRPC } from '@~/utils/tanstack-orpc';
 
 import appCss from '../index.css?url';
@@ -33,21 +34,11 @@ export const Route = createRootRouteWithContext<iRouterAppContext>()({
         name: 'viewport',
         content: 'width=device-width, initial-scale=1',
       },
-      {
+      ...seo({
         title: 'startername',
-      },
-      {
-        name: 'description',
-        content: 'startername is a web application',
-      },
-      {
-        name: 'keywords',
-        content: 'startername, web application, orpc, tanstack, react',
-      },
-      {
-        name: 'apple-mobile-web-app-title',
-        content: 'Startername',
-      },
+        description: 'startername is a web application',
+        image: '/social-preview.png',
+      }),
     ],
     links: [
       { rel: 'stylesheet', href: appCss },
