@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
 
 import type { ORPCOutputs } from '@~/utils/orpc';
 import { tanstackRPC } from '@~/utils/tanstack-orpc';
+import { toast } from '@~/utils/toast';
 
 export type UserProfileQueryReturnType = ORPCOutputs['user']['getUserProfile'];
 

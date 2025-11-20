@@ -72,7 +72,7 @@ function RootComponent() {
               <Header />
               <Outlet />
             </div>
-            <Toaster richColors />
+            <Toaster />
           </NuqsAdapter>
         </ThemeProvider>
         <TanStackRouterDevtools position="bottom-left" />

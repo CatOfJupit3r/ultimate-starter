@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
 
 import { tanstackRPC } from '@~/utils/tanstack-orpc';
+import { toast } from '@~/utils/toast';
 
 export const regeneratePublicCodeMutationOptions = tanstackRPC.user.regeneratePublicCode.mutationOptions({
   onSuccess: (_data, _variables, _context, ctx) => {
