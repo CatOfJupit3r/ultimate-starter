@@ -25,16 +25,16 @@ function Metrics() {
       <p className="mb-4 text-sm text-muted-foreground">Join thousands of challenge creators and competitors</p>
       <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
         <div className="flex flex-col items-center">
-          <p className="text-lg font-bold text-foreground">
+          <div className="text-lg font-bold text-foreground">
             {isPending || error ? <CountSkeleton /> : metrics?.totalUsers}
-          </p>
+          </div>
           <p className="text-xs">Total Users</p>
         </div>
         <div className="h-8 w-px bg-border" />
         <div className="flex flex-col items-center">
-          <p className="text-lg font-bold text-foreground">
+          <div className="text-lg font-bold text-foreground">
             {isPending || error ? <CountSkeleton /> : metrics?.activeSessions}
-          </p>
+          </div>
           <p className="text-xs">Active Sessions</p>
         </div>
       </div>
