@@ -1,10 +1,13 @@
 /// <reference types="vite/client" />
+import { TanStackDevtools } from '@tanstack/react-devtools';
+import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
 import type { QueryClient } from '@tanstack/react-query';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { NuqsAdapter } from 'nuqs/adapters/react';
+import type { ComponentProps } from 'react';
 
 import Header from '@~/components/header';
 import { ThemeProvider } from '@~/components/theme-provider';
@@ -57,6 +60,20 @@ export const Route = createRootRouteWithContext<iRouterAppContext>()({
   }),
 });
 
+const PLUGINS: ComponentProps<typeof TanStackDevtools>['plugins'] = [
+  {
+    name: 'TanStack Query',
+    render: <ReactQueryDevtoolsPanel />,
+    defaultOpen: true,
+  },
+  {
+    name: 'TanStack Router',
+    render: <TanStackRouterDevtoolsPanel />,
+    defaultOpen: false,
+  },
+  formDevtoolsPlugin(),
+];
+
 function RootComponent() {
   useSuspenseQuery(meQueryOptions); // keep this sucker here to make sure there are no hydration errors
 
@@ -75,8 +92,7 @@ function RootComponent() {
             <ToasterContainer />
           </NuqsAdapter>
         </ThemeProvider>
-        <TanStackRouterDevtools position="bottom-left" />
-        <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
+        <TanStackDevtools plugins={PLUGINS} />
         <Scripts />
       </body>
     </html>
