@@ -25,10 +25,10 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Install Node 19 for tsdown
+            - name: Install Node 24.11.1 for tsdown
               uses: actions/setup-node@v4
               with:
-                  node-version: 19
+                  node-version: 24.11.1
 
             - name: Setup Bun ${{ matrix.bun-version }}
               uses: oven-sh/setup-bun@v1

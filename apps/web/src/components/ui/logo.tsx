@@ -8,7 +8,7 @@ export function Logo({ className }: { className?: string }) {
     <img
       src={`/favicon/favicon${theme === 'light' ? '.dark' : ''}.svg`}
       className={cn('size-32 ', className)}
-      alt="Wyrmways Logo"
+      alt="Startername Logo"
     />
   );
 }

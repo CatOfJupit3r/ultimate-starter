@@ -1,17 +1,13 @@
 import { Link } from '@tanstack/react-router';
-import { LuHouse, LuZap } from 'react-icons/lu';
+import { LuHouse } from 'react-icons/lu';
 
 import { useMe } from '@~/features/user';
 
 import { ModeToggle } from './mode-toggle';
-import { Button } from './ui/button';
 import { Logo } from './ui/logo';
 import UserMenu from './user-menu';
 
-const HEADER_LINKS = [
-  { to: '/dashboard', label: 'Dashboard', authRequired: true, icon: LuHouse },
-  { to: '/challenges', label: 'Challenges', authRequired: false, icon: LuZap },
-] as const;
+const HEADER_LINKS = [{ to: '/dashboard', label: 'Dashboard', authRequired: true, icon: LuHouse }] as const;
 
 export default function Header() {
   const { isLoggedIn } = useMe();
@@ -23,7 +19,7 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2 font-semibold text-lg hover:opacity-80 transition-opacity">
             <Logo className="h-6 w-6 text-primary" />
-            <span className="hidden sm:inline-block">Wyrmways</span>
+            <span className="hidden sm:inline-block">startername</span>
           </Link>
         </div>
 
@@ -46,11 +42,6 @@ export default function Header() {
 
         {/* User Menu - Right */}
         <div className="flex items-center gap-2">
-          {isLoggedIn ? (
-            <Button variant="default" size="sm" asChild className="hidden sm:flex">
-              <Link to="/challenges/create">Create Challenge</Link>
-            </Button>
-          ) : null}
           <ModeToggle />
           <UserMenu />
         </div>

@@ -43,7 +43,7 @@ export const Route = createRootRouteWithContext<iRouterAppContext>()({
       },
       {
         name: 'apple-mobile-web-app-title',
-        content: 'Wyrmways',
+        content: 'Startername',
       },
     ],
     links: [

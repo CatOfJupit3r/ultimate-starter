@@ -1,6 +1,7 @@
 import { call } from '@orpc/server';
 import { it, expect, describe, beforeEach } from 'bun:test';
 
+import { USER_ACHIEVEMENTS } from '@startername/shared';
 import { BADGE_IDS } from '@startername/shared/constants/badges';
 
 import { UserAchievementModel } from '@~/db/models/user-achievements.model';
@@ -36,15 +37,20 @@ describe('Badge Selection API', () => {
     it('should allow badge selection when user has required achievement', async () => {
       const { ctx, user } = await createUser();
 
-      await UserAchievementModel.create({
-        userId: user.id,
-        achievementId: 'COMPLETIONIST',
-        unlockedAt: new Date(),
-      });
+      await Promise.all(
+        Object.keys(USER_ACHIEVEMENTS).map(async (achievementId) =>
+          UserAchievementModel.create({
+            userId: user.id,
+            achievementId: achievementId,
+            unlockedAt: new Date(),
+          }),
+        ),
+      );
 
       await Promise.all(
         Object.keys(BADGE_IDS).map(async (key) => {
           const badgeId = BADGE_IDS[key as keyof typeof BADGE_IDS];
+
           const updatedProfile = await call(appRouter.user.updateUserBadge, { badgeId }, ctx());
           expect(updatedProfile).not.toBeNil();
           expect(updatedProfile.selectedBadge).toBe(badgeId);

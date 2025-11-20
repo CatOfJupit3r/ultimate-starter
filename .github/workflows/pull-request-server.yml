@@ -29,10 +29,10 @@ jobs:
               with:
                   bun-version: ${{ matrix.bun-version }}
 
-            - name: Install Node 19 for tsdown
+            - name: Install Node 24.11.1 for tsdown
               uses: actions/setup-node@v4
               with:
-                node-version: 19
+                node-version: 24.11.1
 
             - name: Install dependencies (Server)
               run: bun install

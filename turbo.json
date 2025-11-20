@@ -1,6 +1,8 @@
 {
 	"$schema": "https://turbo.build/schema.json",
 	"ui": "tui",
+	"globalDependencies": ["bun.lockb", "package.json", "turbo.json"],
+	"globalEnv": ["MONGOMS_DOWNLOAD_MIRROR"],
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
@@ -14,7 +16,7 @@
 			"dependsOn": ["^check-types"]
 		},
 		"test": {
-			"dependsOn": ["^test"],
+			"dependsOn": ["^build", "^test"],
 			"outputs": []
 		},
 		"dev": {

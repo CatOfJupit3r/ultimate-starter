@@ -23,7 +23,11 @@ afterEach(async () => {
 
 afterAll(async () => {
   console.log('Tearing down in-memory MongoDB server...');
-  await mongoose.disconnect();
-  await mongo.stop();
+  try {
+    await mongoose.disconnect();
+    await mongo.stop();
+  } catch (error) {
+    console.error('Error during teardown of in-memory MongoDB server:', error);
+  }
   console.log('In-memory MongoDB server has been stopped.');
 });
