@@ -11,6 +11,7 @@ import { rules as prettierConfigRules } from 'eslint-config-prettier';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 import prettierPlugin from 'eslint-plugin-prettier';
 import tailwindRules from 'eslint-plugin-tailwindcss';
+import pluginRouter from '@tanstack/eslint-plugin-router'
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -49,6 +50,7 @@ const reactConfig = [
   // Strict React Config
   rules.react.strict,
   ...tailwindRules.configs['flat/recommended'],
+  ...pluginRouter.configs['flat/recommended'],
 ];
 
 const typescriptConfig = [
