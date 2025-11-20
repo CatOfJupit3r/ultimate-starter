@@ -19,7 +19,7 @@ jobs:
                 working-directory: ./apps/server
         strategy:
             matrix:
-                bun-version: ['latest']
+                bun-version: ["latest"]
 
         steps:
             - uses: actions/checkout@v4
@@ -28,6 +28,11 @@ jobs:
               uses: oven-sh/setup-bun@v1
               with:
                   bun-version: ${{ matrix.bun-version }}
+
+            - name: Install Node 24.11.1 for tsdown
+              uses: actions/setup-node@v4
+              with:
+                node-version: 24.11.1
 
             - name: Install dependencies (Server)
               run: bun install
@@ -51,6 +56,10 @@ jobs:
                   # an existing binary.
                   node -e "process.env.MONGOMS_DOWNLOAD_DIR=process.env.MONGOMS_DOWNLOAD_DIR; require('mongodb-memory-server').MongoMemoryServer.create().then(s=>s.stop()).catch(()=>{})"
 
+            - name: Build dependencies
+              run: bun run build:deps
+              working-directory: ./
+
             - name: Type check
               run: bun run check-types
 
@@ -66,4 +75,3 @@ jobs:
 
             - name: Build
               run: bun run build
-

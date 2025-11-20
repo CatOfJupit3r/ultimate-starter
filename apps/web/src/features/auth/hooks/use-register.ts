@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 
+import { toastBetterAuthError } from '@~/components/toastifications';
 import { USE_ME_QUERY_KEYS } from '@~/features/user/hooks/use-me';
 import AuthService from '@~/services/auth-service';
 
@@ -31,7 +31,7 @@ const useRegister = () => {
         fetchOptions: { throw: true },
       }),
     onError: (err) => {
-      toast.error(err.message);
+      toastBetterAuthError('Registration Failed', err);
     },
     onSuccess: async (_) => {
       await queryClient.invalidateQueries({

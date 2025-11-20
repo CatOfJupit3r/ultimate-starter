@@ -20,10 +20,15 @@ jobs:
                 working-directory: ./apps/web
         strategy:
             matrix:
-                bun-version: ['1.2.21', 'latest']
+                bun-version: ["1.2.21", "latest"]
 
         steps:
             - uses: actions/checkout@v4
+
+            - name: Install Node 24.11.1 for tsdown
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 24.11.1
 
             - name: Setup Bun ${{ matrix.bun-version }}
               uses: oven-sh/setup-bun@v1
@@ -32,6 +37,10 @@ jobs:
 
             - name: Install dependencies (web)
               run: bun install
+
+            - name: Build dependencies
+              run: bun run build:deps
+              working-directory: ./
 
             - name: Type check
               run: bun run check-types
@@ -42,9 +51,9 @@ jobs:
             - name: Test
               run: bun run test
               env:
-                CI: true
-                
+                  CI: true
+
             - name: Build
               run: bun run build
               env:
-                VITE_SERVER_URL: http://localhost:3000
+                  VITE_SERVER_URL: http://localhost:3000

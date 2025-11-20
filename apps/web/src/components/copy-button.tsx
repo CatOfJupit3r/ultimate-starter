@@ -1,9 +1,10 @@
 import { useCopyToClipboard } from '@uidotdev/usehooks';
 import { useEffect, useState } from 'react';
 import { LuCheck, LuCopy } from 'react-icons/lu';
-import { toast } from 'sonner';
 
 import { Button } from '@~/components/ui/button';
+
+import { toastError, toastSuccess } from './toastifications';
 
 interface iCopyButtonProps {
   value: string;
@@ -29,9 +30,9 @@ export function CopyButton({
     try {
       await copyToClipboard(value);
       setIsShowingFeedback(true);
-      toast.success(successMessage);
+      toastSuccess(successMessage);
     } catch {
-      toast.error(errorMessage);
+      toastError(errorMessage);
     }
   };
 

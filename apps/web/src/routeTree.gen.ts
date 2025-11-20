@@ -11,14 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root';
 import { Route as Auth_onlyRouteImport } from './routes/_auth_only';
 import { Route as IndexRouteImport } from './routes/index';
-import { Route as ChallengesIndexRouteImport } from './routes/challenges/index';
 import { Route as Auth_onlySettingsRouteImport } from './routes/_auth_only/settings';
 import { Route as Auth_onlyProfileRouteImport } from './routes/_auth_only/profile';
 import { Route as Auth_onlyDashboardRouteImport } from './routes/_auth_only/dashboard';
 import { Route as generalTo_dashboardRouteImport } from './routes/(general)/_to_dashboard';
-import { Route as ChallengesChallengeIdIndexRouteImport } from './routes/challenges/$challengeId/index';
-import { Route as ChallengesChallengeIdEditRouteImport } from './routes/challenges/$challengeId/edit';
-import { Route as Auth_onlyChallengesCreateRouteImport } from './routes/_auth_only/challenges/create';
 import { Route as generalTo_dashboardAuthRouteImport } from './routes/(general)/_to_dashboard.auth';
 
 const Auth_onlyRoute = Auth_onlyRouteImport.update({
@@ -28,11 +24,6 @@ const Auth_onlyRoute = Auth_onlyRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any);
-const ChallengesIndexRoute = ChallengesIndexRouteImport.update({
-  id: '/challenges/',
-  path: '/challenges/',
   getParentRoute: () => rootRouteImport,
 } as any);
 const Auth_onlySettingsRoute = Auth_onlySettingsRouteImport.update({
@@ -54,24 +45,6 @@ const generalTo_dashboardRoute = generalTo_dashboardRouteImport.update({
   id: '/(general)/_to_dashboard',
   getParentRoute: () => rootRouteImport,
 } as any);
-const ChallengesChallengeIdIndexRoute =
-  ChallengesChallengeIdIndexRouteImport.update({
-    id: '/challenges/$challengeId/',
-    path: '/challenges/$challengeId/',
-    getParentRoute: () => rootRouteImport,
-  } as any);
-const ChallengesChallengeIdEditRoute =
-  ChallengesChallengeIdEditRouteImport.update({
-    id: '/challenges/$challengeId/edit',
-    path: '/challenges/$challengeId/edit',
-    getParentRoute: () => rootRouteImport,
-  } as any);
-const Auth_onlyChallengesCreateRoute =
-  Auth_onlyChallengesCreateRouteImport.update({
-    id: '/challenges/create',
-    path: '/challenges/create',
-    getParentRoute: () => Auth_onlyRoute,
-  } as any);
 const generalTo_dashboardAuthRoute = generalTo_dashboardAuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -83,22 +56,14 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof Auth_onlyDashboardRoute;
   '/profile': typeof Auth_onlyProfileRoute;
   '/settings': typeof Auth_onlySettingsRoute;
-  '/challenges': typeof ChallengesIndexRoute;
   '/auth': typeof generalTo_dashboardAuthRoute;
-  '/challenges/create': typeof Auth_onlyChallengesCreateRoute;
-  '/challenges/$challengeId/edit': typeof ChallengesChallengeIdEditRoute;
-  '/challenges/$challengeId': typeof ChallengesChallengeIdIndexRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
   '/dashboard': typeof Auth_onlyDashboardRoute;
   '/profile': typeof Auth_onlyProfileRoute;
   '/settings': typeof Auth_onlySettingsRoute;
-  '/challenges': typeof ChallengesIndexRoute;
   '/auth': typeof generalTo_dashboardAuthRoute;
-  '/challenges/create': typeof Auth_onlyChallengesCreateRoute;
-  '/challenges/$challengeId/edit': typeof ChallengesChallengeIdEditRoute;
-  '/challenges/$challengeId': typeof ChallengesChallengeIdIndexRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
@@ -108,35 +73,13 @@ export interface FileRoutesById {
   '/_auth_only/dashboard': typeof Auth_onlyDashboardRoute;
   '/_auth_only/profile': typeof Auth_onlyProfileRoute;
   '/_auth_only/settings': typeof Auth_onlySettingsRoute;
-  '/challenges/': typeof ChallengesIndexRoute;
   '/(general)/_to_dashboard/auth': typeof generalTo_dashboardAuthRoute;
-  '/_auth_only/challenges/create': typeof Auth_onlyChallengesCreateRoute;
-  '/challenges/$challengeId/edit': typeof ChallengesChallengeIdEditRoute;
-  '/challenges/$challengeId/': typeof ChallengesChallengeIdIndexRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths:
-    | '/'
-    | '/dashboard'
-    | '/profile'
-    | '/settings'
-    | '/challenges'
-    | '/auth'
-    | '/challenges/create'
-    | '/challenges/$challengeId/edit'
-    | '/challenges/$challengeId';
+  fullPaths: '/' | '/dashboard' | '/profile' | '/settings' | '/auth';
   fileRoutesByTo: FileRoutesByTo;
-  to:
-    | '/'
-    | '/dashboard'
-    | '/profile'
-    | '/settings'
-    | '/challenges'
-    | '/auth'
-    | '/challenges/create'
-    | '/challenges/$challengeId/edit'
-    | '/challenges/$challengeId';
+  to: '/' | '/dashboard' | '/profile' | '/settings' | '/auth';
   id:
     | '__root__'
     | '/'
@@ -145,20 +88,13 @@ export interface FileRouteTypes {
     | '/_auth_only/dashboard'
     | '/_auth_only/profile'
     | '/_auth_only/settings'
-    | '/challenges/'
-    | '/(general)/_to_dashboard/auth'
-    | '/_auth_only/challenges/create'
-    | '/challenges/$challengeId/edit'
-    | '/challenges/$challengeId/';
+    | '/(general)/_to_dashboard/auth';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   Auth_onlyRoute: typeof Auth_onlyRouteWithChildren;
   generalTo_dashboardRoute: typeof generalTo_dashboardRouteWithChildren;
-  ChallengesIndexRoute: typeof ChallengesIndexRoute;
-  ChallengesChallengeIdEditRoute: typeof ChallengesChallengeIdEditRoute;
-  ChallengesChallengeIdIndexRoute: typeof ChallengesChallengeIdIndexRoute;
 }
 
 declare module '@tanstack/react-router' {
@@ -175,13 +111,6 @@ declare module '@tanstack/react-router' {
       path: '/';
       fullPath: '/';
       preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    '/challenges/': {
-      id: '/challenges/';
-      path: '/challenges';
-      fullPath: '/challenges';
-      preLoaderRoute: typeof ChallengesIndexRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/_auth_only/settings': {
@@ -212,27 +141,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof generalTo_dashboardRouteImport;
       parentRoute: typeof rootRouteImport;
     };
-    '/challenges/$challengeId/': {
-      id: '/challenges/$challengeId/';
-      path: '/challenges/$challengeId';
-      fullPath: '/challenges/$challengeId';
-      preLoaderRoute: typeof ChallengesChallengeIdIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    '/challenges/$challengeId/edit': {
-      id: '/challenges/$challengeId/edit';
-      path: '/challenges/$challengeId/edit';
-      fullPath: '/challenges/$challengeId/edit';
-      preLoaderRoute: typeof ChallengesChallengeIdEditRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    '/_auth_only/challenges/create': {
-      id: '/_auth_only/challenges/create';
-      path: '/challenges/create';
-      fullPath: '/challenges/create';
-      preLoaderRoute: typeof Auth_onlyChallengesCreateRouteImport;
-      parentRoute: typeof Auth_onlyRoute;
-    };
     '/(general)/_to_dashboard/auth': {
       id: '/(general)/_to_dashboard/auth';
       path: '/auth';
@@ -247,14 +155,12 @@ interface Auth_onlyRouteChildren {
   Auth_onlyDashboardRoute: typeof Auth_onlyDashboardRoute;
   Auth_onlyProfileRoute: typeof Auth_onlyProfileRoute;
   Auth_onlySettingsRoute: typeof Auth_onlySettingsRoute;
-  Auth_onlyChallengesCreateRoute: typeof Auth_onlyChallengesCreateRoute;
 }
 
 const Auth_onlyRouteChildren: Auth_onlyRouteChildren = {
   Auth_onlyDashboardRoute: Auth_onlyDashboardRoute,
   Auth_onlyProfileRoute: Auth_onlyProfileRoute,
   Auth_onlySettingsRoute: Auth_onlySettingsRoute,
-  Auth_onlyChallengesCreateRoute: Auth_onlyChallengesCreateRoute,
 };
 
 const Auth_onlyRouteWithChildren = Auth_onlyRoute._addFileChildren(
@@ -276,9 +182,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   Auth_onlyRoute: Auth_onlyRouteWithChildren,
   generalTo_dashboardRoute: generalTo_dashboardRouteWithChildren,
-  ChallengesIndexRoute: ChallengesIndexRoute,
-  ChallengesChallengeIdEditRoute: ChallengesChallengeIdEditRoute,
-  ChallengesChallengeIdIndexRoute: ChallengesChallengeIdIndexRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
