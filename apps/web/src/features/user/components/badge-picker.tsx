@@ -103,7 +103,7 @@ export function BadgePicker() {
                     {!isUnlocked && <LuLock className="size-3" />}
                     {isSelected ? <LuCheck className="size-4" /> : null}
                   </div>
-                  <p className="text-xs opacity-80 text-wrap">{badge.description}</p>
+                  <p className="text-xs text-wrap opacity-80">{badge.description}</p>
                 </div>
               </Button>
             );

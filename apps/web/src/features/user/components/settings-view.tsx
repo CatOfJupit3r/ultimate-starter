@@ -175,7 +175,7 @@ export function SettingsView() {
           <TabsContent value="danger" className="mt-6">
             <Card className="border-red-200 bg-red-50/50 dark:border-red-900 dark:bg-red-950/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2 text-red-900 dark:text-red-400">
+                <CardTitle className="flex items-center gap-2 text-lg text-red-900 dark:text-red-400">
                   <LuTriangleAlert className="h-5 w-5" />
                   Delete Account
                 </CardTitle>
@@ -198,7 +198,7 @@ export function SettingsView() {
                   </Button>
                 ) : (
                   <div className="space-y-3 pt-2">
-                    <p className="text-sm text-foreground font-medium">
+                    <p className="text-sm font-medium text-foreground">
                       Are you absolutely sure? This action cannot be undone.
                     </p>
                     <div className="flex gap-2">

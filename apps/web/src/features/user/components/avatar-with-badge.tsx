@@ -43,7 +43,7 @@ export function AvatarWithBadge({
       </Avatar>
       {badgeIcon ? (
         <div
-          className={`absolute -bottom-1 -right-1 flex items-center justify-center rounded-full bg-background border-2 border-background shadow-sm ${badgeOverlaySizeClasses[size]}`}
+          className={`absolute -right-1 -bottom-1 flex items-center justify-center rounded-full border-2 border-background bg-background shadow-sm ${badgeOverlaySizeClasses[size]}`}
           title={badge?.label ?? 'Badge'}
           aria-label={badge?.label ?? 'User badge'}
         >

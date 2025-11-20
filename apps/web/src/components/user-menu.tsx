@@ -35,7 +35,7 @@ export default function UserMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="outline">{user.name}</Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-card w-56" align="end">
+      <DropdownMenuContent className="w-56 bg-card" align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem disabled className="text-xs text-muted-foreground">
@@ -43,13 +43,13 @@ export default function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link to="/profile" className="w-full cursor-pointer flex items-center gap-2">
+          <Link to="/profile" className="flex w-full cursor-pointer items-center gap-2">
             <LuUser className="h-4 w-4" />
             Profile
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to="/settings" className="w-full cursor-pointer flex items-center gap-2">
+          <Link to="/settings" className="flex w-full cursor-pointer items-center gap-2">
             <LuSettings className="h-4 w-4" />
             Settings
           </Link>
@@ -58,7 +58,7 @@ export default function UserMenu() {
         <DropdownMenuItem asChild>
           <Button
             variant="ghost"
-            className="w-full justify-start px-2 gap-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+            className="w-full justify-start gap-2 px-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
             onClick={() => {
               void AuthService.getInstance()
                 .signOut({ fetchOptions: { throw: true } })
