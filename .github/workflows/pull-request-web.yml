@@ -33,6 +33,9 @@ jobs:
             - name: Install dependencies (web)
               run: bun install
 
+            - name: Build dependencies
+              run: bun run build:deps
+    
             - name: Type check
               run: bun run check-types
 
