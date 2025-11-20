@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { toastBetterAuthError } from '@~/components/toastifications';
 import { USE_ME_QUERY_KEYS } from '@~/features/user/hooks/use-me';
 import AuthService from '@~/services/auth-service';
-import { toast } from '@~/utils/toast';
 
 const useLogin = () => {
   const queryClient = useQueryClient();
@@ -20,7 +20,7 @@ const useLogin = () => {
         fetchOptions: { throw: true },
       }),
     onError: (err) => {
-      toast.error(err.message);
+      toastBetterAuthError('Login Failed', err);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({

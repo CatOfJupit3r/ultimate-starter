@@ -88,7 +88,7 @@ export function ProfileForm() {
 - Reuse the central query client via router context or TanStack hooks—never create ad-hoc clients.
 - Export `queryOptions`/`mutationOptions` from hooks so routes and loaders can preload or reuse them.
 - Optimistic mutations must use `ctx.client` provided in option callbacks and call `invalidateQueries` when server truth is needed.
-- Use Sonner (`toast.success/error`) for cross-route feedback and inline UI for localized validation messages.
+- Use react-toastify (`toastSuccess/toastError`) for cross-route feedback and inline UI for localized validation messages. If you need a custom layout for your toast message, prefer to declare them in `@~/components/toastifications/create-jsx-toasts.tsx` and compose them from `common-toast-parts`
 
 ## Routing & View State
 
@@ -103,7 +103,7 @@ export function ProfileForm() {
 - Loading: `PseudoPage` for full-page suspense, `Loader` or skeletons (`<Skeleton />`) for section-level fetches.
 - Empty states: `Empty`, `EmptyHeader`, `EmptyDescription`, and `EmptyContent` provide consistent visual language.
 - Error states: apply `Alert`/`AlertDescription` or contextual callouts styled like the challenges hub error card.
-- Toasts: use Sonner (`toast.success|error|warning`) with concise copy; avoid duplicating toasts for the same event.
+- Toasts: use react-toastify (`toastSuccess|Error|Warning`) with concise copy; avoid duplicating toasts for the same event.
 
 ## Accessibility & UX
 

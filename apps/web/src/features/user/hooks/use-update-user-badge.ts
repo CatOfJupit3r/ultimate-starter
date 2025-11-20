@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 
+import { toastError, toastSuccess } from '@~/components/toastifications';
 import type { ORPCOutputs } from '@~/utils/orpc';
 import { tanstackRPC } from '@~/utils/tanstack-orpc';
-import { toast } from '@~/utils/toast';
 
 export type UserProfileQueryReturnType = ORPCOutputs['user']['getUserProfile'];
 
@@ -29,13 +29,13 @@ export const updateUserBadgeMutationOptions = tanstackRPC.user.updateUserBadge.m
       void ctx.client.invalidateQueries({ queryKey: key });
     }
 
-    toast.error('Failed to update badge');
+    toastError('Failed to update badge');
   },
   onSuccess: (data, _variables, _context, ctx) => {
     const key = tanstackRPC.user.getUserProfile.queryKey();
 
     ctx.client.setQueryData<UserProfileQueryReturnType>(key, data);
-    toast.success('Badge updated successfully');
+    toastSuccess('Badge updated successfully');
   },
 });
 

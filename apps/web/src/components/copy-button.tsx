@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { LuCheck, LuCopy } from 'react-icons/lu';
 
 import { Button } from '@~/components/ui/button';
-import { toast } from '@~/utils/toast';
+
+import { toastError, toastSuccess } from './toastifications';
 
 interface iCopyButtonProps {
   value: string;
@@ -29,9 +30,9 @@ export function CopyButton({
     try {
       await copyToClipboard(value);
       setIsShowingFeedback(true);
-      toast.success(successMessage);
+      toastSuccess(successMessage);
     } catch {
-      toast.error(errorMessage);
+      toastError(errorMessage);
     }
   };
 

@@ -1,6 +1,6 @@
-import { useTheme } from 'next-themes';
-
 import { cn } from '@~/lib/utils';
+
+import { useTheme } from '../theme-provider';
 
 export function Logo({ className }: { className?: string }) {
   const { theme } = useTheme();

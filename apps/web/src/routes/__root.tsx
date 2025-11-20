@@ -8,7 +8,7 @@ import { NuqsAdapter } from 'nuqs/adapters/react';
 
 import Header from '@~/components/header';
 import { ThemeProvider } from '@~/components/theme-provider';
-import { Toaster } from '@~/components/ui/sonner';
+import ToasterContainer from '@~/components/toastifications/toaster-container';
 import { meQueryOptions } from '@~/features/user';
 import type { tanstackRPC } from '@~/utils/tanstack-orpc';
 
@@ -72,7 +72,7 @@ function RootComponent() {
               <Header />
               <Outlet />
             </div>
-            <Toaster />
+            <ToasterContainer />
           </NuqsAdapter>
         </ThemeProvider>
         <TanStackRouterDevtools position="bottom-left" />

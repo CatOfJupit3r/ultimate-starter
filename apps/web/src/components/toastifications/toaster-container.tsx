@@ -1,8 +1,9 @@
-import { useTheme } from 'next-themes';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Toaster = () => {
+import { useTheme } from '../theme-provider';
+
+export default function ToasterContainer() {
   const { theme } = useTheme();
 
   return (
@@ -19,6 +20,4 @@ const Toaster = () => {
       theme={theme === 'dark' ? 'dark' : 'light'}
     />
   );
-};
-
-export { Toaster };
+}
