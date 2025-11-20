@@ -32,7 +32,12 @@ jobs:
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-
+        
+      - name: Install Node 19 for tsdown
+        uses: actions/setup-node@v4
+        with:
+          node-version: 19
+        
       - name: Install project dependencies
         run: bun install --no-verify
         continue-on-error: true
@@ -40,6 +45,9 @@ jobs:
       - name: Retry install without --no-verify
         run: bun install
         if: failure()
+
+      - name: Build dependencies
+        run: bun run build:deps
 
       - name: Pre-download MongoDB Memory Server
         run: |

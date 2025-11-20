@@ -2,7 +2,6 @@ import { call } from '@orpc/server';
 import { it, expect, describe, beforeEach } from 'bun:test';
 
 import { BADGE_IDS } from '@startername/shared/constants/badges';
-import { errorCodes } from '@startername/shared/enums/errors.enums';
 
 import { UserAchievementModel } from '@~/db/models/user-achievements.model';
 import { UserProfileModel } from '@~/db/models/user-profile.model';
