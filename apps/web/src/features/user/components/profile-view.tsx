@@ -43,7 +43,7 @@ export function ProfileView() {
                 <div>
                   <h1 className="text-2xl font-bold text-foreground">{user?.name || user?.username}</h1>
                   <p className="text-muted-foreground">@{user?.username}</p>
-                  {profile?.bio ? <p className="text-sm text-muted-foreground mt-2">{profile.bio}</p> : null}
+                  {profile?.bio ? <p className="mt-2 text-sm text-muted-foreground">{profile.bio}</p> : null}
                   <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
                     {user?.createdAt ? (
                       <div className="flex items-center gap-1">

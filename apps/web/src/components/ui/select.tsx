@@ -169,7 +169,7 @@ export const Option = (props: OptionProps<iOptionType, boolean, GroupBase<iOptio
 
   return (
     <components.Option {...props}>
-      <div className="flex justify-between gap-3 items-center">
+      <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-start gap-2">
           {icon ? (
             <span className="flex h-5 w-5 shrink-0 items-center justify-center text-muted-foreground">{icon}</span>

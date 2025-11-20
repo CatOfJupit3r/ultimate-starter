@@ -10,6 +10,8 @@ import { configs, plugins, rules } from 'eslint-config-airbnb-extended';
 import { rules as prettierConfigRules } from 'eslint-config-prettier';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 import prettierPlugin from 'eslint-plugin-prettier';
+import tailwindRules from 'eslint-plugin-tailwindcss';
+import pluginRouter from '@tanstack/eslint-plugin-router'
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -17,7 +19,7 @@ const gitignorePath = path.resolve('.', '.gitignore');
 const currentFilename = fileURLToPath(import.meta.url);
 const currentDirname = path.dirname(currentFilename);
 const tsconfigRootDir = path.resolve(currentDirname);
-const tsconfigPath = path.resolve(tsconfigRootDir, 'tsconfig.json');
+const tailwindConfigPath = path.join(currentDirname, 'src', 'index.css');
 
 const jsConfig = [
   // ESLint Recommended Rules
@@ -47,6 +49,8 @@ const reactConfig = [
   ...configs.react.recommended,
   // Strict React Config
   rules.react.strict,
+  ...tailwindRules.configs['flat/recommended'],
+  ...pluginRouter.configs['flat/recommended'],
 ];
 
 const typescriptConfig = [
@@ -205,6 +209,12 @@ const silenceWebOpinions = [
           depth: 3,
         },
       ],
+      'tailwindcss/no-custom-classname': [
+        'error',
+        {
+          whitelist: [''],
+        },
+      ],
     },
   },
 ];
@@ -214,6 +224,13 @@ export default [
   includeIgnoreFile(gitignorePath),
   {
     ignores: ['eslint.config.mjs', 'tests/**', 'dist/**', './src/routeTree.gen.ts'],
+  },
+  {
+    settings: {
+      tailwindcss: {
+        config: tailwindConfigPath,
+      },
+    },
   },
   // Javascript Config
   ...jsConfig,

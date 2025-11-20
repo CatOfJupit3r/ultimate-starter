@@ -15,24 +15,24 @@ export const Route = createFileRoute('/')({
   component: HomeComponent,
 });
 
-const CountSkeleton = () => <Skeleton className="w-[5ch] h-7" />;
+const CountSkeleton = () => <Skeleton className="h-7 w-[5ch]" />;
 
 function Metrics() {
   const { data: metrics, isPending, error } = useMetrics();
 
   return (
-    <div className="mt-10 pt-10 border-t border-border">
-      <p className="text-sm text-muted-foreground mb-4">Join thousands of challenge creators and competitors</p>
+    <div className="mt-10 border-t border-border pt-10">
+      <p className="mb-4 text-sm text-muted-foreground">Join thousands of challenge creators and competitors</p>
       <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
-        <div className="flex items-center flex-col">
-          <p className="font-bold text-foreground text-lg">
+        <div className="flex flex-col items-center">
+          <p className="text-lg font-bold text-foreground">
             {isPending || error ? <CountSkeleton /> : metrics?.totalUsers}
           </p>
           <p className="text-xs">Total Users</p>
         </div>
         <div className="h-8 w-px bg-border" />
-        <div className="flex items-center flex-col">
-          <p className="font-bold text-foreground text-lg">
+        <div className="flex flex-col items-center">
+          <p className="text-lg font-bold text-foreground">
             {isPending || error ? <CountSkeleton /> : metrics?.activeSessions}
           </p>
           <p className="text-xs">Active Sessions</p>
@@ -78,7 +78,7 @@ const FEATURES = [
 
 function HomeComponent() {
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-background overflow-y-auto">
+    <div className="min-h-[calc(100vh-4rem)] overflow-y-auto bg-background">
       {/* Hero Section */}
       <section className="relative border-b border-border">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
@@ -90,7 +90,7 @@ function HomeComponent() {
             <h1 className="text-5xl font-bold tracking-tight text-foreground sm:text-6xl">
               Turn Ideas Into
               <br className="my-3" />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-orange-600 to-amber-600">
+              <span className="bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
                 SaaS Products
               </span>
             </h1>
@@ -102,7 +102,7 @@ function HomeComponent() {
             </p>
 
             {/* CTA Buttons */}
-            <div className="mt-10 flex gap-4 justify-center">
+            <div className="mt-10 flex justify-center gap-4">
               <Link to="/dashboard">
                 <Button size="lg" variant="outline">
                   <TbLayoutDashboard className="h-5 w-5" />
@@ -125,7 +125,7 @@ function HomeComponent() {
       {/* Features Section */}
       <section className="border-b border-border py-16 sm:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center mb-12">
+          <div className="mx-auto mb-12 max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">Everything You Need!</h2>
             <p className="mt-4 text-lg text-muted-foreground">Built for developers.</p>
           </div>
@@ -135,7 +135,7 @@ function HomeComponent() {
               <Card key={feature.title}>
                 <CardContent className="pt-6">
                   <div className="mb-4 text-purple-600">{feature.icon}</div>
-                  <h3 className="font-semibold text-foreground mb-2">{feature.title}</h3>
+                  <h3 className="mb-2 font-semibold text-foreground">{feature.title}</h3>
                   <p className="text-sm text-muted-foreground">{feature.description}</p>
                 </CardContent>
               </Card>

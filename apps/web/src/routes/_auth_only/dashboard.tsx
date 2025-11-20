@@ -19,7 +19,7 @@ function RouteComponent() {
             </div>
             <div className="flex gap-2">
               <span className="text-muted-foreground">•</span>
-              <Link to="/profile" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link to="/profile" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
                 View Profile
               </Link>
             </div>
