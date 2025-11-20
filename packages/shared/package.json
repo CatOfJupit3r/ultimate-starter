@@ -30,7 +30,8 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsdown",
-    "prepare": "bun run build"
+    "prepare": "bun run build",
+    "dev": "tsdown --watch"
   },
   "devDependencies": {
     "tsdown": "catalog:",
