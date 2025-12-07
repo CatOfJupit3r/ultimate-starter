@@ -10,7 +10,7 @@ import type { iWithLogger, LoggerFactory, LoggerType } from '../logger/logger.ty
 export class ValkeyService implements iWithLogger {
   public readonly logger: LoggerType;
 
-  private client: Redis | null = null;
+  private client: Redis | Nil = null;
 
   constructor(@inject(TOKENS.LoggerFactory) loggerFactory: LoggerFactory) {
     this.logger = loggerFactory.create('valkey');
@@ -18,6 +18,10 @@ export class ValkeyService implements iWithLogger {
 
   public async connect() {
     if (this.client) return this.client;
+    if (env.NODE_ENV === 'test') {
+      this.logger.info('Valkey connection skipped in test environment');
+      return null;
+    }
 
     this.client = new Redis({
       host: env.VALKEY_HOST,

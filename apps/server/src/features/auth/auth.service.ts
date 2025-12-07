@@ -3,6 +3,7 @@ import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { username } from 'better-auth/plugins';
 import type Redis from 'ioredis';
+import { isNil } from 'lodash-es';
 import { inject, singleton } from 'tsyringe';
 
 import env from '@~/constants/env';
@@ -12,22 +13,24 @@ import { TOKENS } from '@~/di/tokens';
 import type { iWithLogger, LoggerFactory, LoggerType } from '../logger/logger.types';
 import { devImpersonatePlugin } from './better-auth-plugins/dev-impersonate.plugin';
 
-const createInstance = (db: mongoose.mongo.Db, logger: LoggerType, valkey: Redis) =>
+const createInstance = (db: mongoose.mongo.Db, logger: LoggerType, valkey: Redis | Nil) =>
   betterAuth({
     database: mongodbAdapter(db),
     secret: env.BETTER_AUTH_SECRET,
     trustedOrigins: [process.env.CORS_ORIGIN ?? ''],
     plugins: [username(), devImpersonatePlugin()],
-    secondaryStorage: {
-      get: async (key) => valkey.get(key),
-      set: async (key, value, ttl) => {
-        if (ttl) await valkey.set(key, value, 'EX', ttl);
-        else await valkey.set(key, value);
-      },
-      delete: async (key) => {
-        await valkey.del(key);
-      },
-    },
+    secondaryStorage: !isNil(valkey)
+      ? {
+          get: async (key) => valkey.get(key),
+          set: async (key, value, ttl) => {
+            if (ttl) await valkey.set(key, value, 'EX', ttl);
+            else await valkey.set(key, value);
+          },
+          delete: async (key) => {
+            await valkey.del(key);
+          },
+        }
+      : undefined,
     emailAndPassword: {
       enabled: true,
     },
@@ -70,7 +73,7 @@ export class AuthService implements iWithLogger {
     this.logger = loggerFactory.create('auth');
   }
 
-  public connect(db: mongoose.mongo.Db, valkey: Redis) {
+  public connect(db: mongoose.mongo.Db, valkey: Redis | Nil) {
     this.instance = createInstance(db, this.logger, valkey);
   }
 
