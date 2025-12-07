@@ -6,7 +6,7 @@
     "sourceMap": true,
     "outDir": "dist",
     "composite": true,
-    "types": ["std-worthy"],
-    "typeRoots": ["../../types", "./node_modules"]
-  }
+  },
+  "files": ["./src/globals.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }

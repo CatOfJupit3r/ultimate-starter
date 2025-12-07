@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useLocation } from '@tanstack/react-router';
 import { LuUser, LuSettings, LuLogOut } from 'react-icons/lu';
 
 import {
@@ -10,13 +10,14 @@ import {
   DropdownMenuTrigger,
 } from '@~/components/ui/dropdown-menu';
 import { useMe } from '@~/features/user';
-import AuthService from '@~/services/auth-service';
+import AuthService from '@~/services/auth.service';
 
 import { Button } from './ui/button';
 import { Skeleton } from './ui/skeleton';
 
 export default function UserMenu() {
   const { user, isLoggedIn, isPending, refetch } = useMe();
+  const location = useLocation();
 
   if (isPending) {
     return <Skeleton className="h-9 w-24" />;
@@ -29,6 +30,18 @@ export default function UserMenu() {
       </Button>
     );
   }
+
+  const handleSignOut = async () => {
+    try {
+      await AuthService.getInstance().signOut({
+        fetchOptions: { throw: true },
+      });
+    } catch (error) {
+      console.error('Sign out failed:', error);
+    } finally {
+      await refetch();
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -56,20 +69,15 @@ export default function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-2 px-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-            onClick={() => {
-              void AuthService.getInstance()
-                .signOut({ fetchOptions: { throw: true } })
-                .finally(async () => {
-                  void refetch();
-                });
-            }}
+          <Link
+            to="/auth"
+            search={{ redirect: location.pathname }}
+            className="flex w-full cursor-pointer items-center gap-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+            onClick={handleSignOut}
           >
             <LuLogOut className="h-4 w-4" />
             Sign Out
-          </Button>
+          </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

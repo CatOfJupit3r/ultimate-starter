@@ -6,7 +6,7 @@
   "printWidth": 120,
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "endOfLine": "lf",
-  "importOrderParserPlugins": ["typescript", "decorators"],
+  "importOrderParserPlugins": ["typescript", "classProperties", "decorators-legacy"],
   "importOrderSeparation": true,
   "importOrder": ["<THIRD_PARTY_MODULES>", "@startername/(.*)$", "^@~/(.*)$", "^[./]"]
 }

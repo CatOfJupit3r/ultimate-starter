@@ -18,8 +18,9 @@ const getUserProfile = authProcedure
   .route({
     path: '/profile',
     method: 'GET',
-    summary: 'Get authenticated user\'s profile',
-    description: 'Retrieves the current user\'s custom profile data (bio and other custom fields not stored in Better Auth). Username and basic user info are managed through Better Auth and should be retrieved using the useMe hook. Returns the user profile object or throws USER_PROFILE_NOT_FOUND if profile doesn\'t exist.',
+    summary: "Get authenticated user's profile",
+    description:
+      "Retrieves the current user's custom profile data (bio and other custom fields not stored in Better Auth). Username and basic user info are managed through Better Auth and should be retrieved using the useMe hook. Returns the user profile object or throws USER_PROFILE_NOT_FOUND if profile doesn't exist.",
   })
   .output(USER_PROFILE_SCHEMA);
 
@@ -27,8 +28,9 @@ const updateUserProfile = authProcedure
   .route({
     path: '/profile',
     method: 'PUT',
-    summary: 'Update authenticated user\'s profile',
-    description: 'Updates the current user\'s profile bio (additional profile data not stored in Better Auth). Bio is optional and max 500 characters. Username and basic user info are managed through Better Auth and are read from useMe hook. Returns the updated profile object.',
+    summary: "Update authenticated user's profile",
+    description:
+      "Updates the current user's profile bio (additional profile data not stored in Better Auth). Bio is optional and max 500 characters. Username and basic user info are managed through Better Auth and are read from useMe hook. Returns the updated profile object.",
   })
   .input(
     z.object({
@@ -43,7 +45,7 @@ const updateUserBadge = authProcedure
     method: 'PUT',
     summary: 'Update user selected badge',
     description:
-      'Updates the user\'s selected badge. Validates that the badge exists and checks if the user has unlocked the required achievement (if applicable). Returns the updated user profile with the new selected badge.',
+      "Updates the user's selected badge. Validates that the badge exists and checks if the user has unlocked the required achievement (if applicable). Returns the updated user profile with the new selected badge.",
   })
   .input(
     z.object({

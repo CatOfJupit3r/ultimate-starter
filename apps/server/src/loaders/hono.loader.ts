@@ -3,39 +3,58 @@ import { OpenAPIReferencePlugin } from '@orpc/openapi/plugins';
 import { onError } from '@orpc/server';
 import { RPCHandler } from '@orpc/server/fetch';
 import { ZodToJsonSchemaConverter } from '@orpc/zod';
-import type { betterAuth } from 'better-auth';
 import { Hono } from 'hono';
 import type { Context as HonoContext } from 'hono';
+import { contextStorage } from 'hono/context-storage';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import { isEmpty } from 'lodash-es';
+import { stringify } from 'safe-stable-stringify';
 
 import env from '@~/constants/env';
+import { resolve } from '@~/di';
+import { TOKENS } from '@~/di/tokens';
+import { requestContextMiddleware } from '@~/features/logger/logger.middleware';
+import type { iRequestContext } from '@~/features/logger/logger.types';
 import { appRouter } from '@~/routers';
 import nonContractRouter from '@~/routers/non-contract.router';
 
 interface iCreateContextOptions {
-  context: HonoContext;
+  context: HonoContext<iRequestContext>;
 }
 
-function contextGenerator(auth: ReturnType<typeof betterAuth>) {
+function contextGenerator() {
   return async function createContext({ context }: iCreateContextOptions) {
-    const session = await auth.api.getSession({
-      headers: context.req.raw.headers,
-    });
+    const session = context.get('session');
     return {
       session,
     };
   };
 }
 
+function shouldLogError(_error: unknown) {
+  // Add logic to determine if the error should be logged
+  return false;
+}
+
 export type Context = Awaited<ReturnType<ReturnType<typeof contextGenerator>>>;
 
-export default async function honoLoader(auth: ReturnType<typeof betterAuth>) {
-  const app = new Hono();
+export default async function honoLoader() {
+  const app = new Hono<iRequestContext>();
 
-  const createContext = contextGenerator(auth);
+  const auth = resolve(TOKENS.AuthService).getInstance();
+  const apiLogger = resolve(TOKENS.LoggerFactory).create('API');
 
-  app.use(logger());
+  const createContext = contextGenerator();
+  app.use('/*', requestContextMiddleware);
+
+  app.use(contextStorage());
+  app.use(
+    logger((msg, ...info) => {
+      const meta = isEmpty(info) ? undefined : { info };
+      apiLogger.debug(msg, meta);
+    }),
+  );
   app.use(
     '/*',
     cors({
@@ -45,7 +64,6 @@ export default async function honoLoader(auth: ReturnType<typeof betterAuth>) {
       credentials: true,
     }),
   );
-
   app.on(['POST', 'GET'], '/auth/*', async (c) => auth.handler(c.req.raw));
 
   app.route('/', nonContractRouter);
@@ -58,7 +76,8 @@ export default async function honoLoader(auth: ReturnType<typeof betterAuth>) {
     ],
     interceptors: [
       onError((error) => {
-        console.error(error);
+        if (!shouldLogError(error)) return;
+        apiLogger.error(stringify(error) ?? 'Unknown API error');
       }),
     ],
   });
@@ -66,7 +85,8 @@ export default async function honoLoader(auth: ReturnType<typeof betterAuth>) {
   const rpcHandler = new RPCHandler(appRouter, {
     interceptors: [
       onError((error) => {
-        console.error(error);
+        if (!shouldLogError(error)) return;
+        apiLogger.error(stringify(error) ?? 'Unknown RPC error');
       }),
     ],
   });

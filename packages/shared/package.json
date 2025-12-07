@@ -10,6 +10,10 @@
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
     },
+    "./globals": {
+      "types": "./dist/globals.d.mts",
+      "default": "./dist/globals.d.mts"
+    },
     "./constants/*": {
       "types": "./dist/constants/*.d.mts",
       "default": "./dist/constants/*.mjs"
@@ -27,19 +31,39 @@
       "default": "./dist/helpers/*.mjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsdown",
     "prepare": "bun run build",
-    "dev": "tsdown --watch --no-clean"
+    "dev": "tsdown --watch --no-clean",
+    "prettier": "prettier --write .",
+    "check-types": "tsgo --noEmit",
+    "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
-    "tsdown": "catalog:",
+    "@eslint/compat": "catalog:",
+    "@eslint/js": "catalog:",
+    "@stylistic/eslint-plugin": "catalog:",
     "@trivago/prettier-plugin-sort-imports": "catalog:",
-    "prettier": "catalog:"
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-airbnb-extended": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-import-resolver-typescript": "catalog:",
+    "eslint-plugin-import-x": "catalog:",
+    "eslint-plugin-n": "catalog:",
+    "eslint-plugin-prettier": "catalog:",
+    "prettier": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "@typescript/native-preview": "catalog:"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "catalog:"
   },
   "dependencies": {
     "@orpc/contract": "catalog:",

@@ -1,6 +1,7 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { createRouter as createTanStackRouter } from '@tanstack/react-router';
 
+import { ErrorBoundary } from './components/error-boundary';
 import { NotFound } from './components/not-found';
 import PseudoPage from './components/pseudo-page';
 import { routeTree } from './routeTree.gen';
@@ -16,6 +17,7 @@ export const getRouter = () => {
     context: { tanstackRPC, queryClient },
     defaultPendingComponent: PseudoPage,
     defaultNotFoundComponent: NotFound,
+    defaultErrorComponent: ErrorBoundary,
     Wrap: function WrapComponent({ children }) {
       return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
     },

@@ -1,16 +1,15 @@
 import { describe, expect, it } from 'bun:test';
 
-import { USER_ACHIEVEMENTS } from '@startername/shared/constants/achievements';
-
-import { UserAchievementModel } from '@~/db/models/user-achievements.model';
-import { EVENTS } from '@~/enums/events.enums';
-import { eventBus } from '@~/lib/event-bus';
-import { achievementsService } from '@~/services/achievements.service';
+import { resolve } from '@~/di';
+import { TOKENS } from '@~/di/tokens';
 
 import { createUser } from './helpers/utilities';
 
+const getAchievementsService = () => resolve(TOKENS.AchievementsService);
+
 describe('Achievements System', () => {
   it('should list all available achievements', async () => {
+    const achievementsService = getAchievementsService();
     const achievements = await achievementsService.listAllAchievements();
 
     expect(achievements).toBeDefined();
@@ -21,6 +20,7 @@ describe('Achievements System', () => {
   });
 
   it('should return empty array for user with no achievements', async () => {
+    const achievementsService = getAchievementsService();
     const user = await createUser();
     const userId = user.user.id;
 

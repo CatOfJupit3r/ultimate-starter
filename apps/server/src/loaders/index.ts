@@ -1,28 +1,32 @@
+import { registerServices, resolve } from '@~/di';
+import { TOKENS } from '@~/di/tokens';
+
 import achievementsLoader from './achievements.loader';
 import authLoader from './auth.loader';
 import databaseLoader from './database.loader';
 import honoLoader from './hono.loader';
 
 export default async function loaders() {
-  console.log('Starting loaders...');
+  console.log('Registering DI services...');
+  await registerServices();
+  const logger = resolve(TOKENS.LoggerFactory).global();
+  logger.info('DI services registered.');
 
-  console.log('Loading database...');
+  logger.info('Loading database...');
   const db = await databaseLoader();
-  console.log('Database loaded.');
-
-  console.log('Loading authentication...');
+  logger.info('Database loaded.');
+  logger.info('Loading authentication...');
   const instance = await authLoader(db);
-  console.log('Authentication loaded.');
+  logger.info('Authentication loaded.');
 
-  console.log('Loading achievements...');
+  logger.info('Loading achievements...');
   await achievementsLoader();
-  console.log('Achievements loaded.');
+  logger.info('Achievements loaded.');
 
-  console.log('Loading Hono framework...');
-  const { app, appRouter } = await honoLoader(instance);
-  console.log('Hono framework loaded.');
+  logger.info('Loading Hono framework...');
+  const { app, appRouter } = await honoLoader();
+  logger.info('Hono framework loaded.');
 
-  console.log('All loaders completed.');
-
+  logger.info('All loaders completed.');
   return { app, auth: instance, appRouter };
 }

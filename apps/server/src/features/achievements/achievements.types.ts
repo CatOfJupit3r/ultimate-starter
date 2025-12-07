@@ -1,6 +1,6 @@
 import type { UserAchievementId } from '@startername/shared/constants/achievements';
 
-import type { iEventPayloadMap, EventType } from '@~/enums/events.enums';
+import type { iEventPayloadMap, EventType } from '@~/features/events/events.constants';
 
 export interface iAchievementContext {
   unlock: <T extends UserAchievementId>(

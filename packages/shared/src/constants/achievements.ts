@@ -1,14 +1,12 @@
 import { z } from 'zod';
 
-export const UserAchievementIdSchema = z.enum([
-  'BETA_TESTER',
-]);
+export const UserAchievementIdSchema = z.enum(['BETA_TESTER']);
 
 export const USER_ACHIEVEMENTS = UserAchievementIdSchema.enum;
 
 export type UserAchievementId = z.infer<typeof UserAchievementIdSchema>;
 
-export interface UserAchievementMeta {
+export interface iUserAchievementMeta {
   id: UserAchievementId;
   label: string;
   description: string;

@@ -1,6 +1,6 @@
 {
-  "name": "Startername",
-  "short_name": "Startername",
+  "name": "startername",
+  "short_name": "startername",
   "icons": [
     {
       "src": "/favicon/web-app-manifest-192x192.png",

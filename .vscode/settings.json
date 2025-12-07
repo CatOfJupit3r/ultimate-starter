@@ -1,6 +1,6 @@
 {
-  "cSpell.words": [
-    "ORPC",
-    "toastifications"
-  ],
+    "cSpell.words": ["orpc", "trivago", "valkey"],
+    "typescript.preferences.autoImportFileExcludePatterns": ["@radix-ui/*"],
+    "javascript.preferences.autoImportFileExcludePatterns": ["@radix-ui/*"],
+    "typescript.experimental.useTsgo": true
 }
