@@ -98,6 +98,177 @@ applyTo: "apps/server/**/*.ts,packages/shared/**/*.ts"
 - The `/auth/*` route is mounted directly on Hono using `auth.handler`. Client code uses `better-auth/react` (`apps/web/src/services/auth-service.ts`).
 - If you add lifecycle hooks (e.g., after user creation), wrap them in try/catch, log meaningful errors, and avoid throwing unless the request must fail.
 
+## Server Architecture
+
+### Feature-based design
+
+Each feature lives in its own folder with all related logic:
+
+apps/server/src/features/<domain>/
+  ├── <domain>.model.ts       # Feature-specific models
+  ├── <domain>.service.ts     # Business logic
+  ├── <domain>.router.ts      # Routes/controllers
+  ├── <domain>.hooks.ts       # Feature hooks
+  ├── <domain>.helpers.ts     # Utilities
+  └── <domain>.types.ts       # Types/contracts
+
+### Shared / Global
+
+Cross-feature logic lives in /:
+
+```
+apps/server/src/
+  ├── base/                    # BaseService, BaseModel, abstract classes
+  ├── services/                # Logger, EventBus, Config, Cache
+  ├── helpers/                 # Utils (date, string, crypto, etc.)
+  └── hooks/                   # Global hook registry
+```
+
+## Code Snippets & Patterns
+
+### Query Optimization
+```typescript
+// Use indexes from models
+// E.g., Challenge queries: creatorId, visibility, createdAt
+const challenges = await ChallengeModel
+  .find({ visibility: CHALLENGE_VISIBILITY.PUBLIC, archived: false })
+  .sort({ createdAt: -1 })
+  .limit(limit)
+  .skip(offset);
+```
+
+### Dependency Injection (DI) patterns
+
+This codebase uses tsyringe's container with a small wrapper in `apps/server/src/di`.
+Follow these steps when adding or using services:
+
+- Add a token to `apps/server/src/di/tokens.ts` (unique symbol + type in the registry).
+- Export your service class (stateless where possible) and register it in `registerServices()` in `apps/server/src/di/container.ts`.
+- Use the `resolve` helper or the `GETTERS` helper (`apps/server/src/routers/di-getter.ts`) from handlers to obtain instances.
+
+Example — token + registry entry (from `tokens.ts`):
+```typescript
+// apps/server/src/di/tokens.ts (excerpt)
+const myServiceToken: unique symbol = Symbol.for('MyService');
+
+export const TOKENS = {
+  // ...existing tokens
+  MyService: myServiceToken,
+} as const;
+
+export interface iTokenRegistry {
+  // ...existing entries
+  [TOKENS.MyService]: MyService;
+}
+```
+
+Example — register the service (in `container.ts`):
+```typescript
+// apps/server/src/di/container.ts (excerpt)
+import { MyService } from '@~/features/my-feature/my-feature.service';
+import { TOKENS } from './tokens';
+
+export async function registerServices() {
+  // ...other registrations
+  container.registerSingleton(TOKENS.MyService, MyService);
+}
+
+// Resolve helper
+export function resolve<T extends keyof iTokenRegistry>(token: T): iTokenRegistry[T] {
+  return container.resolve<iTokenRegistry[T]>(token);
+}
+```
+
+Example — using a service outside of classes:
+```typescript
+import { resolve } from '@~/di';
+import { TOKENS } from '@~/di/tokens';
+
+export const myHandler = async (ctx) => {
+  const myService = resolve(TOKENS.MyService);
+  const result = await myService.doSomething(ctx.request.body);
+  return ctx.json(result);
+}
+```
+
+Notes & patterns
+- Prefer `registerSingleton` for shared infrastructure (database, event bus, logger factories).
+- Use `container.register(..., { lifecycle: Lifecycle.Transient })` or `useClass` for services that must be created per usage (e.g., stateful short-lived objects).
+- Keep services small, focused, and stateless where feasible. Push business logic into service methods rather than routers.
+- For testability, prefer resolving tokens in tests (mock the container registration during test setup) or export a factory that accepts dependencies explicitly.
+
+Quick checklist when adding a new service
+1. Create the service class file under `apps/server/src/features/<feature>` and export it.
+2. Add a token in `apps/server/src/di/tokens.ts` and add the type to `iTokenRegistry`.
+3. Register the service in `registerServices()` in `apps/server/src/di/container.ts`.
+4. Use `resolve(TOKENS.YourService)` or add a getter to `apps/server/src/routers/di-getter.ts` for common access.
+
+### Constructor injection
+
+While resolving services via `resolve(TOKENS.X)` is fine in handlers, prefer constructor injection for service-to-service wiring so dependencies are explicit and testable.
+
+Example — inject one service into another using `tsyringe` decorators:
+
+```typescript
+import { injectable, inject } from 'tsyringe';
+import { TOKENS } from '@~/di/tokens';
+
+@injectable()
+export class NotificationsService {
+  constructor(
+    @inject(TOKENS.UserService) private userService: UserService,
+    @inject(TOKENS.LoggerFactory) private loggerFactory: LoggerFactory,
+  ) {
+    this.logger = this.loggerFactory.create('NotificationsService');
+  }
+
+  private readonly logger: ReturnType<LoggerFactory['create']>;
+
+  public async notifyUser(userId: string, payload: NotificationPayload) {
+    const user = await this.userService.findById(userId);
+    if (!user) {
+      this.logger.warn('Cannot notify non-existent user', { userId });
+      return;
+    }
+    // ...send notification
+    this.logger.info('User notified', { userId });
+  }
+}
+```
+
+Register `NotificationsService` in `registerServices()` with `container.registerSingleton(TOKENS.NotificationsService, NotificationsService)` and the container will inject dependencies automatically.
+
+### Logger factory
+
+The repo exposes a `LoggerFactory` token and implementation; register the factory as a singleton and use it inside services to create contextual loggers.
+
+Example logger factory interface and usage pattern:
+
+```ts
+// In a service:
+constructor(@inject(TOKENS.LoggerFactory) private loggerFactory: LoggerFactory) {
+  this.logger = this.loggerFactory.create('MyService');
+}
+
+this.logger.info('started', { some: 'meta' });
+```
+
+Using a logger factory keeps logger creation consistent (same format, processors, and sinks) and avoids importing a global logger instance directly in feature code.
+
+
+## Error Throwing
+```typescript
+// For access denial (hide resource existence):
+throw ORPCNotFoundError(errorCodes.RESOURCE_NOT_FOUND);
+
+// For permission denial (user has some access):
+throw ORPCForbiddenError(errorCodes.INSUFFICIENT_PERMISSIONS);
+
+// For bad input:
+throw ORPCBadRequestError(errorCodes.INVALID_INPUT_VALUE);
+```
+
+
 ## Local Quality Checks
 
 - `bun run lint`: ESLint for backend + shared packages.

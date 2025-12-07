@@ -90,6 +90,7 @@ applyTo: "apps/web/**/*.ts,packages/shared/**/*.ts"
 - Always prefer query keys derived from `tanstackRPC.<namespace>.<procedure>.queryKey({ input })`;
 
 ## Optimistic UI Updates
+
 - Always derive cache identifiers from the generated helpers: `const key = tanstackRPC.<namespace>.<procedure>.queryKey({ input })`.
 - Cancel in-flight queries before writing: `await queryClient.cancelQueries({ queryKey: key });`.
 - Snapshot existing data so failures can roll back: `const previous = queryClient.getQueryData(key); return { previous };`.
@@ -124,6 +125,87 @@ applyTo: "apps/web/**/*.ts,packages/shared/**/*.ts"
     });
   ```
 - Surface optimistic state in the UI through mutation flags (`isPending`, `isSuccess`, `isError`) and toast feedback.
+
+## Optimistic Updates
+
+```typescript
+const mutationOptions = tanstackRPC.namespace.procedure.mutationOptions({
+  async onMutate(variables, ctx) {
+    const key = tanstackRPC.namespace.queryProcedure.queryKey();
+    await ctx.client.cancelQueries({ queryKey: key });
+    const previous = ctx.client.getQueryData(key);
+    ctx.client.setQueryData<NamespaceProcedureReturn>(key, (old) => ({ ...old, ...updatedFields }));
+    return { previous };
+  },
+  onError: (_error, _variables, context, ctx) => {
+    const key = tanstackRPC.namespace.queryProcedure.queryKey();
+    if (context?.previous) ctx.client.setQueryData<NamespaceProcedureReturn>(key, context.previous);
+    else void ctx.client.invalidateQueries({ queryKey: key });
+  },
+  onSettled: (_data, _error, _variables, ctx) => {
+    const key = tanstackRPC.namespace.queryProcedure.queryKey();
+    void ctx.client.invalidateQueries({ queryKey: key });
+  },
+});
+```
+
+## Component Loading States
+
+```typescript
+const { data: item, isPending, error } = useQuery(...);
+
+if (isPending) return <Skeleton />;
+if (error) return <ErrorBoundary error={error} />;
+if (!item) return <NotFound />;
+
+return <ItemDisplay item={item} />;
+```
+
+## URL State with nuqs
+
+```typescript
+import z from 'zod';
+import { useQueryStates, parseAsString, parseAsStringEnum } from 'nuqs';
+
+const sortValuesSchema = z.enum(['RECENT', 'PARTICIPANTS', 'COMPLETED']);
+const SORT_VALUES = sortValuesSchema.enum;
+const SORT_VALUES_ARRAY = Object.values(SORT_VALUES);
+type SortValue = z.infer<typeof sortValuesSchema>;
+
+export function ChallengeFilters() {
+  const [{ search, sort }, setQueryStates] = useQueryStates({
+    search: parseAsString.withDefault(''),
+    sort: parseAsStringEnum(SORT_VALUES_ARRAY).withDefault(SORT_VALUES.RECENT),
+  });
+
+  return (
+    <form className="flex gap-3">
+      <Input
+        value={search}
+        onChange={(event) => void setQueryStates({ search: event.target.value || null })}
+        placeholder="Search challenges..."
+      />
+      <SingleSelect
+        options={SORT_VALUES_ARRAY.map((value) => ({ label: value, value }))}
+        value={sort}
+        onValueChange={(value) => void setQueryStates({ sort: value ?? SORT_VALUES.RECENT })}
+        className="w-40"
+      />
+    </form>
+  );
+}
+```
+
+## Frontend Architecture
+
+- **Feature code**: `apps/web/src/features/<domain>` holds domain modules with colocated `components`, `hooks`, and tests.
+- **Query Hooks**: `apps/web/src/features/*/hooks/queries/**/*.ts`
+- **Mutation Hooks**: `apps/web/src/features/*/hooks/mutations/**/*.ts`
+- **Components**: `apps/web/src/features/*/components/**/*.tsx`
+- **Helpers**: `apps/web/src/features/*/helpers/**/*.tsx`
+- **Routes**: `apps/web/src/routes/**/*.tsx`
+- **oRPC Setup**: `apps/web/src/utils/tanstack-orpc.ts`
+- **Auth Service**: `apps/web/src/services/auth-service.ts`
 
 ## Forms, Feedback, and Styling
 - TanStack Form powers auth flows (`components/sign-in-form.tsx`, `sign-up-form.tsx`); keep validators in sync with shared `zod` schemas and show validation errors inline.
