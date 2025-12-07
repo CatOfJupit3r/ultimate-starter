@@ -36,7 +36,7 @@ export const Route = createRootRouteWithContext<iRouterAppContext>()({
       },
       ...seo({
         title: 'startername',
-        description: 'startername is your go-to home management app',
+        description: 'startername is a web application',
         image: '/social-preview.png',
       }),
     ],
