@@ -1,4 +1,4 @@
-import type { Context, Next } from 'hono';
+import type { MiddlewareHandler } from 'hono';
 import { randomUUID } from 'node:crypto';
 
 import { resolve } from '@~/di';
@@ -16,7 +16,7 @@ import type { iRequestContext } from './logger.types';
  * @example
  * app.use(requestContextMiddleware);
  */
-export async function requestContextMiddleware(c: Context<iRequestContext>, next: Next) {
+export const requestContextMiddleware: MiddlewareHandler<iRequestContext> = async (c, next) => {
   const auth = resolve(TOKENS.AuthService).getInstance();
 
   // Get the session - this may already be resolved by earlier middleware
@@ -34,4 +34,4 @@ export async function requestContextMiddleware(c: Context<iRequestContext>, next
   c.set('session', session);
 
   return next();
-}
+};
