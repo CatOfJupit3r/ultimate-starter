@@ -33,7 +33,7 @@ const BreadcrumbLink = forwardRef<
   }
 
   return (
-    <a ref={ref} className={cn('hover:text-foreground transition-colors cursor-pointer', className)} {...props}>
+    <a ref={ref} className={cn('cursor-pointer transition-colors hover:text-foreground', className)} {...props}>
       {children}
     </a>
   );

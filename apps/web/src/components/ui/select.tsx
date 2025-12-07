@@ -38,7 +38,7 @@ export interface iOptionType {
  */
 const selectStyles = {
   controlStyles: {
-    base: 'flex !min-h-9 w-full rounded-md border border-input bg-transparent pl-3 py-1 pr-1 gap-1 text-sm shadow-sm transition-colors hover:cursor-pointer',
+    base: 'flex min-h-9! w-full rounded-md border border-input bg-transparent pl-3 py-1 pr-1 gap-1 text-sm shadow-sm transition-colors hover:cursor-pointer',
     focus: 'outline-none ring-1 ring-ring',
     disabled: 'cursor-not-allowed opacity-50',
   },
@@ -54,7 +54,7 @@ const selectStyles = {
   menuList: 'morel-scrollbar',
   groupHeadingStyles: 'py-2 px-1 text-secondary-foreground text-sm font-semibold',
   optionStyles: {
-    base: 'hover:cursor-pointer hover:bg-accent hover:text-accent-foreground px-2 py-1.5 rounded-sm !text-sm !cursor-default !select-none !outline-none font-sans',
+    base: 'hover:cursor-pointer hover:bg-accent hover:text-accent-foreground px-2 py-1.5 rounded-sm text-sm! cursor-default! select-none! outline-none! font-sans',
     focus: 'active:bg-accent/90 bg-accent text-accent-foreground',
     disabled: 'pointer-events-none opacity-50',
     selected: '',
@@ -307,8 +307,10 @@ const ForwardedSelectMulti = ForwardedSelect as unknown as ForwardRefExoticCompo
   MultiSelectBaseProps & RefAttributes<SelectInstance<iOptionType, true, GroupBase<iOptionType>>>
 >;
 
-export interface iSingleSelectProps
-  extends Omit<SingleSelectBaseProps, 'value' | 'defaultValue' | 'onChange' | 'isMulti'> {
+export interface iSingleSelectProps extends Omit<
+  SingleSelectBaseProps,
+  'value' | 'defaultValue' | 'onChange' | 'isMulti'
+> {
   value?: string | null;
   defaultValue?: string | null;
   onValueChange?: (value: string | null, option: iOptionType | null, action: ActionMeta<iOptionType>) => void;
@@ -349,8 +351,10 @@ export const SingleSelect = forwardRef<SelectInstance<iOptionType, false, GroupB
   },
 );
 
-export interface iMultiSelectProps
-  extends Omit<MultiSelectBaseProps, 'value' | 'defaultValue' | 'onChange' | 'isMulti'> {
+export interface iMultiSelectProps extends Omit<
+  MultiSelectBaseProps,
+  'value' | 'defaultValue' | 'onChange' | 'isMulti'
+> {
   value?: string[];
   defaultValue?: string[];
   onValueChange?: (values: string[], options: Array<iOptionType>, action: ActionMeta<iOptionType>) => void;

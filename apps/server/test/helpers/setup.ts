@@ -1,6 +1,9 @@
 import { afterAll, afterEach } from 'bun:test';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
+import 'reflect-metadata';
+
+import { registerServices } from '@~/di';
 
 let mongo: MongoMemoryServer;
 
@@ -11,6 +14,10 @@ await mongoose.connect(uri, {
   serverSelectionTimeoutMS: 1000,
 });
 console.log('In-memory MongoDB server is ready.');
+
+console.log('Registering DI services for tests...');
+await registerServices();
+console.log('DI services registered.');
 
 afterEach(async () => {
   await Promise.race([

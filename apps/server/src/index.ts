@@ -1,4 +1,5 @@
 // sort-imports-ignore
+import 'reflect-metadata';
 import env from './constants/env';
 import loaders from './loaders';
 

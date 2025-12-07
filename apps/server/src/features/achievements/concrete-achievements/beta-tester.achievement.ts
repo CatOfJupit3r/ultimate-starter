@@ -1,8 +1,8 @@
 import { USER_ACHIEVEMENTS } from '@startername/shared/constants/achievements';
 
-import { EVENTS } from '@~/enums/events.enums';
+import { EVENTS } from '@~/features/events/events.constants';
 
-import type { iAchievementContext, iAchievementDefinition } from './base-achievement';
+import type { iAchievementContext, iAchievementDefinition } from '../achievements.types';
 
 export const betaTesterAchievement: iAchievementDefinition = {
   id: USER_ACHIEVEMENTS.BETA_TESTER,

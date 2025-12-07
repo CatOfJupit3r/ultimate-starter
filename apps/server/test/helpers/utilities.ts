@@ -1,6 +1,6 @@
 import { auth } from './instance';
 
-type UserData = Parameters<typeof auth.api.signUpEmail>[0]['body'];
+type UserData = NonNullable<Prettify<Parameters<typeof auth.api.signUpEmail>[0]>>['body'];
 
 // ============================================================================
 // User Creation Utilities
@@ -28,7 +28,6 @@ export async function createUser(newUser: UserData = createRandomUser()) {
 
   const getSession = await auth.api.getSession({
     headers: {
-      // @ts-expect-error better-auth types
       cookie,
     },
   });

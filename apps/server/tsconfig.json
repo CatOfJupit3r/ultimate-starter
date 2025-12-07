@@ -6,12 +6,12 @@
     "verbatimModuleSyntax": true,
     "strict": true,
     "skipLibCheck": true,
-    "typeRoots": ["../../types", "./node_modules/@types", "../../node_modules/@types"],
     "paths": {
-      "@~/*": ["./src/*"]
+      "@~/*": ["./src/*"],
+      "@startername/shared/globals": ["../../packages/shared/src/globals.d.ts"]
     },
     "outDir": "./dist",
-    "types": ["bun", "std-worthy"],
+    "types": ["bun"],
     "composite": true,
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
@@ -22,5 +22,15 @@
     {
       "path": "../../packages/shared"
     }
+  ],
+  "files": [
+    "../../packages/shared/src/globals.d.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "test/**/*.ts",
+    "test/**/*.tsx"
   ]
 }

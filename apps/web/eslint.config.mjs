@@ -6,12 +6,12 @@
  */
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
+import pluginRouter from '@tanstack/eslint-plugin-router';
 import { configs, plugins, rules } from 'eslint-config-airbnb-extended';
 import { rules as prettierConfigRules } from 'eslint-config-prettier';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
+import tailwindcssPlugin from 'eslint-plugin-better-tailwindcss';
 import prettierPlugin from 'eslint-plugin-prettier';
-import tailwindRules from 'eslint-plugin-tailwindcss';
-import pluginRouter from '@tanstack/eslint-plugin-router'
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -19,6 +19,7 @@ const gitignorePath = path.resolve('.', '.gitignore');
 const currentFilename = fileURLToPath(import.meta.url);
 const currentDirname = path.dirname(currentFilename);
 const tsconfigRootDir = path.resolve(currentDirname);
+const tsconfigPath = path.resolve(tsconfigRootDir, 'tsconfig.json');
 const tailwindConfigPath = path.join(currentDirname, 'src', 'index.css');
 
 const jsConfig = [
@@ -49,7 +50,25 @@ const reactConfig = [
   ...configs.react.recommended,
   // Strict React Config
   rules.react.strict,
-  ...tailwindRules.configs['flat/recommended'],
+  {
+    files: ['**/*.{jsx,tsx}'],
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      'better-tailwindcss': tailwindcssPlugin,
+    },
+    rules: {
+      ...tailwindcssPlugin.configs['stylistic-error'].rules,
+      ...tailwindcssPlugin.configs['correctness-error'].rules,
+      'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
+      'better-tailwindcss/no-unregistered-classes': 'off',
+    },
+  },
   ...pluginRouter.configs['flat/recommended'],
 ];
 
@@ -209,12 +228,6 @@ const silenceWebOpinions = [
           depth: 3,
         },
       ],
-      'tailwindcss/no-custom-classname': [
-        'error',
-        {
-          whitelist: [''],
-        },
-      ],
     },
   },
 ];
@@ -223,12 +236,12 @@ export default [
   // Ignore .gitignore files/folder in eslint
   includeIgnoreFile(gitignorePath),
   {
-    ignores: ['eslint.config.mjs', 'tests/**', 'dist/**', './src/routeTree.gen.ts'],
+    ignores: ['eslint.config.mjs', 'tests/**', 'dist/**', './src/routeTree.gen.ts', "vite.config.ts"],
   },
   {
     settings: {
-      tailwindcss: {
-        config: tailwindConfigPath,
+      'better-tailwindcss': {
+        entryPoint: tailwindConfigPath,
       },
     },
   },

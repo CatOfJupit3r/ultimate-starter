@@ -34,10 +34,19 @@ const envSchema = z.object({
   MONGO_PASSWORD: z.string().optional().default('password'),
   MONGO_DATABASE_NAME: z.string().optional().default('startername'),
 
+  // VALKEY / REDIS CONFIG
+  VALKEY_HOST: z.string().optional().default('localhost'),
+  VALKEY_PORT: z.coerce.number().optional().default(6379),
+  VALKEY_USERNAME: z.string().optional(),
+  VALKEY_PASSWORD: z.string().optional(),
+  VALKEY_DB: z.coerce.number().int().optional().default(0),
+
   // SERVER CONFIG
   SERVER_PORT: z.coerce.number().int().min(1).max(65535).optional().default(5050),
   SERVER_HOST: z.string().optional().default('localhost'),
   CORS_ORIGIN: z.url().optional().default(''),
+
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 });
 
 const env = envSchema.safeParse(process.env);

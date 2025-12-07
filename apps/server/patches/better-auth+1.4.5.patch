@@ -1,0 +1,76 @@
+diff --git a/node_modules/better-auth/dist/adapters/mongodb-adapter/index.mjs b/node_modules/better-auth/dist/adapters/mongodb-adapter/index.mjs
+index 3107831..c2cc024 100644
+--- a/node_modules/better-auth/dist/adapters/mongodb-adapter/index.mjs
++++ b/node_modules/better-auth/dist/adapters/mongodb-adapter/index.mjs
+@@ -20,25 +20,15 @@ const mongodbAdapter = (db, config) => {
+ 			model = getDefaultModelName(model);
+ 			if (field === "id" || field === "_id" || schema[model].fields[field]?.references?.field === "id") {
+ 				if (value === null || value === void 0) return value;
+-				if (typeof value !== "string") {
+-					if (value instanceof ObjectId) return value;
+-					if (Array.isArray(value)) return value.map((v) => {
+-						if (v === null || v === void 0) return v;
+-						if (typeof v === "string") try {
+-							return new ObjectId(v);
+-						} catch (e) {
+-							return v;
+-						}
+-						if (v instanceof ObjectId) return v;
+-						throw new Error("Invalid id value, received: " + JSON.stringify(v));
+-					});
+-					throw new Error("Invalid id value, received: " + JSON.stringify(value));
+-				}
+-				try {
+-					return new ObjectId(value);
+-				} catch (e) {
+-					return value;
+-				}
++				if (typeof value === "string") return value;
++				if (value instanceof ObjectId) return value.toString();
++				if (Array.isArray(value)) return value.map((v) => {
++					if (v === null || v === void 0) return v;
++					if (typeof v === "string") return v;
++					if (v instanceof ObjectId) return v.toString();
++					throw new Error("Invalid id value, received: " + JSON.stringify(v));
++				});
++				throw new Error("Invalid id value, received: " + JSON.stringify(value));
+ 			}
+ 			return value;
+ 		}
+@@ -335,22 +325,20 @@ const mongodbAdapter = (db, config) => {
+ 				const customIdGen = getCustomIdGenerator(options);
+ 				if (field === "_id" || fieldAttributes.references?.field === "id") {
+ 					if (customIdGen) return data;
+-					if (action === "update") return data;
+-					if (Array.isArray(data)) return data.map((v) => {
+-						if (typeof v === "string") try {
+-							return new ObjectId(v);
+-						} catch (error) {
+-							return v;
+-						}
+-						return v;
+-					});
+-					if (typeof data === "string") try {
+-						return new ObjectId(data);
+-					} catch (error) {
+-						return data;
+-					}
+-					if (fieldAttributes?.references?.field === "id" && !fieldAttributes?.required && data === null) return null;
+-					return new ObjectId();
++					const normalizeIdValue = (value) => {
++						if (value === null || value === void 0) return value;
++						if (typeof value === "string") return value;
++						if (value instanceof ObjectId) return value.toString();
++						return value;
++					};
++					if (Array.isArray(data)) return data.map(normalizeIdValue);
++					const normalized = normalizeIdValue(data);
++					if (fieldAttributes?.references?.field === "id" && !fieldAttributes?.required && normalized === null) return null;
++					if (normalized === undefined) return new ObjectId().toString();
++					if (normalized === null) return null;
++					if (typeof normalized === "string") return normalized;
++					if (normalized instanceof ObjectId) return normalized.toString();
++					return new ObjectId().toString();
+ 				}
+ 				return data;
+ 			},

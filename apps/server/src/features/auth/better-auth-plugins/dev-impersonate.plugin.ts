@@ -1,6 +1,5 @@
-import { createAuthEndpoint } from '@better-auth/core/middleware';
 import type { BetterAuthPlugin } from 'better-auth';
-import { APIError } from 'better-call';
+import { createAuthEndpoint, APIError } from 'better-auth/api';
 import { z } from 'zod';
 
 /**
@@ -152,7 +151,7 @@ export const devImpersonatePlugin = () =>
           }
 
           // Create impersonation session (1 hour expiry)
-          const session = await ctx.context.internalAdapter.createSession(targetUser.id, ctx, false, {
+          const session = await ctx.context.internalAdapter.createSession(targetUser.id, false, {
             expiresAt: getDate(60 * 60, 'sec'), // 1 hour
           });
 

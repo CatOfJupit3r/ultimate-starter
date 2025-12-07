@@ -1,14 +1,13 @@
-import { achievementsService } from '@~/services/achievements.service';
-
 import { base, protectedProcedure, publicProcedure } from '../lib/orpc';
+import { GETTERS } from './di-getter';
 
 export const achievementsRouter = base.achievements.router({
   listAchievements: publicProcedure.achievements.listAchievements.handler(async () =>
-    achievementsService.listAllAchievements(),
+    GETTERS.AchievementsService().listAllAchievements(),
   ),
 
   getMyAchievements: protectedProcedure.achievements.getMyAchievements.handler(async ({ context }) => {
     const userId = context.session.user.id;
-    return achievementsService.getUserAchievements(userId);
+    return GETTERS.AchievementsService().getUserAchievements(userId);
   }),
 });

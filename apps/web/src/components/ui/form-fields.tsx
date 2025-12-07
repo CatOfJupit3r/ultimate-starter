@@ -99,6 +99,7 @@ export const SelectField = ({ label, options, ...selectProps }: iSelectFieldProp
           value={field.state.value}
           onValueChange={(value) => (value ? field.handleChange(value) : undefined)}
           onBlur={field.handleBlur}
+          options={options}
           {...selectProps}
         />
       </div>

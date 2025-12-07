@@ -1,8 +1,10 @@
 import { EventEmitter } from 'node:events';
+import { singleton } from 'tsyringe';
 
-import type { iEventPayloadMap, EventType } from '@~/enums/events.enums';
+import type { iEventPayloadMap, EventType } from '@~/features/events/events.constants';
 
-class TypedEventBus extends EventEmitter {
+@singleton()
+export class TypedEventBus extends EventEmitter {
   public on<K extends EventType>(event: K, listener: (payload: iEventPayloadMap[K]) => unknown): this {
     return super.on(event, listener);
   }
@@ -19,5 +21,3 @@ class TypedEventBus extends EventEmitter {
     return super.once(event, listener);
   }
 }
-
-export const eventBus = new TypedEventBus();

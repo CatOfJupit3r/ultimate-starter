@@ -1,7 +1,7 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 
-import AuthService from '@~/services/auth-service';
-import type { InternalAuthSession } from '@~/services/auth-service';
+import AuthService from '@~/services/auth.service';
+import type { InternalAuthSession } from '@~/services/auth.service';
 import { QUERY_REFETCH_INTERVALS } from '@~/utils/query-client';
 
 const PLACEHOLDER_USER: InternalAuthSession = {
