@@ -5,29 +5,35 @@ import { createAuthClient } from 'better-auth/react';
 
 import { getBackendURL } from '@~/utils/ssr-helpers';
 
-const getInitialAuthHeaders = createIsomorphicFn()
+export const getAuthHeaders = createIsomorphicFn()
   .client(() => ({}))
   .server(() => getRequestHeaders());
 
-const authInstance = createAuthClient({
-  plugins: [usernameClient()],
-  baseURL: getBackendURL('/auth'),
-  fetchOptions: {
-    throw: true,
-    headers: getInitialAuthHeaders(),
-  },
-});
+const createAuthInstance = () =>
+  createAuthClient({
+    plugins: [usernameClient()],
+    baseURL: getBackendURL('/auth'),
+    fetchOptions: {
+      throw: true,
+    },
+  });
 
 class AuthService {
+  private authInstance;
+
+  constructor() {
+    this.authInstance = createAuthInstance();
+  }
+
   public async getSession() {
-    return authInstance.getSession({ fetchOptions: { throw: true } });
+    return this.authInstance.getSession({ fetchOptions: { throw: true, headers: getAuthHeaders() } });
   }
 
   public getInstance() {
-    return authInstance;
+    return this.authInstance;
   }
 }
 
-export type InternalAuthSession = (typeof authInstance)['$Infer']['Session'];
+export type InternalAuthSession = AuthService['authInstance']['$Infer']['Session'];
 
 export default new AuthService();

@@ -2,7 +2,6 @@
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
 import type { QueryClient } from '@tanstack/react-query';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
@@ -24,6 +23,10 @@ export interface iRouterAppContext {
 }
 
 export const Route = createRootRouteWithContext<iRouterAppContext>()({
+  loader: async ({ context }) => {
+    // keep this sucker here to make sure there are no hydration errors
+    await context.queryClient.ensureQueryData(meQueryOptions);
+  },
   component: RootComponent,
   head: () => ({
     meta: [
@@ -66,8 +69,6 @@ const PLUGINS: ComponentProps<typeof TanStackDevtools>['plugins'] = [
 ];
 
 function RootComponent() {
-  useSuspenseQuery(meQueryOptions); // keep this sucker here to make sure there are no hydration errors
-
   return (
     <html lang="en" className="dark">
       <head>

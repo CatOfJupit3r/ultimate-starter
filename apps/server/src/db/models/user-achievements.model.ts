@@ -1,4 +1,4 @@
-import { getModelForClass, index, modelOptions, prop } from '@typegoose/typegoose';
+import { getModelForClass, index, modelOptions, prop, Severity } from '@typegoose/typegoose';
 import type { DocumentType } from '@typegoose/typegoose';
 
 import type { UserAchievementId } from '@startername/shared/constants/achievements';
@@ -28,7 +28,7 @@ export class UserAchievementClass {
   @prop({ required: true })
   public unlockedAt!: Date;
 
-  @prop({ type: Object })
+  @prop({ type: () => Object, allowMixed: Severity.ALLOW })
   public data?: Record<string, unknown>;
 
   public createdAt!: Date;
