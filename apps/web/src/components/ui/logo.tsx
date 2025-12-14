@@ -1,14 +1,14 @@
 import { cn } from '@~/lib/utils';
 
-import { useTheme } from '../theme-provider';
+import { USER_THEME, useTheme } from '../theme-provider';
 
 export function Logo({ className }: { className?: string }) {
-  const { theme } = useTheme();
+  const { userTheme } = useTheme();
   return (
     <img
-      src={`/favicon/favicon${theme === 'light' ? '.dark' : ''}.svg`}
+      src={`/favicon/favicon${userTheme === USER_THEME.light ? '.dark' : ''}.svg`}
       className={cn('size-32', className)}
-      alt="startername Logo"
+      alt="startname Logo"
     />
   );
 }

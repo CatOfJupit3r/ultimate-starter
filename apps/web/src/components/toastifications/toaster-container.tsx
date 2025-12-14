@@ -1,10 +1,10 @@
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useTheme } from '../theme-provider';
+import { USER_THEME, useTheme } from '../theme-provider';
 
 export default function ToasterContainer() {
-  const { theme } = useTheme();
+  const { appTheme } = useTheme();
 
   return (
     <ToastContainer
@@ -17,7 +17,7 @@ export default function ToasterContainer() {
       pauseOnFocusLoss
       draggable
       pauseOnHover
-      theme={theme === 'dark' ? 'dark' : 'light'}
+      theme={appTheme === USER_THEME.dark ? 'dark' : 'light'}
     />
   );
 }
