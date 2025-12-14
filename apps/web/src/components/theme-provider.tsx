@@ -1,102 +1,98 @@
+import { createServerFn } from '@tanstack/react-start';
+import { getCookie, setCookie } from '@tanstack/react-start/server';
 import { createContext, use, useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
+import z from 'zod';
 
-import { FunctionOnce } from './function-once';
+import { isOnClient } from '@~/utils/ssr-helpers';
 
-export type ResolvedTheme = 'dark' | 'light';
-export type Theme = ResolvedTheme | 'system';
+const userThemeZod = z.enum(['light', 'dark', 'system']);
+export const USER_THEME = userThemeZod.enum;
+const userThemeValidator = userThemeZod.clone().catch(USER_THEME.dark);
+
+export type UserTheme = z.infer<typeof userThemeZod>;
+export type AppTheme = Exclude<UserTheme, 'system'>;
+
+const THEME_COOKIE = 'startername.theme';
+
+export const getStoredTheme = createServerFn().handler(async () => userThemeValidator.parse(getCookie(THEME_COOKIE)));
+
+export function getInitialThemeClass(theme: UserTheme): Exclude<UserTheme, typeof USER_THEME.system> {
+  if (theme === USER_THEME.system) {
+    // During SSR, default to light; client will adjust if needed
+    return USER_THEME.dark;
+  }
+  return theme;
+}
+
+export const setStoredTheme = createServerFn({ method: 'POST' })
+  .inputValidator((data: unknown) => userThemeValidator.parse(data))
+  .handler(({ data }) => {
+    setCookie(THEME_COOKIE, data);
+  });
+
+function getSystemTheme(): AppTheme {
+  if (isOnClient) return USER_THEME.dark;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? USER_THEME.dark : USER_THEME.light;
+}
+
+function handleThemeChange(theme: UserTheme) {
+  const root = document.documentElement;
+  root.classList.remove(USER_THEME.light, USER_THEME.dark);
+  const newTheme = theme === USER_THEME.system ? getSystemTheme() : theme;
+  root.classList.add(newTheme);
+}
+
+function setupPreferredListener() {
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  const handler = () => handleThemeChange(USER_THEME.system);
+  mediaQuery.addEventListener('change', handler);
+  return () => mediaQuery.removeEventListener('change', handler);
+}
+
+interface iThemeContextProps {
+  userTheme: UserTheme;
+  appTheme: AppTheme;
+  setTheme: (theme: UserTheme) => void;
+}
+
+const ThemeContext = createContext<iThemeContextProps | undefined>(undefined);
 
 interface iThemeProviderProps {
-  children: React.ReactNode;
-  defaultTheme?: Theme;
-  storageKey?: string;
+  children: ReactNode;
+  initialTheme: UserTheme;
 }
 
-interface iThemeProviderState {
-  theme: Theme;
-  resolvedTheme: ResolvedTheme;
-  setTheme: (theme: Theme) => void;
-}
-
-const initialState: iThemeProviderState = {
-  theme: 'system',
-  resolvedTheme: 'light',
-  setTheme: () => null,
-};
-
-const ThemeProviderContext = createContext<iThemeProviderState>(initialState);
-
-const isBrowser = typeof window !== 'undefined';
-
-export function ThemeProvider({
-  children,
-  defaultTheme = 'system',
-  storageKey = 'startername.theme',
-}: iThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (isBrowser ? (localStorage.getItem(storageKey) as Theme) : defaultTheme) || defaultTheme,
-  );
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
+export function ThemeProvider({ children, initialTheme }: iThemeProviderProps) {
+  const [userTheme, setUserTheme] = useState<UserTheme>(initialTheme);
 
   useEffect(() => {
-    const root = window.document.documentElement;
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    handleThemeChange(userTheme);
 
-    function updateTheme() {
-      root.classList.remove('light', 'dark');
-
-      if (theme === 'system') {
-        const systemTheme = mediaQuery.matches ? 'dark' : 'light';
-        setResolvedTheme(systemTheme);
-        root.classList.add(systemTheme);
-        return;
-      }
-
-      setResolvedTheme(theme);
-      root.classList.add(theme);
+    if (userTheme === 'system') {
+      return setupPreferredListener();
     }
+    return undefined;
+  }, [userTheme]);
 
-    mediaQuery.addEventListener('change', updateTheme);
-    updateTheme();
+  const appTheme = userTheme === 'system' ? getSystemTheme() : userTheme;
 
-    return () => mediaQuery.removeEventListener('change', updateTheme);
-  }, [theme]);
+  const setTheme = (newUserTheme: UserTheme) => {
+    setUserTheme(newUserTheme);
+    void setStoredTheme({ data: newUserTheme });
+  };
 
-  const value = useMemo(
-    () => ({
-      theme,
-      resolvedTheme,
-      setTheme: (newTheme: Theme) => {
-        localStorage.setItem(storageKey, newTheme);
-        setTheme(newTheme);
-      },
-    }),
-    [theme, resolvedTheme, storageKey],
-  );
+  const value = useMemo(() => ({ userTheme, appTheme, setTheme }), [userTheme, appTheme]);
 
-  return (
-    <ThemeProviderContext value={value}>
-      <FunctionOnce param={storageKey}>
-        {(currentStorageKey) => {
-          const currentTheme: string | null = localStorage.getItem(currentStorageKey);
-
-          if (
-            currentTheme === 'dark' ||
-            ((currentTheme === null || currentTheme === 'system') &&
-              window.matchMedia('(prefers-color-scheme: dark)').matches)
-          ) {
-            document.documentElement.classList.add('dark');
-          }
-        }}
-      </FunctionOnce>
-      {children}
-    </ThemeProviderContext>
-  );
+  return <ThemeContext value={value}>{children}</ThemeContext>;
 }
 
 export function useTheme() {
-  const context = use(ThemeProviderContext);
+  const context = use(ThemeContext);
 
-  if (context === undefined) throw new Error('useTheme must be used within a ThemeProvider');
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
 
   return context;
 }

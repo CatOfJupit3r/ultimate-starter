@@ -1,4 +1,5 @@
 import tailwindcss from '@tailwindcss/vite';
+import { devtools } from '@tanstack/devtools-vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
@@ -31,6 +32,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      devtools(),
       tailwindcss(),
       tanstackStart({
         router: {

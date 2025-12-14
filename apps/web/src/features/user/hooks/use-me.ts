@@ -1,8 +1,9 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 
+import { INTERVALS } from '@~/constants/dates';
 import AuthService from '@~/services/auth.service';
 import type { InternalAuthSession } from '@~/services/auth.service';
-import { QUERY_REFETCH_INTERVALS } from '@~/utils/query-client';
+import { isOnClient } from '@~/utils/ssr-helpers';
 
 const PLACEHOLDER_USER: InternalAuthSession = {
   user: {
@@ -33,7 +34,7 @@ export const meQueryOptions = queryOptions({
   queryKey: USE_ME_QUERY_KEYS(),
   queryFn: meQueryFn,
   // Caching and retry configurations
-  staleTime: QUERY_REFETCH_INTERVALS.ONE_MINUTE, // Data considered fresh for 1 minutes
+  staleTime: isOnClient ? INTERVALS.ONE_MINUTE : 0, // Data considered fresh for 1 minutes
   refetchOnWindowFocus: true, // Refetch when window regains focus
   retry: 1, // Retry once on failure
 });

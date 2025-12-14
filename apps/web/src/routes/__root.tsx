@@ -2,7 +2,6 @@
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
 import type { QueryClient } from '@tanstack/react-query';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
@@ -10,7 +9,7 @@ import { NuqsAdapter } from 'nuqs/adapters/react';
 import type { ComponentProps } from 'react';
 
 import Header from '@~/components/header';
-import { ThemeProvider } from '@~/components/theme-provider';
+import { getInitialThemeClass, getStoredTheme, ThemeProvider } from '@~/components/theme-provider';
 import ToasterContainer from '@~/components/toastifications/toaster-container';
 import { meQueryOptions } from '@~/features/user';
 import { seo } from '@~/utils/seo';
@@ -24,6 +23,11 @@ export interface iRouterAppContext {
 }
 
 export const Route = createRootRouteWithContext<iRouterAppContext>()({
+  loader: async ({ context }) => {
+    // keep this sucker here to make sure there are no hydration errors
+    const [, initialTheme] = await Promise.all([context.queryClient.ensureQueryData(meQueryOptions), getStoredTheme()]);
+    return { initialTheme };
+  },
   component: RootComponent,
   head: () => ({
     meta: [
@@ -66,15 +70,16 @@ const PLUGINS: ComponentProps<typeof TanStackDevtools>['plugins'] = [
 ];
 
 function RootComponent() {
-  useSuspenseQuery(meQueryOptions); // keep this sucker here to make sure there are no hydration errors
+  const { initialTheme } = Route.useLoaderData();
+  const themeClass = getInitialThemeClass(initialTheme);
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className={themeClass} suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
       <body>
-        <ThemeProvider>
+        <ThemeProvider initialTheme={initialTheme}>
           <NuqsAdapter>
             <div className="grid h-svh grid-rows-[auto_1fr]">
               <Header />

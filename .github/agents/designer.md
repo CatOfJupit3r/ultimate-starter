@@ -130,7 +130,7 @@ export function ProfileForm() {
 ### Phase 3 — Implementation
 1. Add or extend feature components in `apps/web/src/features/<domain>/components`; expose them via the feature index.
 2. Create/extend hooks in `features/<domain>/hooks` using `tanstackRPC` helpers; export both hooks and option factories.
-3. Register routes under `apps/web/src/routes`, using `beforeLoad`, loader prefetching (`context.queryClient.ensureQueryData`), and proper context usage.
+3. Register routes under `apps/web/src/routes`, using `loader`, loader prefetching (`context.queryClient.ensureQueryData`), and proper context usage.
 4. Manage view/URL state with `nuqs`, wiring defaults that mirror server-side expectations.
 
 ### Phase 4 — Accessibility, Tests & Polish

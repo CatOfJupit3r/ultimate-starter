@@ -1,6 +1,6 @@
 import { LuMoon, LuSun } from 'react-icons/lu';
 
-import { useTheme } from '@~/components/theme-provider';
+import { USER_THEME, useTheme } from '@~/components/theme-provider';
 import { Button } from '@~/components/ui/button';
 import {
   DropdownMenu,
@@ -22,9 +22,9 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme(USER_THEME.light)}>Light</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme(USER_THEME.dark)}>Dark</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme(USER_THEME.system)}>System</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
