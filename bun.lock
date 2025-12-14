@@ -74,7 +74,7 @@
         "@orpc/tanstack-query": "catalog:",
         "@startername/shared": "workspace:*",
         "@tailwindcss/vite": "4.1.18",
-        "@tanstack/devtools-vite": "0.3.12",
+        "@tanstack/devtools-vite": "^0.3.12",
         "@tanstack/pacer": "0.17.0",
         "@tanstack/react-devtools": "0.8.4",
         "@tanstack/react-form": "1.27.3",
