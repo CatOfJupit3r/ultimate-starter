@@ -1,11 +1,16 @@
 import { resolve } from '@~/di';
 import { TOKENS } from '@~/di/tokens';
+import type { iTokenRegistry, InjectionTokens } from '@~/di/tokens';
 
-export const GETTERS = {
-  AuthService: () => resolve(TOKENS.AuthService),
-  AchievementsService: () => resolve(TOKENS.AchievementsService),
-  BadgesService: () => resolve(TOKENS.BadgesService),
-  UserService: () => resolve(TOKENS.UserService),
-  DatabaseService: () => resolve(TOKENS.DatabaseService),
-  EventBus: () => resolve(TOKENS.EventBus),
+// Auto-generate GETTERS from TOKENS to eliminate manual maintenance
+type GettersMap = {
+  [K in keyof InjectionTokens]: () => iTokenRegistry[InjectionTokens[K]];
 };
+
+// Create GETTERS dynamically from TOKENS using Object.fromEntries
+export const GETTERS = Object.fromEntries(
+  Object.keys(TOKENS).map((key) => {
+    const tokenKey = key as keyof InjectionTokens;
+    return [tokenKey, () => resolve(TOKENS[tokenKey])];
+  }),
+) as GettersMap;
