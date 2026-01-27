@@ -3,6 +3,8 @@ import { TOKENS } from '@~/di/tokens';
 import type { iTokenRegistry, InjectionTokens } from '@~/di/tokens';
 
 // Auto-generate GETTERS from TOKENS to eliminate manual maintenance
+// When a new service is added to TOKENS, it will automatically be available in GETTERS
+// This ensures type safety and reduces the risk of forgetting to add a getter
 type GettersMap = {
   [K in keyof InjectionTokens]: () => iTokenRegistry[InjectionTokens[K]];
 };
