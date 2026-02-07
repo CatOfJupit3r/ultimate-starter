@@ -1,6 +1,5 @@
 import { LuMoon, LuSun } from 'react-icons/lu';
 
-import { USER_THEME, useTheme } from '@~/components/theme-provider';
 import { Button } from '@~/components/ui/button';
 import {
   DropdownMenu,
@@ -8,6 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@~/components/ui/dropdown-menu';
+
+import { USER_THEME } from './themes/constants';
+import { useTheme } from './themes/use-theme';
 
 export function ModeToggle() {
   const { setTheme } = useTheme();

@@ -4,3 +4,4 @@ node_modules
 .env
 mongo/data
 .moon/cache
+.github/skills/react-best-practices/

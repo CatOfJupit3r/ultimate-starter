@@ -12,6 +12,7 @@ import { rules as prettierConfigRules } from 'eslint-config-prettier';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 import tailwindcssPlugin from 'eslint-plugin-better-tailwindcss';
 import prettierPlugin from 'eslint-plugin-prettier';
+import reactRefresh from 'eslint-plugin-react-refresh';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -61,12 +62,20 @@ const reactConfig = [
     },
     plugins: {
       'better-tailwindcss': tailwindcssPlugin,
+      'react-refresh': reactRefresh,
     },
     rules: {
       ...tailwindcssPlugin.configs['stylistic-error'].rules,
       ...tailwindcssPlugin.configs['correctness-error'].rules,
       'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
       'better-tailwindcss/no-unregistered-classes': 'off',
+      'react-refresh/only-export-components': 'error',
+    },
+  },
+  {
+    files: ['src/routes/**/*.{jsx,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
   ...pluginRouter.configs['flat/recommended'],
@@ -236,7 +245,14 @@ export default [
   // Ignore .gitignore files/folder in eslint
   includeIgnoreFile(gitignorePath),
   {
-    ignores: ['eslint.config.mjs', 'test/**', 'dist/**', './src/routeTree.gen.ts', "vite.config.ts", "vitest.config.ts"],
+    ignores: [
+      'eslint.config.mjs',
+      'test/**',
+      'dist/**',
+      './src/routeTree.gen.ts',
+      'vite.config.ts',
+      'vitest.config.ts',
+    ],
   },
   {
     settings: {

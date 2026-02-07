@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 import { cva } from 'class-variance-authority';
 import type { VariantProps } from 'class-variance-authority';

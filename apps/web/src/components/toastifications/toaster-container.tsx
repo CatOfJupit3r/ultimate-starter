@@ -1,7 +1,8 @@
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { USER_THEME, useTheme } from '../theme-provider';
+import { USER_THEME } from '../themes/constants';
+import { useTheme } from '../themes/use-theme';
 
 export default function ToasterContainer() {
   const { appTheme } = useTheme();

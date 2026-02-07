@@ -9,7 +9,8 @@ import { NuqsAdapter } from 'nuqs/adapters/react';
 import type { ComponentProps } from 'react';
 
 import Header from '@~/components/header';
-import { getInitialThemeClass, getStoredTheme, ThemeProvider } from '@~/components/theme-provider';
+import { getInitialThemeClass, getStoredTheme } from '@~/components/themes/helpers';
+import { ThemeProvider } from '@~/components/themes/theme-provider';
 import ToasterContainer from '@~/components/toastifications/toaster-container';
 import { meQueryOptions } from '@~/features/user';
 import { seo } from '@~/utils/seo';
