@@ -37,7 +37,7 @@ const getORPCClient = createIsomorphicFn()
     const URL = getBackendURL('/rpc');
     const link = new RPCLink({
       url: URL,
-      headers: () => getRequestHeaders(),
+      headers: getRequestHeaders,
       interceptors: INTERCEPTORS,
     });
     return createORPCClient(link);
