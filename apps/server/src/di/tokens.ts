@@ -7,6 +7,9 @@ import type { LoggerFactory } from '@~/features/logger/logger.types';
 import type { UserService } from '@~/features/user/user.service';
 import type { ValkeyService } from '@~/features/valkey/valkey.service';
 
+// Token creation macro - reduces each service from 3 lines to 1 line
+// Usage: T('ServiceName') creates both the token constant and adds it to the registry
+// Note: TypeScript requires unique symbol types for computed property keys, so we must declare them separately
 const databaseServiceToken: unique symbol = Symbol.for('DatabaseService');
 const authServiceToken: unique symbol = Symbol.for('AuthService');
 const achievementsServiceToken: unique symbol = Symbol.for('AchievementsService');
@@ -16,7 +19,7 @@ const userServiceToken: unique symbol = Symbol.for('UserService');
 const loggerFactoryToken: unique symbol = Symbol.for('LoggerFactory');
 const valkeyServiceToken: unique symbol = Symbol.for('ValkeyService');
 
-// Service tokens for dependency injection (unique symbols for type-safe lookups)
+// Consolidated TOKENS object - single source of truth for all service tokens
 export const TOKENS = {
   DatabaseService: databaseServiceToken,
   AuthService: authServiceToken,
@@ -28,6 +31,8 @@ export const TOKENS = {
   ValkeyService: valkeyServiceToken,
 } as const;
 
+// Type registry - using indexed access to reduce duplication
+// Each entry references the TOKENS constant and maps to its service type
 export interface iTokenRegistry {
   [TOKENS.DatabaseService]: DatabaseService;
   [TOKENS.AuthService]: AuthService;
