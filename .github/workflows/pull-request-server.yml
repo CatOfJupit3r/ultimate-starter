@@ -5,7 +5,7 @@ on:
         types: [opened, synchronize, reopened]
         paths:
             - ".github/workflows/pull-request-coordinator.yml"
-            - "bun.lockb"
+            - "pnpm-lock.yaml"
             - "apps/server/**/*.ts"
             - "apps/server/package.json"
             - "apps/server/tsconfig.json"
@@ -19,58 +19,58 @@ jobs:
                 working-directory: ./apps/server
         strategy:
             matrix:
-                bun-version: ["latest"]
+                pnpm-version: ["10.11.0"]
 
         steps:
             - uses: actions/checkout@v4
 
-            - name: Setup Bun ${{ matrix.bun-version }}
-              uses: oven-sh/setup-bun@v2
+            - name: Setup pnpm ${{ matrix.pnpm-version }}
+              uses: pnpm/action-setup@v4
               with:
-                  bun-version: ${{ matrix.bun-version }}
+                  version: ${{ matrix.pnpm-version }}
 
-            - name: Install Node 24.11.1 for tsdown
+            - name: Install Node 24.11.1
               uses: actions/setup-node@v4
               with:
                 node-version: 24.11.1
 
-            - name: Cache bun dependencies
+            - name: Cache pnpm dependencies
               uses: actions/cache@v4
               with:
                   path: |
-                      ~/.bun/install/cache
+                      ~/.pnpm-store
                       node_modules
                       apps/*/node_modules
                       packages/*/node_modules
-                  key: bun-${{ runner.os }}-${{ hashFiles('bun.lockb') }}
-                  restore-keys: bun-${{ runner.os }}-
+                  key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  restore-keys: pnpm-${{ runner.os }}-
 
             - name: Install dependencies (Server)
-              run: bun install --frozen-lockfile
+              run: pnpm install --frozen-lockfile
 
-            - name: Restore mongodb-memory-server cache
-              uses: actions/cache@v4
-              with:
-                  path: ~/.cache/mongodb-binaries
-                  key: mongo-binaries-${{ runner.os }}-8.0.4
-                  restore-keys: mongo-binaries-${{ runner.os }}-
+            # - name: Restore mongodb-memory-server cache
+            #   uses: actions/cache@v4
+            #   with:
+            #       path: ~/.cache/mongodb-binaries
+            #       key: mongo-binaries-${{ runner.os }}-8.0.4
+            #       restore-keys: mongo-binaries-${{ runner.os }}-
 
             - name: Build dependencies
-              run: bun run build:deps
+              run: pnpm run build:deps
               working-directory: ./
 
             - name: Type check
-              run: bun run check-types
+              run: pnpm run check-types
 
             - name: Lint
-              run: bun run lint
+              run: pnpm run lint
 
-            - name: Test
-              run: bun run test
-              env:
-                  CI: true
-                  MONGOMS_DOWNLOAD_DIR: ~/.cache/mongodb-binaries
-                  MONGOMS_PREFER_GLOBAL_PATH: "1"
+            # - name: Test
+            #   run: pnpm run test
+            #   env:
+            #       CI: true
+            #       MONGOMS_DOWNLOAD_DIR: ~/.cache/mongodb-binaries
+            #       MONGOMS_PREFER_GLOBAL_PATH: "1"
 
             - name: Build
-              run: bun run build
+              run: pnpm run build

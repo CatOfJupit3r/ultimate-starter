@@ -4,11 +4,11 @@ applyTo: '**/*.ts'
 
 ## Guidelines, Structure, and Purpose
 - This file outlines the overall workspace structure, development guidelines, and key conventions for contributors to the monorepo
-- The repo is a Turborepo monorepo managed with Bun (`packageManager` pinned at 1.2.21) and Docker-backed MongoDB; `bun run dev` boots both the API (http://localhost:3000) and web app (http://localhost:3001).
+- The repo is a moonrepo monorepo managed with pnpm (packageManager pinned at 10.0.0) and Docker-backed MongoDB; `pnpm run dev` boots both the API (http://localhost:3000) and web app (http://localhost:3001).
 - Backend code uses TypeScript + Hono + oRPC on top of MongoDB via Mongoose; shared contracts live in packages/shared and drive both REST/OpenAPI and RPC layers.
 - Frontend code is React 19 with Vite, TanStack Router/Query/Form, Tailwind, Sonner, and the Better Auth client; shared types come from packages/shared.
-- Quality gates run locally via `bun run check-types`, `bun run lint`, and `bun run prettier`; Husky hooks (installed by `bun run prepare`) enforce these before commits.
-- Follow the workspace workflow: open an issue, branch as `<issue>-<slug>`, commit with `git cz` (or `bun commit`), keep Docker running for seeded Mongo, and avoid rebases on main.
+- Quality gates run locally via `pnpm run check-types`, `pnpm run lint`, and `pnpm run prettier`; Husky hooks (installed by `pnpm run prepare`) enforce these before commits.
+- Follow the workspace workflow: open an issue, branch as `<issue>-<slug>`, commit with `git cz` (or `pnpm commit`), keep Docker running for seeded Mongo, and avoid rebases on main.
 - For specialized guides, see `server.instructions.md` for backend patterns and `web.instructions.md` for frontend conventions.
 
 ### Monorepo Layout Highlights
@@ -31,7 +31,7 @@ applyTo: '**/*.ts'
   ```
 - If your variable is reused across server and client, define it in `packages/shared/src/constants` and import it from `@startername/shared/constants`. Only do this for non-sensitive data.
 - When resolving warnings or errors, prefer addressing the root cause instead of using `// @ts-ignore` or `as unknown as <Type>`. Use these only as a last resort with a comment explaining why.
-- If you encounter eslint warnings, run `bun run lint` to fix them in the file.
+- If you encounter eslint warnings, run `pnpm run lint` to fix them in the file.
 - When referencing values, that have enum, ALWAYS use the enum itself instead of hardcoding strings. Example:
   ```typescript
   // GOOD
@@ -62,6 +62,8 @@ applyTo: '**/*.ts'
 - The Better Auth server is mounted under `/auth/*` and expects HTTPS cookies (`sameSite: 'none'`, `secure: true`); keep this in mind when testing locally.
 - Aliases: `@~/` resolves to `apps/server/src` or `apps/web/src` depending on the package; `@startername/shared` surfaces shared types.
 - MongoDB runs at `mongodb://localhost:6060/startername` by default; adjust via env vars and update docker-compose if ports change.
+- Node.js v24 is required; use nvm or similar to manage Node versions.
+- pnpm ≥10.0.0 is the package manager; use `corepack enable` to activate it.
 
 ### Structure and Patterns
 

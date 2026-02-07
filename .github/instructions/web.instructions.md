@@ -8,7 +8,7 @@ applyTo: "apps/web/**/*.ts,packages/shared/**/*.ts"
 - Authentication relies on Better Auth's React client (`apps/web/src/services/auth-service.ts`) and uses secure cookies issued by the backend.
 
 ## Environment & Bootstrapping
-- Run `bun run dev` at the repo root to start both the web app (`http://localhost:3001`) and the API; ensure Docker Desktop is running so Mongo boots successfully.
+- Run `pnpm run dev` at the repo root to start both the web app (`http://localhost:3001`) and the API; ensure Docker Desktop is running so Mongo boots successfully.
 - Copy `.env.example` to `.env` in `apps/web` and configure environment variables (e.g., Vite public URLs) before launching.
 - Vite aliases: `@~/` resolves to `apps/web/src`, enabling concise imports across components, hooks, and utilities.
 

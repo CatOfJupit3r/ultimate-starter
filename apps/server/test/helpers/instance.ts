@@ -5,6 +5,21 @@ if (process.env.NODE_ENV !== 'test') {
   throw new Error('Tests should be run in test environment');
 }
 
-const { app, appRouter, auth } = await loaders();
+type LoadedApp = Awaited<ReturnType<typeof loaders>>;
 
-export { app, appRouter, auth };
+let cachedLoader: Promise<LoadedApp> | null = null;
+
+async function loadOnce() {
+  if (!cachedLoader) {
+    cachedLoader = loaders();
+  }
+  return cachedLoader;
+}
+
+export async function resetAppCache() {
+  cachedLoader = null;
+}
+
+const { app, appRouter, auth } = await loadOnce();
+
+export { app, appRouter, auth, loadOnce as getTestApp };

@@ -1,10 +1,10 @@
 import { call } from '@orpc/server';
-import { it, expect, describe } from 'bun:test';
+import { it, expect, describe } from 'vitest';
 
 import { UserProfileModel } from '@~/db/models/user-profile.model';
 
-import { appRouter } from './helpers/instance';
-import { createUser } from './helpers/utilities';
+import { appRouter } from '../helpers/instance';
+import { createUser } from './utilities';
 
 describe('User Profile API', () => {
   describe('getUserProfile', () => {

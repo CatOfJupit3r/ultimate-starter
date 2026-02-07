@@ -1,5 +1,5 @@
 import { call } from '@orpc/server';
-import { it, expect, describe, beforeEach } from 'bun:test';
+import { it, expect, describe, beforeEach } from 'vitest';
 
 import { USER_ACHIEVEMENTS } from '@startername/shared';
 import { BADGE_IDS } from '@startername/shared/constants/badges';
@@ -7,8 +7,8 @@ import { BADGE_IDS } from '@startername/shared/constants/badges';
 import { UserAchievementModel } from '@~/db/models/user-achievements.model';
 import { UserProfileModel } from '@~/db/models/user-profile.model';
 
-import { appRouter } from './helpers/instance';
-import { createUser } from './helpers/utilities';
+import { appRouter } from '../helpers/instance';
+import { createUser } from './utilities';
 
 describe('Badge Selection API', () => {
   describe('updateUserBadge', () => {

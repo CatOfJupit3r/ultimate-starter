@@ -22,10 +22,27 @@ interface iChildLoggerConfig {
 let globalWinstonLogger: winston.Logger | null = null;
 
 function getOrCreateGlobalLogger(colorize: boolean): winston.Logger {
+  const isTest = process.env.NODE_ENV === 'test';
+  const configuredLevel = process.env.LOG_LEVEL;
+
+  let level: string;
+  if (configuredLevel) {
+    level = configuredLevel;
+  } else if (process.env.NODE_ENV === 'production') {
+    level = 'info';
+  } else if (isTest) {
+    level = 'error';
+  } else {
+    level = 'debug';
+  }
+
+  const shouldSilence = isTest && (configuredLevel === 'silent' || level === 'silent');
+
   globalWinstonLogger ??= winston.createLogger({
-    level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+    level: shouldSilence ? 'error' : level,
+    silent: shouldSilence,
     format: WINSTON_LOGGER_FORMAT(colorize),
-    transports: [new winston.transports.Console()],
+    transports: [new winston.transports.Console({ silent: shouldSilence })],
   });
   return globalWinstonLogger;
 }

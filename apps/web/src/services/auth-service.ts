@@ -6,8 +6,8 @@ import { createAuthClient } from 'better-auth/react';
 import { getBackendURL } from '@~/utils/ssr-helpers';
 
 const getInitialAuthHeaders = createIsomorphicFn()
-  .client(() => ({}))
-  .server(() => getRequestHeaders());
+  .client(() => ({}) as Record<string, string>)
+  .server(getRequestHeaders);
 
 const authInstance = createAuthClient({
   plugins: [usernameClient()],

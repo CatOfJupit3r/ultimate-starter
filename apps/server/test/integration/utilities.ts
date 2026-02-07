@@ -1,4 +1,4 @@
-import { auth } from './instance';
+import { auth } from '../helpers/instance';
 
 type UserData = NonNullable<Prettify<Parameters<typeof auth.api.signUpEmail>[0]>>['body'];
 
