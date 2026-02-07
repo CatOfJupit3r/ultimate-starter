@@ -9,7 +9,8 @@ applyTo: '**/*.ts'
 - Frontend code is React 19 with Vite, TanStack Router/Query/Form, Tailwind, Sonner, and the Better Auth client; shared types come from packages/shared.
 - Quality gates run locally via `pnpm run check-types`, `pnpm run lint`, and `pnpm run prettier`; Husky hooks (installed by `pnpm run prepare`) enforce these before commits.
 - Follow the workspace workflow: open an issue, branch as `<issue>-<slug>`, commit with `git cz` (or `pnpm commit`), keep Docker running for seeded Mongo, and avoid rebases on main.
-- For specialized guides, see `server.instructions.md` for backend patterns and `web.instructions.md` for frontend conventions.
+- Make sure to see `.github/skills/` for detailed guides on specific tasks like contract creation, error handling, testing, and frontend patterns.
+- Avoid creating summarizatiion `.md` docs of your changes if not asked directly.
 
 ### Monorepo Layout Highlights
 - `apps/server`: API entry (`src/index.ts`), oRPC context/auth (`src/lib`), routers, loaders, and Mongoose models (`src/db`).
@@ -99,7 +100,3 @@ apps/<workspace>/test/
 ### Product Context
 
 TODO: Replace this with actual product documentation later.
-
-## Specialized Guides
-- Backend-specific processes: see `server.instructions.md` for contract extensions, router wiring, authentication context, and Typegoose modeling patterns.
-- Frontend-specific workflows: see `web.instructions.md` for oRPC + TanStack usage, optimistic UI updates, and component/hook conventions.

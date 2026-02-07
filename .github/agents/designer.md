@@ -9,7 +9,7 @@ You are an expert product designer and frontend implementer for the project. You
 ## Core Principles
 
 1. **Follow Project Standards Strictly**
-   - Always read `.github/copilot-instructions.md` and `.github/instructions/web.instructions.md` before making changes; mirror their guidance in every deliverable.
+   - Always read `.github/copilot-instructions.md` before making changes; mirror their guidance in every deliverable.
    - Understand the feature-first layout in `apps/web` and reuse established patterns instead of inventing new ones.
 
 2. **Compose with the Existing UI System**
@@ -49,38 +49,7 @@ You are an expert product designer and frontend implementer for the project. You
 
 - Use the TanStack React Form wrapper exported as `useAppForm` plus the generated `form.*` helpers. This ensures consistent markup, validation feedback, and accessibility wiring.
 - Keep validation schemas in `validators.onSubmit` using `zod`. Derive types from schemas where needed.
-- Example pattern:
-
-```tsx
-import z from 'zod';
-import { Button } from '@~/components/ui/button';
-import { useAppForm } from '@~/components/ui/field';
-
-const profileSchema = z.object({
-  displayName: z.string().min(2, 'Display name is required'),
-  bio: z.string().max(280).optional(),
-});
-
-export function ProfileForm() {
-  const form = useAppForm({
-    defaultValues: { displayName: '', bio: '' },
-    validators: { onSubmit: profileSchema },
-    onSubmit: async ({ value }) => {
-      await updateProfile(value);
-    },
-  });
-
-  return (
-    <form.AppForm>
-      <form.Form className="space-y-4">
-        <form.AppField name="displayName">{(field) => <field.TextField label="Display name" />}</form.AppField>
-        <form.AppField name="bio">{(field) => <field.TextareaField label="Bio" />}</form.AppField>
-        <form.SubmitButton>Save changes</form.SubmitButton>
-      </form.Form>
-    </form.AppForm>
-  );
-}
-```
+- For detailed form patterns and examples, see `.github/skills/react-component-patterns/`
 
 ## Data Fetching & Mutations
 
@@ -88,7 +57,8 @@ export function ProfileForm() {
 - Reuse the central query client via router context or TanStack hooks—never create ad-hoc clients.
 - Export `queryOptions`/`mutationOptions` from hooks so routes and loaders can preload or reuse them.
 - Optimistic mutations must use `ctx.client` provided in option callbacks and call `invalidateQueries` when server truth is needed.
-- Use react-toastify (`toastSuccess/toastError`) for cross-route feedback and inline UI for localized validation messages. If you need a custom layout for your toast message, prefer to declare them in `@~/components/toastifications/create-jsx-toasts.tsx` and compose them from `common-toast-parts`
+- Use react-toastify (`toastSuccess/toastError`) for cross-route feedback and inline UI for localized validation messages.
+- For comprehensive patterns and examples, see `.github/skills/tanstack-query-integration/`
 
 ## Routing & View State
 
@@ -97,6 +67,7 @@ export function ProfileForm() {
 - Guarded routes should follow the `beforeLoad` pattern with `tryCatch` from `@~/utils/std-utils` to prevent redirect loops.
 - `NuqsAdapter` is already mounted at the root; use `useQueryStates` or `useQueryState` for search, filters, and toggles. Keep param defaults consistent with server fallbacks.
 - Reuse `PseudoPage` for route-level pending UI and `Loader` for intra-page loading blocks.
+- For detailed routing and state management patterns, see `.github/skills/react-component-patterns/`
 
 ## Async UX Patterns
 
@@ -140,73 +111,10 @@ export function ProfileForm() {
 
 ## Patterns & Snippets
 
-### Using generated query helpers
-
-```tsx
-import { useQuery } from '@tanstack/react-query';
-import { tanstackRPC } from '@~/utils/tanstack-orpc';
-
-export const publicChallengesQueryOptions = tanstackRPC.challenge.listPublicChallenges.queryOptions({
-  input: { limit: 20, offset: 0, sort: 'recent' },
-});
-
-export function usePublicChallenges(params: { enabled?: boolean }) {
-  return useQuery({ ...publicChallengesQueryOptions, enabled: params.enabled ?? true });
-}
-```
-
-### Route context access & guards
-
-```tsx
-import { createFileRoute, redirect } from '@tanstack/react-router';
-import { meQueryOptions } from '@~/features/user';
-import { tryCatch } from '@~/utils/std-utils';
-
-export const Route = createFileRoute('/dashboard')({
-  beforeLoad: async ({ context }) => {
-    const { data } = await tryCatch(() => context.queryClient.ensureQueryData(meQueryOptions));
-    if (!data?.session) throw redirect({ to: '/auth' });
-  },
-  component: DashboardPage,
-});
-
-function DashboardPage() {
-  const { tanstackRPC } = Route.useRouteContext();
-  // use tanstackRPC here for imperative calls if needed
-  return <div />;
-}
-```
-
-### URL state with nuqs
-
-```tsx
-import { useQueryStates, parseAsString, parseAsStringEnum } from 'nuqs';
-
-const SORT_VALUES = ['recent', 'participants', 'completed'] as const;
-
-export function ChallengeFilters() {
-  const [{ search, sort }, setQueryStates] = useQueryStates({
-    search: parseAsString.withDefault(''),
-    sort: parseAsStringEnum<typeof SORT_VALUES[number]>(SORT_VALUES).withDefault('recent'),
-  });
-
-  return (
-    <form className="flex gap-3">
-      <Input
-        value={search}
-        onChange={(event) => void setQueryStates({ search: event.target.value || null })}
-        placeholder="Search challenges..."
-      />
-      <SingleSelect
-        options={SORT_VALUES.map((value) => ({ label: value, value }))}
-        value={sort}
-        onValueChange={(value) => void setQueryStates({ sort: value ?? 'recent' })}
-        className="w-40"
-      />
-    </form>
-  );
-}
-```
+Refer to the following skills for comprehensive pattern examples and code snippets:
+- `.github/skills/react-component-patterns/` - Form patterns, hook usage, best practices, component composition and reuse patterns
+- `.github/skills/tanstack-query-integration/` - Query helpers and data fetching patterns
+- `.github/skills/feature-implementation-workflow/` - End-to-end feature implementation
 
 ## Accessibility Checklist
 
