@@ -1,5 +1,6 @@
 import type { BetterAuthPlugin } from 'better-auth';
 import { createAuthEndpoint, APIError } from 'better-auth/api';
+import { parseUserOutput } from 'better-auth/db';
 import { z } from 'zod';
 
 /**
@@ -81,6 +82,8 @@ export const setSessionCookie = async (
  *
  * Provides user impersonation capability for development environments.
  * Similar to admin impersonation but bypasses permission checks when NODE_ENV !== 'production'.
+ *
+ * https://github.com/better-auth/better-auth/blob/canary/packages/better-auth/src/plugins/admin/routes.ts
  */
 export const devImpersonatePlugin = () =>
   ({
@@ -155,6 +158,7 @@ export const devImpersonatePlugin = () =>
             expiresAt: getDate(60 * 60, 'sec'), // 1 hour
           });
 
+          console.log(`Impersonating user ${targetUser.id} (${targetUser.email}) with session ${session.token}`);
           if (!session) {
             throw new APIError('INTERNAL_SERVER_ERROR', {
               message: 'Failed to create impersonation session',
@@ -163,26 +167,27 @@ export const devImpersonatePlugin = () =>
 
           const { authCookies } = ctx.context;
 
-          // Clear existing session cookies
+          console.log('Clearing existing session cookies to prevent conflicts with impersonation session');
           deleteSessionCookie(ctx);
 
-          // Check for existing "don't remember me" cookie
+          console.log('Setting new session cookie for impersonation session');
           const dontRememberMeCookie = await ctx.getSignedCookie(
             authCookies.dontRememberToken.name,
             ctx.context.secret,
           );
 
-          // Store original session if one exists
+          console.log('Original session cookies cleared. Setting impersonation session cookie now.');
           if (ctx.context.session?.session) {
             const devSessionCookie = ctx.context.createAuthCookie('dev_original_session');
             await ctx.setSignedCookie(
               devSessionCookie.name,
               `${ctx.context.session.session.token}:${dontRememberMeCookie ?? ''}`,
               ctx.context.secret,
-              authCookies.sessionToken.options,
+              authCookies.sessionData.attributes,
             );
           }
 
+          console.log('Setting impersonation session cookie now.');
           // Set the impersonation session
           await setSessionCookie(
             ctx,
@@ -193,9 +198,10 @@ export const devImpersonatePlugin = () =>
             true, // Don't remember (session cookie)
           );
 
+          console.log('Impersonation session cookie set successfully.');
           return ctx.json({
             session,
-            user: targetUser,
+            user: parseUserOutput(ctx.context.options, targetUser),
           });
         },
       ),

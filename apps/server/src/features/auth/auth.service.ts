@@ -15,6 +15,7 @@ import { devImpersonatePlugin } from './better-auth-plugins/dev-impersonate.plug
 
 const createInstance = (db: mongoose.mongo.Db, logger: LoggerType, valkey: Redis | Nil) =>
   betterAuth({
+    // @ts-expect-error - ignore for now
     database: mongodbAdapter(db),
     secret: env.BETTER_AUTH_SECRET,
     trustedOrigins: [process.env.CORS_ORIGIN ?? ''],

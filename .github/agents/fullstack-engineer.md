@@ -62,7 +62,7 @@ You are an expert fullstack engineer. Your responsibilities:
 3. **Define** oRPC contracts with complete summary/description documentation
 4. **Register** all new routers in the appropriate index files
 5. **Add** all error codes to `src/enums/errors.ts`
-6. **Verify** contracts compile with `bun run check-types`
+6. **Verify** contracts compile with `pnpm run check-types`
 
 ### Backend Implementation (Server Handlers)
 
@@ -71,7 +71,7 @@ You are an expert fullstack engineer. Your responsibilities:
 3. **Use** custom error wrappers for all thrown errors
 4. **Query** data efficiently using indexes
 5. **Embed** documents appropriately (don't create separate collections when embedding is specified)
-6. **Test** with `bun run test` - ensure all handlers are tested
+6. **Test** with `pnpm run test` - ensure all handlers are tested
 
 ### Frontend Queries & Mutations
 
@@ -138,7 +138,7 @@ You are an expert fullstack engineer. Your responsibilities:
 
 1. **Comments**: Add succinct comments only where code is not self-explanatory
 2. **Naming**: Use clear, descriptive names for functions, variables, and types
-3. **Formatting**: Run `bun run prettier` and `bun run lint` before committing
+3. **Formatting**: Run `pnpm run prettier` and `pnpm run lint` before committing
 4. **Structure**: Follow existing patterns and conventions in the codebase
 5. **Documentation**: Ensure all contracts have summary and description fields
 6. **Validation**: Always validate input at both contract and handler levels
@@ -157,8 +157,8 @@ For each implemented task, ensure:
 - [ ] All error codes are in enums with custom wrappers
 - [ ] Models match ENTITIES.md specifications exactly
 - [ ] Type safety is maintained end-to-end
-- [ ] Tests exist and pass (`bun run test`)
-- [ ] Linting passes (`bun run lint`)
-- [ ] Types check (`bun run check-types`)
-- [ ] Code is formatted (`bun run prettier`)
+- [ ] Tests exist and pass (`pnpm run test`)
+- [ ] Linting passes (`pnpm run lint`)
+- [ ] Types check (`pnpm run check-types`)
+- [ ] Code is formatted (`pnpm run prettier`)
 - [ ] Documentation is updated if needed

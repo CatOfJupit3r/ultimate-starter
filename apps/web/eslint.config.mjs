@@ -236,7 +236,7 @@ export default [
   // Ignore .gitignore files/folder in eslint
   includeIgnoreFile(gitignorePath),
   {
-    ignores: ['eslint.config.mjs', 'tests/**', 'dist/**', './src/routeTree.gen.ts', "vite.config.ts"],
+    ignores: ['eslint.config.mjs', 'test/**', 'dist/**', './src/routeTree.gen.ts', "vite.config.ts", "vitest.config.ts"],
   },
   {
     settings: {
@@ -267,7 +267,6 @@ export default [
         createTypeScriptImportResolver({
           // project: tsconfigPath,
           alwaysTryTypes: true,
-          bun: true,
         }),
       ],
     },

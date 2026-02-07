@@ -36,7 +36,7 @@
   ],
   "scripts": {
     "build": "tsdown",
-    "prepare": "bun run build",
+    "prepare": "pnpm run build",
     "dev": "tsdown --watch --no-clean",
     "prettier": "prettier --write .",
     "check-types": "tsgo --noEmit",
@@ -47,6 +47,7 @@
     "@eslint/js": "catalog:",
     "@stylistic/eslint-plugin": "catalog:",
     "@trivago/prettier-plugin-sort-imports": "catalog:",
+    "@types/node": "^24.0.0",
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
     "eslint": "catalog:",

@@ -4,14 +4,14 @@ applyTo: "apps/server/**/*.ts,packages/shared/**/*.ts"
 
 ## Overview
 
-- API lives in `apps/server` and runs on Bun with Hono, oRPC, and Better Auth on top of MongoDB (Mongoose via Typegoose).
+- API lives in `apps/server` and runs on Node.js with Hono, oRPC, and Better Auth on top of MongoDB (Mongoose via Typegoose).
 - Contracts defined in `packages/shared` are the single source of truth for both RPC and REST/OpenAPI surfaces.
 - The server exposes REST (OpenAPIHandler) alongside RPC (`/api/rpc`) and Better Auth routes under `/auth/*`.
 - Logging defaults to Hono's `logger()` middleware; add structured logging only where it improves observability.
 
 ## Environment & Bootstrapping
 
-- Start the stack with `bun run dev`; it launches the API at `http://localhost:3000` and MongoDB via `docker-compose.dev.yml`.
+- Start the stack with `pnpm run dev`; it launches the API at `http://localhost:3000` and MongoDB via `docker-compose.dev.yml`.
 - Copy `.env.example` to `.env` inside `apps/server` and adjust values; `src/constants/env.ts` validates them with `zod` at boot.
 - Default Mongo connection: `mongodb://localhost:6060/startername` with credentials `username/password`. Update the compose file if you change ports or users.
 - The Better Auth server issues secure (`sameSite: 'none'`, `secure: true`) cookies; use HTTPS (or Chrome flags) when testing cross-origin.
@@ -31,7 +31,7 @@ applyTo: "apps/server/**/*.ts,packages/shared/**/*.ts"
 
 3. **Register the router.**
     - Append the router to `appRouter` in `apps/server/src/routers/index.ts` so it is automatically exposed via both REST and RPC handlers.
-    - Run `bun run check-types` to ensure contract/implementation parity.
+    - Run `pnpm run check-types` to ensure contract/implementation parity.
 
 4. **Extend context cautiously.**
     - `createContext` (`apps/server/src/lib/context.ts`) currently injects the Better Auth session. Add new context properties (e.g., loaders, feature flags) only if they are cheap to resolve per request.
@@ -271,7 +271,7 @@ throw ORPCBadRequestError(errorCodes.INVALID_INPUT_VALUE);
 
 ## Local Quality Checks
 
-- `bun run lint`: ESLint for backend + shared packages.
-- `bun run check-types`: TypeScript project references (server + shared).
-- `bun run dev`: hot reload API + Mongo container.
-- Husky runs lint-staged on commit; re-run `bun run prepare` if the hooks go missing.
+- `pnpm run lint`: ESLint for backend + shared packages.
+- `pnpm run check-types`: TypeScript project references (server + shared).
+- `pnpm run dev`: hot reload API + Mongo container.
+- Husky runs lint-staged on commit; re-run `pnpm run prepare` if the hooks go missing.

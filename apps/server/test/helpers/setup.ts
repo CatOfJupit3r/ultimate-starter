@@ -1,7 +1,10 @@
-import { afterAll, afterEach } from 'bun:test';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import 'reflect-metadata';
+import { afterAll, afterEach } from 'vitest';
+
+// Import custom matchers
+import './matchers';
 
 let mongo: MongoMemoryServer;
 

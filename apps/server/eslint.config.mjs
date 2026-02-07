@@ -168,7 +168,7 @@ const silenceOpinions = [
 
 export default [
   {
-    ignores: ['eslint.config.mjs', 'test/**', 'dist/**'],
+    ignores: ['eslint.config.mjs', 'test/**', 'dist/**', "vitest.config.ts"],
   },
   // Ignore .gitignore files/folder in eslint
   includeIgnoreFile(gitignorePath),
@@ -194,7 +194,6 @@ export default [
         createTypeScriptImportResolver({
           // project: tsconfigPath,
           alwaysTryTypes: true,
-          bun: true,
         }),
       ],
     },

@@ -28,12 +28,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
-          bun-version: latest
+          version: latest
         
-      - name: Install Node 24.11.1 for tsdown
+      - name: Install Node 24.11.1
         uses: actions/setup-node@v4
         with:
           node-version: 24.11.1
@@ -44,39 +44,39 @@ jobs:
           path: |
             .turbo
             node_modules/.cache/turbo
-          key: ${{ runner.os }}-turbo-${{ hashFiles('bun.lockb', 'turbo.json') }}
+          key: ${{ runner.os }}-turbo-${{ hashFiles('pnpm-lock.yaml', 'turbo.json') }}
           restore-keys: |
             ${{ runner.os }}-turbo-
 
-      - name: Restore MongoDB binary cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/mongodb-binaries
-          key: ${{ runner.os }}-mongodb-${{ hashFiles('apps/server/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-mongodb-
+      # - name: Restore MongoDB binary cache
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ~/.cache/mongodb-binaries
+      #     key: ${{ runner.os }}-mongodb-${{ hashFiles('apps/server/package.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-mongodb-
 
       - name: Install project dependencies
-        run: bun install --no-verify
+        run: pnpm install --no-verify
         continue-on-error: true
 
       - name: Retry install without --no-verify
-        run: bun install
+        run: pnpm install
         if: failure()
 
       - name: Build dependencies
-        run: bun run build:deps
+        run: pnpm run build:deps
 
       - name: Reinstall after build
-        run: bun install
+        run: pnpm install
 
-      - name: Pre-download MongoDB Memory Server
-        run: |
-          bun run test
-        env:
-          MONGOMS_DOWNLOAD_MIRROR: http://downloads.mongodb.org
-        continue-on-error: true
+      # - name: Pre-download MongoDB Memory Server
+      #   run: |
+      #     pnpm run test
+      #   env:
+      #     MONGOMS_DOWNLOAD_MIRROR: http://downloads.mongodb.org
+      #   continue-on-error: true
 
       - name: Verify installation
         run: |
-          bun --version
+          pnpm --version
