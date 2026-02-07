@@ -1,6 +1,6 @@
-import { it, expect, describe } from 'bun:test';
+import { it, expect, describe } from 'vitest';
 
-import { app } from './helpers/instance';
+import { app } from '../helpers/instance';
 
 describe('Index Test Suite', () => {
   it('GET /health from oRPC returns 200 when called as REST', async () => {

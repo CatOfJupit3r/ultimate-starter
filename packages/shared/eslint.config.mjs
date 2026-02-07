@@ -148,7 +148,6 @@ export default [
         createTypeScriptImportResolver({
           // project: tsconfigPath,
           alwaysTryTypes: true,
-          bun: true,
         }),
       ],
     },

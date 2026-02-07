@@ -48,8 +48,8 @@ async function main() {
   await Promise.all(targets.map(removeDirectory));
 
   if (shouldClearLockfile) {
-    await rm(path.join(rootDir, "bun.lock"), { force: true });
-    console.log("Removed bun.lock");
+    await rm(path.join(rootDir, "pnpm-lock.yaml"), { force: true });
+    console.log("Removed pnpm-lock.yaml");
   }
 }
 

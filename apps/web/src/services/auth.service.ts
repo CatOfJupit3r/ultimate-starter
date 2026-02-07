@@ -7,6 +7,7 @@ import { getBackendURL } from '@~/utils/ssr-helpers';
 
 export const getAuthHeaders = createIsomorphicFn()
   .client(() => ({}))
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   .server(() => getRequestHeaders());
 
 const createAuthInstance = () =>

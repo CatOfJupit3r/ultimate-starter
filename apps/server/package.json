@@ -5,23 +5,24 @@
   "scripts": {
     "build": "tsdown --tsconfig tsconfig.build.json",
     "check-types": "tsgo --noEmit",
-    "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
-    "dev": "bun run --hot src/index.ts",
-    "start": "bun run dist/index.js",
+    "dev": "tsx watch --clear-screen=false src/index.ts",
+    "start": "node dist/index.js",
     "prettier": "prettier --write .",
-    "test": "NODE_ENV=test && bun test --preload ./test/helpers/setup.ts",
-    "lint": "eslint . --ext .ts",
-    "postinstall": "patch-package"
+    "test": "NODE_ENV=test vitest run",
+    "test:watch": "NODE_ENV=test vitest",
+    "test:ui": "NODE_ENV=test vitest --ui",
+    "lint": "eslint . --ext .ts"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=24.0.0"
   },
   "dependencies": {
-    "@startername/shared": "workspace:*",
+    "@hono/node-server": "^1.19.9",
     "@hono/standard-validator": "0.2.1",
     "@orpc/openapi": "catalog:",
     "@orpc/server": "catalog:",
     "@orpc/zod": "catalog:",
+    "@startername/shared": "workspace:*",
     "@typegoose/typegoose": "13.0.0",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
@@ -41,11 +42,12 @@
     "@eslint/js": "catalog:",
     "@stylistic/eslint-plugin": "catalog:",
     "@trivago/prettier-plugin-sort-imports": "catalog:",
-    "@types/bun": "catalog:",
     "@types/lodash-es": "catalog:",
+    "@types/node": "^24.0.0",
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
     "@typescript/native-preview": "catalog:",
+    "@vitest/ui": "^3.0.0",
     "eslint": "catalog:",
     "eslint-config-airbnb-extended": "catalog:",
     "eslint-config-prettier": "catalog:",
@@ -54,11 +56,12 @@
     "eslint-plugin-n": "catalog:",
     "eslint-plugin-prettier": "catalog:",
     "mongodb-memory-server": "11.0.1",
-    "patch-package": "catalog:",
     "prettier": "catalog:",
     "tsdown": "catalog:",
+    "tsx": "^4.19.2",
     "typescript": "catalog:",
-    "typescript-eslint": "catalog:"
+    "typescript-eslint": "catalog:",
+    "vitest": "^3.0.0"
   },
   "overrides": {
     "mongodb": "7.0.0"

@@ -66,7 +66,7 @@ const FEATURES = [
   },
   {
     title: 'Shiny new tech',
-    description: 'Built with Bun, React, TanStack Router, and more modern technologies.',
+    description: 'Built with Node.js, React, TanStack Router, and more modern technologies.',
     icon: <HiOutlineSparkles className="h-8 w-8" />,
   },
   {
@@ -98,7 +98,7 @@ function HomeComponent() {
             {/* Subheading */}
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
               Don&apos;t bother managing your own setup. Launch your next project with our full-stack starter template
-              built with Bun, React, TanStack Router, and oRPC.
+              built with Node.js, React, TanStack Router, and oRPC.
             </p>
 
             {/* CTA Buttons */}

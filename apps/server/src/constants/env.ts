@@ -2,21 +2,17 @@ import { config } from 'dotenv';
 import { z } from 'zod';
 
 switch (process.env.NODE_ENV) {
-  case 'test': {
-    config({ path: '.env.test' });
-    console.log('Loaded .env.test file');
+  case 'test':
     break;
-  }
   case 'production': {
     // we assume they are passed to by container
     // e.g. Heroku, Docker, etc.
     console.log('Current environment expects variables to by passed by container');
     break;
   }
-  case undefined:
   case 'development':
     console.log('Using .development.env file');
-    config();
+    config({ quiet: true });
     console.log('Loaded .development.env file');
     break;
   default:
