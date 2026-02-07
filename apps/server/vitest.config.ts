@@ -1,36 +1,80 @@
 import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
-export default defineConfig({
-  test: {
-    globals: true,
-    environment: 'node',
-    setupFiles: ['./test/helpers/setup.ts'],
-    include: ['test/**/*.test.ts'],
-    exclude: ['node_modules', 'dist'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules', 'dist', 'test', '**/*.test.ts', '**/*.config.ts'],
-    },
-    // Increase timeout for MongoDB tests
-    testTimeout: 10000,
-    hookTimeout: 10000,
-    // Run tests sequentially with a single worker to share MongoDB instance
-    // This significantly speeds up test startup by avoiding multiple MongoMemoryServer instances
-    poolOptions: {
-      threads: {
-        singleThread: true,
-      },
-    },
-    // Isolate each test file to prevent state leakage
-    isolate: true,
+const alias = {
+  '@~': path.resolve(__dirname, './src'),
+};
+
+const commonTestConfig = {
+  globals: true,
+  environment: 'node',
+  clearMocks: true,
+  restoreMocks: true,
+  mockReset: true,
+  watchExclude: ['mongo/**', 'dist/**', '.vitest/**'],
+  env: {
+    NODE_ENV: 'test',
+    BETTER_AUTH_SECRET: 'test-secret',
+    BETTER_AUTH_URL: 'http://localhost:3000/auth',
+    VALKEY_HOST: 'localhost',
+    VALKEY_PORT: '6379',
+    MONGO_USER: 'username',
+    MONGO_PASSWORD: 'password',
+    MONGO_DATABASE_NAME: 'startername-test',
+    LOG_LEVEL: 'error',
   },
+  coverage: {
+    provider: 'v8' as const,
+    reporter: ['text', 'json', 'html'],
+    exclude: ['node_modules', 'dist', 'test', '**/*.test.ts', '**/*.config.ts'],
+    statements: 70,
+    branches: 70,
+    functions: 70,
+    lines: 70,
+  },
+};
+
+const baseProjectConfig = {
   resolve: {
-    alias: {
-      '@~': path.resolve(__dirname, './src'),
-    },
+    alias,
   },
-  // Use Vite's cacheDir for caching
   cacheDir: 'node_modules/.vitest',
+};
+
+export default defineConfig({
+  ...baseProjectConfig,
+  test: {
+    ...commonTestConfig,
+    include: ['test/**/*.test.ts'],
+    projects: [
+      {
+        ...baseProjectConfig,
+        test: {
+          ...commonTestConfig,
+          include: ['test/unit/**/*.test.ts', 'test/**/*.unit.test.ts'],
+          exclude: ['test/integration/**', 'test/**/*.int.test.ts'],
+          setupFiles: ['./test/helpers/matchers.ts'],
+          isolate: true,
+        },
+      },
+      {
+        ...baseProjectConfig,
+        test: {
+          ...commonTestConfig,
+          include: ['test/**/*.test.ts'],
+          exclude: ['test/unit/**', 'test/**/*.unit.test.ts'],
+          globalSetup: ['./test/global-setup.ts'],
+          setupFiles: ['./test/helpers/setup.ts'],
+          testTimeout: 10000,
+          hookTimeout: 10000,
+          poolOptions: {
+            threads: {
+              singleThread: true,
+            },
+          },
+          isolate: false,
+        },
+      },
+    ],
+  },
 });

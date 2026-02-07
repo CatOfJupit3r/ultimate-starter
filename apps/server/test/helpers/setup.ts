@@ -1,4 +1,3 @@
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import 'reflect-metadata';
 import { afterAll, afterEach } from 'vitest';
@@ -6,22 +5,25 @@ import { afterAll, afterEach } from 'vitest';
 // Import custom matchers
 import './matchers';
 
-let mongo: MongoMemoryServer;
+const uri = process.env.MONGO_URI;
+const workerId = process.env.VITEST_WORKER_ID ?? '0';
+const baseDbName = process.env.MONGO_DATABASE_NAME ?? 'startername-test';
+const dbName = `${baseDbName}-${workerId}`;
 
-console.log('Setting up in-memory MongoDB server for tests...');
-mongo = await MongoMemoryServer.create({
-  // Use ephemeral storage for faster I/O in CI
-  instance: {
-    storageEngine: 'ephemeralForTest',
-  },
-});
-const uri = mongo.getUri();
-await mongoose.connect(uri, {
+// Ensure downstream code (e.g., DatabaseService) sees the scoped db name
+process.env.MONGO_DATABASE_NAME = dbName;
+
+if (!uri) {
+  throw new Error('MONGO_URI was not provided to test setup');
+}
+
+const mongoUriWithDb = uri.endsWith('/') ? `${uri}${dbName}` : `${uri}/${dbName}`;
+
+await mongoose.connect(mongoUriWithDb, {
   serverSelectionTimeoutMS: 5000,
   // Reduce connection pool for tests
   maxPoolSize: 5,
 });
-console.log('In-memory MongoDB server is ready.');
 
 afterEach(async () => {
   // Use deleteMany on all collections instead of dropDatabase - much faster
@@ -30,12 +32,5 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
-  console.log('Tearing down in-memory MongoDB server...');
-  try {
-    await mongoose.disconnect();
-    await mongo.stop({ doCleanup: true, force: true });
-  } catch (error) {
-    console.error('Error during teardown of in-memory MongoDB server:', error);
-  }
-  console.log('In-memory MongoDB server has been stopped.');
+  await mongoose.disconnect();
 });

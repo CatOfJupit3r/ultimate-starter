@@ -7,8 +7,8 @@ import { BADGE_IDS } from '@startername/shared/constants/badges';
 import { UserAchievementModel } from '@~/db/models/user-achievements.model';
 import { UserProfileModel } from '@~/db/models/user-profile.model';
 
-import { appRouter } from './helpers/instance';
-import { createUser } from './helpers/utilities';
+import { appRouter } from '../helpers/instance';
+import { createUser } from './utilities';
 
 describe('Badge Selection API', () => {
   describe('updateUserBadge', () => {

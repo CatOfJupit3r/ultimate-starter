@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { resolve } from '@~/di';
 import { TOKENS } from '@~/di/tokens';
 
-import { createUser } from './helpers/utilities';
+import { createUser } from './utilities';
 
 const getAchievementsService = () => resolve(TOKENS.AchievementsService);
 
