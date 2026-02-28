@@ -55,7 +55,7 @@ function BreadcrumbPage({ className, ...props }: ComponentProps<'span'>) {
 function BreadcrumbSeparator({ children, className, ...props }: ComponentProps<'li'>) {
   return (
     <li role="presentation" aria-hidden="true" className={cn('', className)} {...props}>
-      {children ?? <LuChevronRight className="h-3.5 w-3.5" />}
+      {children ?? <LuChevronRight className="size-3.5" />}
     </li>
   );
 }

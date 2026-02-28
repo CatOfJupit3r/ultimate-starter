@@ -16,6 +16,7 @@
   "engines": {
     "node": ">=24.0.0"
   },
+  "prettier": "@ultimate-starter/prettier-config",
   "dependencies": {
     "@hono/node-server": "^1.19.9",
     "@hono/standard-validator": "0.2.1",
@@ -38,29 +39,18 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@eslint/compat": "catalog:",
-    "@eslint/js": "catalog:",
-    "@stylistic/eslint-plugin": "catalog:",
-    "@trivago/prettier-plugin-sort-imports": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "^24.0.0",
-    "@typescript-eslint/eslint-plugin": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
     "@typescript/native-preview": "catalog:",
+    "@ultimate-starter/eslint-config": "workspace:*",
+    "@ultimate-starter/prettier-config": "workspace:*",
     "@vitest/ui": "^3.0.0",
     "eslint": "catalog:",
-    "eslint-config-airbnb-extended": "catalog:",
-    "eslint-config-prettier": "catalog:",
-    "eslint-import-resolver-typescript": "catalog:",
-    "eslint-plugin-import-x": "catalog:",
-    "eslint-plugin-n": "catalog:",
-    "eslint-plugin-prettier": "catalog:",
     "mongodb-memory-server": "11.0.1",
     "prettier": "catalog:",
     "tsdown": "catalog:",
     "tsx": "^4.19.2",
     "typescript": "catalog:",
-    "typescript-eslint": "catalog:",
     "vitest": "^3.0.0"
   },
   "overrides": {

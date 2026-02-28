@@ -1,20 +1,20 @@
 # https://moonrepo.dev/docs/config/project
-$schema: "https://moonrepo.dev/schemas/project.json"
+$schema: 'https://moonrepo.dev/schemas/project.json'
 
-language: "typescript"
-type: "library"
-platform: "node"
+language: 'typescript'
+type: 'library'
+platform: 'node'
 
 tags:
-  - "shared"
-  - "library"
+  - 'shared'
+  - 'library'
 
 tasks:
   test:
     command: "echo 'No tests for shared library yet'"
     inputs:
-      - "src/**/*.ts"
-      - ".bin/vitest/vitest.config.ts"
+      - 'src/**/*.ts'
+      - '.bin/vitest/vitest.config.ts'
 
   build:
     outputs: []

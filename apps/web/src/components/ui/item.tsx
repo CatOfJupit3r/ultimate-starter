@@ -57,7 +57,7 @@ function Item({
 }
 
 const itemMediaVariants = cva(
-  'flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none',
+  'flex shrink-0 items-center justify-center gap-2 group-has-data-[slot=item-description]/item:translate-y-0.5 group-has-data-[slot=item-description]/item:self-start [&_svg]:pointer-events-none',
   {
     variants: {
       variant: {
@@ -101,7 +101,7 @@ function ItemTitle({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
       data-slot="item-title"
-      className={cn('flex w-fit items-center gap-2 text-sm leading-snug font-medium', className)}
+      className={cn('flex w-fit items-center gap-2 text-sm/snug font-medium', className)}
       {...props}
     />
   );
@@ -112,7 +112,7 @@ function ItemDescription({ className, ...props }: ComponentProps<'p'>) {
     <p
       data-slot="item-description"
       className={cn(
-        'line-clamp-2 text-sm leading-normal font-normal text-balance text-muted-foreground',
+        'line-clamp-2 text-sm/normal font-normal text-balance text-muted-foreground',
         '[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary',
         className,
       )}

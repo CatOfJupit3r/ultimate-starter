@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { getModelForClass, modelOptions } from '@typegoose/typegoose';
 
 import { booleanProp, dateProp, objectIdProp, stringProp } from '../prop';

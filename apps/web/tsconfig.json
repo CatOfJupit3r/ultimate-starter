@@ -18,15 +18,8 @@
     "emitDecoratorMetadata": true
   },
   "exclude": ["./eslint.config.js"],
-  "files": [
-    "../../packages/shared/src/globals.d.ts"
-  ],
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.d.ts",
-    "src/types.d.ts"
-  ],
+  "files": ["../../packages/shared/src/globals.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "src/types.d.ts"],
   "references": [
     {
       "path": "../../packages/shared"

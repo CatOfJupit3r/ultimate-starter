@@ -47,7 +47,7 @@ export function ProfileView() {
                   <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
                     {user?.createdAt ? (
                       <div className="flex items-center gap-1">
-                        <LuCalendar className="h-3 w-3" />
+                        <LuCalendar className="size-3" />
                         Joined{' '}
                         {new Date(user.createdAt).toLocaleDateString('en-US', {
                           year: 'numeric',
@@ -88,7 +88,7 @@ export function ProfileView() {
             <Empty className="border border-border">
               <EmptyHeader>
                 <EmptyMedia variant="icon">
-                  <LuTrophy className="h-6 w-6" />
+                  <LuTrophy className="size-6" />
                 </EmptyMedia>
                 <EmptyTitle>Achievements</EmptyTitle>
                 <EmptyDescription>Complete more challenges to unlock achievements!</EmptyDescription>

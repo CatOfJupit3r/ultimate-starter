@@ -9,9 +9,7 @@ interface iComponentProps {
 
 export function ToastBody({ children, className }: iComponentProps) {
   return (
-    <div
-      className={cn('flex w-full gap-2 overflow-hidden pr-4 transition-all sm:flex-col md:max-w-[420px]', className)}
-    >
+    <div className={cn('flex w-full gap-2 overflow-hidden pr-4 transition-all sm:flex-col md:max-w-105', className)}>
       {children}
     </div>
   );

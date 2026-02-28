@@ -1,44 +1,44 @@
 # https://moonrepo.dev/docs/config/project
-$schema: "https://moonrepo.dev/schemas/project.json"
+$schema: 'https://moonrepo.dev/schemas/project.json'
 
-language: "typescript"
-type: "application"
-platform: "node"
+language: 'typescript'
+type: 'application'
+platform: 'node'
 
 dependsOn:
-  - "shared"
+  - 'shared'
 
 tags:
-  - "frontend"
-  - "web"
-  - "react"
+  - 'frontend'
+  - 'web'
+  - 'react'
 
 tasks:
   dev:
-    command: "vite"
+    command: 'vite'
     local: true
     options:
       persistent: true
       cache: false
-      envFile: ".env"
-      outputStyle: "stream"
+      envFile: '.env'
+      outputStyle: 'stream'
       runDepsInParallel: false
 
   build:
-    command: "tsc && vite build"
+    command: 'tsc && vite build'
     inputs:
-      - "src/**/*.ts"
-      - "src/**/*.tsx"
-      - "tsconfig.json"
-      - "vite.config.ts"
-      - "index.html"
+      - 'src/**/*.ts'
+      - 'src/**/*.tsx'
+      - 'tsconfig.json'
+      - 'vite.config.ts'
+      - 'index.html'
     outputs:
-      - "dist"
+      - 'dist'
 
   serve:
-    command: "vite preview --host"
+    command: 'vite preview --host'
     deps:
-      - "~:build"
+      - '~:build'
     options:
       persistent: true
       cache: false
@@ -46,4 +46,4 @@ tasks:
 workspace:
   inheritedTasks:
     exclude:
-      - "dev"
+      - 'dev'
