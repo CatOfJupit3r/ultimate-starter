@@ -3,15 +3,8 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "build": "tsdown --tsconfig tsconfig.build.json",
-    "check-types": "tsgo --noEmit",
-    "dev": "tsx watch --clear-screen=false src/index.ts",
-    "start": "node dist/index.js",
-    "prettier": "prettier --write .",
-    "test": "NODE_ENV=test vitest run",
     "test:watch": "NODE_ENV=test vitest",
-    "test:ui": "NODE_ENV=test vitest --ui",
-    "lint": "eslint . --ext .ts"
+    "test:ui": "NODE_ENV=test vitest --ui"
   },
   "engines": {
     "node": ">=24.0.0"
@@ -27,7 +20,7 @@
     "@typegoose/typegoose": "13.0.0",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
-    "hono": "4.11.3",
+    "hono": "catalog:",
     "hono-openapi": "1.1.2",
     "ioredis": "5.8.2",
     "lodash-es": "catalog:",
@@ -40,18 +33,18 @@
   },
   "devDependencies": {
     "@types/lodash-es": "catalog:",
-    "@types/node": "^24.0.0",
+    "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@ultimate-starter/eslint-config": "workspace:*",
     "@ultimate-starter/prettier-config": "workspace:*",
-    "@vitest/ui": "^3.0.0",
+    "@vitest/ui": "catalog:",
     "eslint": "catalog:",
     "mongodb-memory-server": "11.0.1",
     "prettier": "catalog:",
     "tsdown": "catalog:",
-    "tsx": "^4.19.2",
+    "tsx": "catalog:",
     "typescript": "catalog:",
-    "vitest": "^3.0.0"
+    "vitest": "catalog:"
   },
   "overrides": {
     "mongodb": "7.0.0"

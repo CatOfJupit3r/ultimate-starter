@@ -6,6 +6,8 @@ projects:
   server: "apps/server"
   web: "apps/web"
   shared: "packages/shared"
+  eslint-config: "configs/eslint-config"
+  prettier-config: "configs/prettier-config"
 
 # VCS settings
 vcs:

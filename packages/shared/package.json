@@ -35,16 +35,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "prepare": "pnpm run build",
-    "dev": "tsdown --watch --no-clean",
-    "prettier": "prettier --write .",
-    "check-types": "tsgo --noEmit",
-    "lint": "eslint . --ext .ts"
+    "prepare": "tsdown"
   },
   "prettier": "@ultimate-starter/prettier-config",
   "devDependencies": {
-    "@types/node": "^24.0.0",
+    "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@ultimate-starter/eslint-config": "workspace:*",
     "@ultimate-starter/prettier-config": "workspace:*",
