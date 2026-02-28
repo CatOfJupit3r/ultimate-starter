@@ -330,10 +330,29 @@ export class UserRegistrationService implements iWithLogger {
 
 ### Service with event emission
 
+The EventBus uses a typed `Listener<T>` pattern. Listeners are **ONLY defined in the events module** and imported by other features, ensuring clean dependencies.
+
+#### Defining a Listener
+
+Create listeners in `apps/server/src/features/events/listeners/`:
+
+```typescript
+// features/events/listeners/orders.listeners.ts
+import { Listener } from '../listener.class';
+
+export const OrderCreatedListener = new Listener<{ orderId: string; userId: string }>('ORDER_CREATED');
+export const OrderCancelledListener = new Listener<{ orderId: string; reason: string }>('ORDER_CANCELLED');
+```
+
+The `Listener<TPayload>` class uses phantom typing to carry the payload type at compile time.
+
+#### Emitting events
+
 ```typescript
 import { singleton } from 'tsyringe';
+import { EventBus } from '@~/features/events/event-bus';
+import { OrderCreatedListener } from '@~/features/events/listeners/orders.listeners';
 import { LoggerFactory } from '@~/features/logger/logger.factory';
-import { TypedEventBus } from '@~/features/events/event-bus';
 import type { iWithLogger } from '@~/features/logger/logger.types';
 
 @singleton()
@@ -342,7 +361,7 @@ export class OrderService implements iWithLogger {
 
   constructor(
     loggerFactory: LoggerFactory,
-    private readonly events: TypedEventBus,
+    private readonly eventBus: EventBus,
   ) {
     this.logger = loggerFactory.create('order-service');
   }
@@ -352,10 +371,62 @@ export class OrderService implements iWithLogger {
     
     this.logger.info('Order created', { orderId: order._id });
     
-    // Emit event for other services to react
-    await this.events.emit('order.created', { order });
+    // Emit event - payload is type-checked against OrderCreatedListener
+    this.eventBus.emit(OrderCreatedListener, { 
+      orderId: order._id.toString(), 
+      userId: data.userId,
+    });
     
     return order;
   }
+}
+```
+
+#### Subscribing to events
+
+```typescript
+import { singleton } from 'tsyringe';
+import { EventBus } from '@~/features/events/event-bus';
+import { OrderCreatedListener } from '@~/features/events/listeners/orders.listeners';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
+import type { iWithLogger } from '@~/features/logger/logger.types';
+
+@singleton()
+export class NotificationService implements iWithLogger {
+  public readonly logger: iWithLogger['logger'];
+
+  constructor(
+    loggerFactory: LoggerFactory,
+    private readonly eventBus: EventBus,
+  ) {
+    this.logger = loggerFactory.create('notification-service');
+    this.setupListeners();
+  }
+
+  private setupListeners() {
+    // payload is automatically typed as { orderId: string; userId: string }
+    this.eventBus.on(OrderCreatedListener, async (payload) => {
+      this.logger.info('Sending order confirmation', { orderId: payload.orderId });
+      await this.sendOrderConfirmation(payload.userId, payload.orderId);
+    });
+  }
+
+  private async sendOrderConfirmation(userId: string, orderId: string) {
+    // Send email/notification
+  }
+}
+```
+
+#### Using ListenerPayload type helper
+
+The `ListenerPayload<T>` type extracts the payload type from a Listener:
+
+```typescript
+import type { Listener, ListenerPayload } from '@~/features/events/listener.class';
+
+// Define handler that works with any listener
+interface iEventHandler<TListener extends Listener<unknown>> {
+  listensTo: TListener[];
+  handle: (payload: ListenerPayload<TListener>) => Promise<void>;
 }
 ```

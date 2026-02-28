@@ -158,6 +158,32 @@ export class OrderService { ... }
 
 **Use cases:** Services that might cache request-specific data, services with request state
 
+## EventBus pattern
+
+The `EventBus` is a singleton service for decoupled service communication. It uses typed `Listener<T>` instances for full type safety.
+
+### Quick example
+
+```typescript
+import { singleton } from 'tsyringe';
+import { EventBus } from '@~/features/events/event-bus';
+import { OrderCreatedListener } from '@~/features/events/listeners/orders.listeners';
+
+@singleton()
+export class OrderService {
+  constructor(private readonly eventBus: EventBus) {}
+
+  async createOrder(data: CreateOrderInput) {
+    const order = await OrderModel.create(data);
+    // Payload is type-checked against Listener<{ orderId: string; userId: string }>
+    this.eventBus.emit(OrderCreatedListener, { orderId: order._id.toString(), userId: data.userId });
+    return order;
+  }
+}
+```
+
+Listeners are defined in `features/events/listeners/` and imported by other features. See [references/advanced-patterns.md](references/advanced-patterns.md) for full documentation on defining listeners, emitting, and subscribing.
+
 ## When to use tokens (rare)
 
 Only use tokens for interface-based injection. See `apps/server/src/di/tokens.ts` for documentation.
