@@ -16,7 +16,7 @@ export function ToastBody({ children, className }: iComponentProps) {
 }
 
 export function ToastTitle({ children, className }: iComponentProps) {
-  return <p className={cn('text-accent-foreground text-lg font-semibold', className)}>{children}</p>;
+  return <p className={cn('text-lg font-semibold text-accent-foreground', className)}>{children}</p>;
 }
 
 export function ToastDescription({ children, className }: iComponentProps) {

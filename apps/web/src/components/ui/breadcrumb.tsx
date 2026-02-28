@@ -8,7 +8,7 @@ function Breadcrumb({ className, ...props }: ComponentProps<'nav'>) {
   return (
     <nav
       aria-label="breadcrumb"
-      className={cn('text-muted-foreground flex items-center text-sm', className)}
+      className={cn('flex items-center text-sm text-muted-foreground', className)}
       {...props}
     />
   );
@@ -33,7 +33,7 @@ const BreadcrumbLink = forwardRef<
   }
 
   return (
-    <a ref={ref} className={cn('hover:text-foreground cursor-pointer transition-colors', className)} {...props}>
+    <a ref={ref} className={cn('cursor-pointer transition-colors hover:text-foreground', className)} {...props}>
       {children}
     </a>
   );
@@ -46,7 +46,7 @@ function BreadcrumbPage({ className, ...props }: ComponentProps<'span'>) {
       role="link"
       aria-disabled="true"
       aria-current="page"
-      className={cn('text-foreground font-medium', className)}
+      className={cn('font-medium text-foreground', className)}
       {...props}
     />
   );

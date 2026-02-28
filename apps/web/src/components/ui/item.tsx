@@ -112,8 +112,8 @@ function ItemDescription({ className, ...props }: ComponentProps<'p'>) {
     <p
       data-slot="item-description"
       className={cn(
-        'text-muted-foreground line-clamp-2 text-sm/normal font-normal text-balance',
-        '[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4',
+        'line-clamp-2 text-sm/normal font-normal text-balance text-muted-foreground',
+        '[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary',
         className,
       )}
       {...props}
