@@ -1,36 +1,22 @@
 import mongoose from 'mongoose';
-import 'reflect-metadata';
-import { afterAll, afterEach } from 'vitest';
+import { afterEach } from 'vitest';
 
+// Import connection module to ensure mongoose is connected
+// This module handles the connection and awaits it at module level
+import './connection';
 // Import custom matchers
 import './matchers';
 
-const uri = process.env.MONGO_URI;
-const workerId = process.env.VITEST_WORKER_ID ?? '0';
-const baseDbName = process.env.MONGO_DATABASE_NAME ?? 'startername-test';
-const dbName = `${baseDbName}-${workerId}`;
-
-// Ensure downstream code (e.g., DatabaseService) sees the scoped db name
-process.env.MONGO_DATABASE_NAME = dbName;
-
-if (!uri) {
-  throw new Error('MONGO_URI was not provided to test setup');
-}
-
-const mongoUriWithDb = uri.endsWith('/') ? `${uri}${dbName}` : `${uri}/${dbName}`;
-
-await mongoose.connect(mongoUriWithDb, {
-  serverSelectionTimeoutMS: 5000,
-  // Reduce connection pool for tests
-  maxPoolSize: 5,
-});
-
 afterEach(async () => {
+  // Guard: only clean up if connection is still open
+  if (mongoose.connection.readyState !== 1) return;
+
   // Use deleteMany on all collections instead of dropDatabase - much faster
   const collections = mongoose.connection.collections;
   await Promise.all(Object.values(collections).map((collection) => collection.deleteMany({})));
 });
 
-afterAll(async () => {
-  await mongoose.disconnect();
-});
+// Note: We don't disconnect mongoose in afterAll because with isolate: false,
+// all test files share the connection. Disconnecting in one file's afterAll
+// would break other test files still running. The connection is automatically
+// cleaned up when the process exits (MongoDB Memory Server stops in globalSetup teardown).

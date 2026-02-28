@@ -53,7 +53,7 @@ tasks:
       - "eslint.config.{mjs,js}"
     options:
       runInCI: true
-      cache: true
+      cache: false
       mergeDeps: "append"
       mergeEnv: "append"
 
@@ -72,6 +72,7 @@ tasks:
   # ============================================
   
   # Run tests with Vitest
+  # Note: runInCI is false because tests run in a dedicated job with MongoDB setup
   test:
     command: "vitest run"
     inputs:
@@ -79,8 +80,8 @@ tasks:
       - "@group(tests)"
       - "vitest.config.{ts,js,mjs}"
     options:
-      runInCI: true
-      cache: true
+      runInCI: false
+      cache: false
       mergeDeps: "append"
 
   # Run tests in watch mode

@@ -23,3 +23,17 @@ tasks:
 
   build:
     command: 'rimraf ./dist && tsgo'
+    deps:
+      - 'shared:build'
+
+  check-types:
+    deps:
+      - 'shared:build'
+
+  test:
+    deps:
+      - 'shared:build'
+
+  lint:
+    deps:
+      - 'shared:build'

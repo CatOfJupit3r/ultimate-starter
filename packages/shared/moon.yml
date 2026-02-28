@@ -17,4 +17,9 @@ tasks:
       - '.bin/vitest/vitest.config.ts'
 
   build:
-    outputs: []
+    command: 'tsdown'
+    inputs:
+      - 'src/**/*.ts'
+      - 'tsdown.config.ts'
+    outputs:
+      - 'dist/**/*'

@@ -51,6 +51,7 @@ export default defineConfig({
         ...baseProjectConfig,
         test: {
           ...commonTestConfig,
+          name: 'unit',
           include: ['test/unit/**/*.test.ts', 'test/**/*.unit.test.ts'],
           exclude: ['test/integration/**', 'test/**/*.int.test.ts'],
           setupFiles: ['./test/helpers/matchers.ts'],
@@ -61,17 +62,13 @@ export default defineConfig({
         ...baseProjectConfig,
         test: {
           ...commonTestConfig,
+          name: 'integration',
           include: ['test/**/*.test.ts'],
           exclude: ['test/unit/**', 'test/**/*.unit.test.ts'],
           globalSetup: ['./test/global-setup.ts'],
           setupFiles: ['./test/helpers/setup.ts'],
           testTimeout: 10000,
           hookTimeout: 10000,
-          poolOptions: {
-            threads: {
-              singleThread: true,
-            },
-          },
           isolate: false,
         },
       },
