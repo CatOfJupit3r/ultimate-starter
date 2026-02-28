@@ -27,3 +27,7 @@ tasks:
   test:
     deps:
       - 'shared:build'
+
+  lint:
+    deps:
+      - 'shared:build'
