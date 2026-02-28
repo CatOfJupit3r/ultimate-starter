@@ -1,12 +1,12 @@
 import { USER_ACHIEVEMENTS } from '@startername/shared/constants/achievements';
 
-import { EVENTS } from '@~/features/events/events.constants';
+import { BetaEventListener } from '@~/features/events/listeners/achievements.listeners';
 
 import type { iAchievementContext, iAchievementDefinition } from '../achievements.types';
 
-export const betaTesterAchievement: iAchievementDefinition = {
+export const betaTesterAchievement: iAchievementDefinition<typeof BetaEventListener> = {
   id: USER_ACHIEVEMENTS.BETA_TESTER,
-  listensTo: [EVENTS.BETA_EVENT],
+  listensTo: [BetaEventListener],
   async handle(payload, context: iAchievementContext) {
     await context.unlock(payload.userId, USER_ACHIEVEMENTS.BETA_TESTER, {});
   },

@@ -45,12 +45,12 @@ export class AchievementsService implements iWithLogger {
 
   public initialize() {
     for (const achievement of this.achievements) {
-      for (const event of achievement.listensTo) {
-        this.eventBus.on(event, async (payload) => {
+      for (const listener of achievement.listensTo) {
+        this.eventBus.on(listener, async (payload) => {
           try {
             await achievement.handle(payload, this.context);
           } catch (error) {
-            this.logger.error(`Error handling achievement ${achievement.id} for event ${event}:`, { error });
+            this.logger.error(`Error handling achievement ${achievement.id} for event ${listener.name}:`, { error });
           }
         });
       }

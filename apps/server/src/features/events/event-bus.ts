@@ -1,23 +1,28 @@
 import { EventEmitter } from 'node:events';
 import { singleton } from 'tsyringe';
 
-import type { iEventPayloadMap, EventType } from '@~/features/events/events.constants';
+import type { Listener } from './listener.class';
 
 @singleton()
-export class EventBus extends EventEmitter {
-  public on<K extends EventType>(event: K, listener: (payload: iEventPayloadMap[K]) => unknown): this {
-    return super.on(event, listener);
+export class EventBus {
+  private readonly emitter = new EventEmitter();
+
+  public on<T>(listener: Listener<T>, handler: (payload: T) => unknown): this {
+    this.emitter.on(listener.name, handler);
+    return this;
   }
 
-  public off<K extends EventType>(event: K, listener: (payload: iEventPayloadMap[K]) => unknown): this {
-    return super.off(event, listener);
+  public off<T>(listener: Listener<T>, handler: (payload: T) => unknown): this {
+    this.emitter.off(listener.name, handler);
+    return this;
   }
 
-  public emit<K extends EventType>(event: K, payload: iEventPayloadMap[K]): boolean {
-    return super.emit(event, payload);
+  public emit<T>(listener: Listener<T>, payload: T): boolean {
+    return this.emitter.emit(listener.name, payload);
   }
 
-  public once<K extends EventType>(event: K, listener: (payload: iEventPayloadMap[K]) => unknown): this {
-    return super.once(event, listener);
+  public once<T>(listener: Listener<T>, handler: (payload: T) => unknown): this {
+    this.emitter.once(listener.name, handler);
+    return this;
   }
 }
