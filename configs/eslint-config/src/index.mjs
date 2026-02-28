@@ -185,6 +185,7 @@ const getBaseConfig = (options) => {
           'tests/**',
           'dist/**',
           'build/**',
+          '.lintstagedrc.{js,cjs,mjs}',
         ],
       },
       ...(gitignorePath ? [includeIgnoreFile(gitignorePath)] : []),
