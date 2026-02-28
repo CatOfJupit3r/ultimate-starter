@@ -2,9 +2,8 @@ import { Hono } from 'hono';
 import { describeRoute, validator } from 'hono-openapi';
 import z from 'zod';
 
+import { AuthService } from '@~/features/auth/auth.service';
 import type { iRequestContext } from '@~/features/logger/logger.types';
-
-import { GETTERS } from './di-getter';
 
 const nonContractRouter = new Hono<iRequestContext>();
 
@@ -21,7 +20,7 @@ nonContractRouter.get(
 
     const { userId } = c.req.valid('param');
 
-    const auth = GETTERS.AuthService().getInstance();
+    const auth = c.var.resolve(AuthService).getInstance();
     const { headers, response } = await auth.api.devImpersonateUser({
       body: { userId },
       returnHeaders: true,

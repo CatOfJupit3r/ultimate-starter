@@ -14,12 +14,12 @@ tags:
 
 tasks:
   dev:
-    command: 'tsx watch ./src/index.ts'
+    command: 'node --import @swc-node/register/esm-register --watch ./src/index.ts'
     env:
       NODE_ENV: 'development'
 
   start:
-    command: 'node --import tsx ./src/index.ts'
+    command: 'node --import @swc-node/register/esm-register ./src/index.ts'
 
   build:
     command: 'rimraf ./dist && tsgo'

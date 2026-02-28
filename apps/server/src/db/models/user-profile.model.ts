@@ -1,26 +1,26 @@
-import { getModelForClass, modelOptions } from '@typegoose/typegoose';
+import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import type { DocumentType } from '@typegoose/typegoose';
 
 import type { BadgeId } from '@startername/shared/constants/badges';
 
 import { generatePublicCode } from '../helpers';
-import { objectIdProp, stringProp } from '../prop';
+import { idProp } from '../prop';
 
 @modelOptions({ schemaOptions: { collection: 'profile', timestamps: true } })
 class UserProfileClass {
-  @objectIdProp({ required: true })
+  @idProp({ required: true })
   public _id!: string;
 
-  @stringProp({ required: true, unique: true, index: true })
+  @prop({ required: true, unique: true, index: true })
   public userId!: string;
 
-  @stringProp({ default: () => '', maxlength: 500 })
+  @prop({ default: () => '', maxlength: 500 })
   public bio!: string;
 
-  @stringProp({ type: String, default: null })
+  @prop({ type: String, default: null })
   public selectedBadge?: BadgeId | null;
 
-  @stringProp({ required: true, unique: true, index: true, default: () => generatePublicCode() })
+  @prop({ required: true, unique: true, index: true, default: () => generatePublicCode() })
   public publicCode!: string;
 
   public createdAt!: Date;

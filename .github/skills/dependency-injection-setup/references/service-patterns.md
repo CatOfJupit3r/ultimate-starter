@@ -2,19 +2,21 @@
 
 Complete examples of common service patterns in the codebase.
 
-## Basic Service with Logger
+## Request-Scoped Service with Logger
+
+Services that may hold request-specific state use `@injectable()`:
 
 ```typescript
-import { inject, injectable } from 'tsyringe';
-import { TOKENS } from '@~/di/tokens';
-import type { iLogger } from '@~/di/tokens';
+import { injectable } from 'tsyringe';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
+import type { iWithLogger } from '@~/features/logger/logger.types';
 
 @injectable()
-export class UserService {
-  private readonly logger: iLogger;
+export class UserService implements iWithLogger {
+  public readonly logger: iWithLogger['logger'];
 
-  constructor(@inject(TOKENS.LoggerFactory) loggerFactory: () => iLogger) {
-    this.logger = loggerFactory();
+  constructor(loggerFactory: LoggerFactory) {
+    this.logger = loggerFactory.create('user-service');
   }
 
   public async getUser(userId: string): Promise<User | null> {
@@ -36,23 +38,25 @@ export class UserService {
 }
 ```
 
-## Service with Dependencies
+## Singleton Service (Shared Across Requests)
+
+Stateless services that can be shared use `@singleton()`:
 
 ```typescript
-import { inject, injectable } from 'tsyringe';
-import { TOKENS } from '@~/di/tokens';
-import type { iLogger } from '@~/di/tokens';
-import type { EmailService } from './email.service';
+import { singleton } from 'tsyringe';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
+import { EmailService } from './email.service';
+import type { iWithLogger } from '@~/features/logger/logger.types';
 
-@injectable()
-export class NotificationService {
-  private readonly logger: iLogger;
+@singleton()
+export class NotificationService implements iWithLogger {
+  public readonly logger: iWithLogger['logger'];
 
   constructor(
-    @inject(TOKENS.LoggerFactory) loggerFactory: () => iLogger,
-    @inject(TOKENS.EmailService) private readonly emailService: EmailService
+    loggerFactory: LoggerFactory,
+    private readonly emailService: EmailService,  // Auto-resolved from type
   ) {
-    this.logger = loggerFactory();
+    this.logger = loggerFactory.create('notification-service');
   }
 
   public async notifyUser(userId: string, message: string): Promise<void> {
@@ -78,22 +82,22 @@ export class NotificationService {
 ## Service with Multiple Dependencies
 
 ```typescript
-import { inject, injectable } from 'tsyringe';
-import { TOKENS } from '@~/di/tokens';
-import type { iLogger } from '@~/di/tokens';
-import type { CacheService } from './cache.service';
-import type { DatabaseService } from './database.service';
+import { singleton } from 'tsyringe';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
+import { CacheService } from './cache.service';
+import { DatabaseService } from '@~/db/database.service';
+import type { iWithLogger } from '@~/features/logger/logger.types';
 
-@injectable()
-export class ChallengeService {
-  private readonly logger: iLogger;
+@singleton()
+export class ChallengeService implements iWithLogger {
+  public readonly logger: iWithLogger['logger'];
 
   constructor(
-    @inject(TOKENS.LoggerFactory) loggerFactory: () => iLogger,
-    @inject(TOKENS.CacheService) private readonly cache: CacheService,
-    @inject(TOKENS.DatabaseService) private readonly db: DatabaseService
+    loggerFactory: LoggerFactory,
+    private readonly cache: CacheService,
+    private readonly db: DatabaseService,
   ) {
-    this.logger = loggerFactory();
+    this.logger = loggerFactory.create('challenge-service');
   }
 
   public async getChallenge(id: string): Promise<Challenge | null> {
@@ -124,9 +128,9 @@ export class ChallengeService {
 Most services should be stateless singletons:
 
 ```typescript
-import { injectable } from 'tsyringe';
+import { singleton } from 'tsyringe';
 
-@injectable()
+@singleton()
 export class HashService {
   public async hash(password: string): Promise<string> {
     // Stateless operation
@@ -138,8 +142,7 @@ export class HashService {
   }
 }
 
-// In container.ts
-container.registerSingleton(TOKENS.HashService, HashService);
+// No registration needed - @singleton() handles it
 ```
 
 ### Stateful Service (Transient)
@@ -148,7 +151,7 @@ Use transient lifecycle when services maintain state per operation:
 
 ```typescript
 import { injectable } from 'tsyringe';
-import { Lifecycle } from 'tsyringe';
+import { Lifecycle, container } from 'tsyringe';
 
 @injectable()
 export class TransactionService {
@@ -171,8 +174,8 @@ export class TransactionService {
   }
 }
 
-// In container.ts
-container.register(TOKENS.TransactionService, TransactionService, {
+// In container.ts - explicit registration for transient lifecycle
+container.register(TransactionService, { useClass: TransactionService }, {
   lifecycle: Lifecycle.Transient,
 });
 ```
@@ -182,12 +185,12 @@ container.register(TOKENS.TransactionService, TransactionService, {
 ```typescript
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { container } from 'tsyringe';
-import { TOKENS } from '@~/di/tokens';
 import { UserService } from './user.service';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
 
 describe('UserService', () => {
   let service: UserService;
-  let mockLogger: iLogger;
+  let mockLogger: iWithLogger['logger'];
 
   beforeEach(() => {
     // Setup mocks
@@ -198,13 +201,20 @@ describe('UserService', () => {
       debug: vi.fn(),
     };
 
-    // Register mocks
-    container.register(TOKENS.LoggerFactory, {
-      useValue: () => mockLogger,
-    });
+    const mockLoggerFactory = {
+      create: vi.fn().mockReturnValue(mockLogger),
+      global: vi.fn().mockReturnValue(mockLogger),
+    };
+
+    // Register mock (overrides @singleton() registration)
+    container.register(LoggerFactory, { useValue: mockLoggerFactory });
 
     // Resolve service
-    service = container.resolve(TOKENS.UserService);
+    service = container.resolve(UserService);
+  });
+
+  afterEach(() => {
+    container.clearInstances();
   });
 
   it('should fetch user by id', async () => {

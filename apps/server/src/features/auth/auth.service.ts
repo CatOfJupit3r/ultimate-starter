@@ -4,13 +4,13 @@ import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { username } from 'better-auth/plugins';
 import type Redis from 'ioredis';
 import { isNil } from 'lodash-es';
-import { inject, singleton } from 'tsyringe';
+import { singleton } from 'tsyringe';
 
 import env from '@~/constants/env';
 import { UserProfileModel } from '@~/db/models/user-profile.model';
-import { TOKENS } from '@~/di/tokens';
 
-import type { iWithLogger, LoggerFactory, LoggerType } from '../logger/logger.types';
+import { LoggerFactory } from '../logger/logger.factory';
+import type { iWithLogger, LoggerType } from '../logger/logger.types';
 import { devImpersonatePlugin } from './better-auth-plugins/dev-impersonate.plugin';
 
 const createInstance = (db: mongoose.mongo.Db, logger: LoggerType, valkey: Redis | Nil) =>
@@ -70,7 +70,7 @@ export class AuthService implements iWithLogger {
 
   private instance: ReturnType<typeof createInstance> | null = null;
 
-  constructor(@inject(TOKENS.LoggerFactory) loggerFactory: LoggerFactory) {
+  constructor(loggerFactory: LoggerFactory) {
     this.logger = loggerFactory.create('auth');
   }
 

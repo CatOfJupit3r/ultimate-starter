@@ -1,118 +1,118 @@
-import { getModelForClass, modelOptions } from '@typegoose/typegoose';
+import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
-import { booleanProp, dateProp, objectIdProp, stringProp } from '../prop';
+import { idProp } from '../prop';
 
 @modelOptions({ schemaOptions: { collection: 'user' } })
 class UserClass {
-  @objectIdProp({ required: true })
+  @idProp({ required: true })
   public _id!: string;
 
-  @stringProp({ required: true })
+  @prop({ required: true })
   public name!: string;
 
-  @stringProp({ required: true, unique: true })
+  @prop({ required: true, unique: true })
   public email!: string;
 
-  @booleanProp({ required: true, default: false })
+  @prop({ required: true, default: false })
   public emailVerified!: boolean;
 
-  @stringProp()
+  @prop()
   public image?: string;
 
-  @dateProp({ required: true })
+  @prop({ required: true })
   public createdAt!: Date;
 
-  @dateProp({ required: true })
+  @prop({ required: true })
   public updatedAt!: Date;
 }
 
 @modelOptions({ schemaOptions: { collection: 'session' } })
 class SessionClass {
-  @objectIdProp({ required: true })
+  @idProp({ required: true })
   public _id!: string;
 
-  @dateProp({ required: true })
+  @prop({ required: true })
   public expiresAt!: Date;
 
-  @stringProp({ required: true, unique: true })
+  @prop({ required: true, unique: true })
   public token!: string;
 
-  @dateProp({ required: true })
+  @prop({ required: true })
   public createdAt!: Date;
 
-  @dateProp({ required: true })
+  @prop({ required: true })
   public updatedAt!: Date;
 
-  @stringProp()
+  @prop()
   public ipAddress?: string;
 
-  @stringProp()
+  @prop()
   public userAgent?: string;
 
-  @stringProp({ required: true })
+  @prop({ required: true })
   public userId!: string;
 }
 
 @modelOptions({ schemaOptions: { collection: 'account' } })
 class AccountClass {
-  @objectIdProp({ required: true })
+  @idProp({ required: true })
   public _id!: string;
 
-  @stringProp({ required: true })
+  @prop({ required: true })
   public accountId!: string;
 
-  @stringProp({ required: true })
+  @prop({ required: true })
   public providerId!: string;
 
-  @stringProp({ required: true })
+  @prop({ required: true })
   public userId!: string;
 
-  @stringProp()
+  @prop()
   public accessToken?: string;
 
-  @stringProp()
+  @prop()
   public refreshToken?: string;
 
-  @stringProp()
+  @prop()
   public idToken?: string;
 
-  @dateProp()
+  @prop()
   public accessTokenExpiresAt?: Date;
 
-  @dateProp()
+  @prop()
   public refreshTokenExpiresAt?: Date;
 
-  @stringProp()
+  @prop()
   public scope?: string;
 
-  @stringProp()
+  @prop()
   public password?: string;
 
-  @dateProp({ required: true })
+  @prop({ required: true })
   public createdAt!: Date;
 
-  @dateProp({ required: true })
+  @prop({ required: true })
   public updatedAt!: Date;
 }
 
 @modelOptions({ schemaOptions: { collection: 'verification' } })
 class VerificationClass {
-  @objectIdProp({ required: true })
+  @idProp({ required: true })
   public _id!: string;
 
-  @stringProp({ required: true })
+  @prop({ required: true })
   public identifier!: string;
 
-  @stringProp({ required: true })
+  @prop({ required: true })
   public value!: string;
 
-  @dateProp({ required: true })
+  @prop({ required: true })
   public expiresAt!: Date;
 
-  @dateProp()
+  @prop()
   public createdAt?: Date;
 
-  @dateProp()
+  @prop()
   public updatedAt?: Date;
 }
 

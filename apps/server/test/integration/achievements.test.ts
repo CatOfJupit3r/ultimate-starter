@@ -1,11 +1,11 @@
+import { container } from 'tsyringe';
 import { describe, expect, it } from 'vitest';
 
-import { resolve } from '@~/di';
-import { TOKENS } from '@~/di/tokens';
+import { AchievementsService } from '@~/features/achievements/achievements.service';
 
 import { createUser } from './utilities';
 
-const getAchievementsService = () => resolve(TOKENS.AchievementsService);
+const getAchievementsService = () => container.resolve(AchievementsService);
 
 describe('Achievements System', () => {
   it('should list all available achievements', async () => {

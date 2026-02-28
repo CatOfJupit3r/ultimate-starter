@@ -1,8 +1,8 @@
 import type { MiddlewareHandler } from 'hono';
 import { randomUUID } from 'node:crypto';
+import { container } from 'tsyringe';
 
-import { resolve } from '@~/di';
-import { TOKENS } from '@~/di/tokens';
+import { AuthService } from '@~/features/auth/auth.service';
 
 import type { iRequestContext } from './logger.types';
 
@@ -17,7 +17,7 @@ import type { iRequestContext } from './logger.types';
  * app.use(requestContextMiddleware);
  */
 export const requestContextMiddleware: MiddlewareHandler<iRequestContext> = async (c, next) => {
-  const auth = resolve(TOKENS.AuthService).getInstance();
+  const auth = container.resolve(AuthService).getInstance();
 
   // Get the session - this may already be resolved by earlier middleware
   const session = await auth.api.getSession({

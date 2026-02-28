@@ -1,4 +1,4 @@
-import { inject, injectable } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 import { errorCodes } from '@startername/shared';
 import type { BadgeId } from '@startername/shared/constants/badges';
@@ -7,7 +7,6 @@ import { generatePublicCode } from '@~/db/helpers';
 import { User } from '@~/db/models/auth.model';
 import { UserAchievementModel } from '@~/db/models/user-achievements.model';
 import { UserProfileModel } from '@~/db/models/user-profile.model';
-import { TOKENS } from '@~/di/tokens';
 import { BADGES_META } from '@~/features/badges/badges.constants';
 import {
   ORPCBadRequestError,
@@ -16,13 +15,14 @@ import {
   ORPCNotFoundError,
 } from '@~/lib/orpc-error-wrapper';
 
-import type { iWithLogger, LoggerFactory } from '../logger/logger.types';
+import { LoggerFactory } from '../logger/logger.factory';
+import type { iWithLogger } from '../logger/logger.types';
 
 @injectable()
 export class UserService implements iWithLogger {
   public readonly logger: iWithLogger['logger'];
 
-  constructor(@inject(TOKENS.LoggerFactory) loggerFactory: LoggerFactory) {
+  constructor(loggerFactory: LoggerFactory) {
     this.logger = loggerFactory.create('user-service');
   }
 

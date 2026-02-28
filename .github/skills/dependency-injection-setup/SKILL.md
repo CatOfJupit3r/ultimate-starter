@@ -1,13 +1,22 @@
 ---
 name: dependency-injection-setup
-description: Set up and use dependency injection with tsyringe for server-side services. Use when creating services, registering tokens, implementing service-to-service dependencies, using the logger factory pattern, or resolving services in handlers.
+description: Set up and use dependency injection with tsyringe for server-side services. Use when creating services, implementing service-to-service dependencies, using the logger factory pattern, or resolving services in handlers.
 ---
 
 # Dependency Injection Setup
 
 ## Core concepts
 
-This codebase uses tsyringe's container with a small wrapper in `apps/server/src/di`. Services are registered with tokens and resolved through a type-safe registry.
+This codebase uses tsyringe with `@hono/tsyringe` for request-scoped dependency injection. Key features:
+
+- **emitDecoratorMetadata enabled (via SWC)**: tsyringe automatically infers constructor dependencies from types
+- **Request-scoped containers**: `@hono/tsyringe` creates a child container per request
+- **No tokens needed**: Inject classes directly for concrete classes
+
+**Key principles:**
+- Use `@singleton()` for stateless services shared across requests (LoggerFactory, AuthService, etc.)
+- Use `@injectable()` for request-scoped services (UserService, etc.)
+- Access services via `context.resolve(ServiceClass)` in handlers
 
 ## Step-by-step procedure
 
@@ -18,109 +27,97 @@ Create your service in `apps/server/src/features/<feature>/<feature>.service.ts`
 **See [references/service-patterns.md](references/service-patterns.md) for complete service examples.**
 
 ```typescript
+// For stateless shared services
+import { singleton } from 'tsyringe';
+
+@singleton()
+export class MySharedService {
+  // Shared across all requests
+}
+
+// For request-scoped services
 import { injectable } from 'tsyringe';
 
 @injectable()
-export class MyFeatureService {
-  constructor() {
-    // Constructor logic
-  }
-
-  public async doSomething(input: string): Promise<string> {
-    // Business logic
-    return `Processed: ${input}`;
-  }
+export class MyRequestService {
+  // New instance per request
 }
 ```
 
-### 2. Add a token to the registry
+### 2. Register the service
 
-Add the token and type to `apps/server/src/di/tokens.ts`:
+Add the import to `apps/server/src/di/container.ts`:
 
 ```typescript
-// Create a unique symbol
-const myFeatureServiceToken: unique symbol = Symbol.for('MyFeatureService');
-
-export const TOKENS = {
-  // ...existing tokens
-  MyFeatureService: myFeatureServiceToken,
-} as const;
-
-// Add type to registry
-export interface iTokenRegistry {
-  // ...existing entries
-  [TOKENS.MyFeatureService]: MyFeatureService;
+export async function registerServices() {
+  // Import triggers @singleton()/@injectable() registration
+  await import('@~/features/my-feature/my-feature.service');
 }
 ```
 
-### 3. Register the service
+### 3. Use in oRPC handlers
 
-Register in `apps/server/src/di/container.ts`:
+Use `context.resolve(ServiceClass)` to get services:
 
 ```typescript
 import { MyFeatureService } from '@~/features/my-feature/my-feature.service';
-import { TOKENS } from './tokens';
+import { protectedProcedure, base } from '../lib/orpc';
 
-export async function registerServices() {
-  // ...other registrations
-  
-  // For stateless services (most cases)
-  container.registerSingleton(TOKENS.MyFeatureService, MyFeatureService);
-  
-  // For stateful services that need per-usage instances
-  container.register(TOKENS.MyFeatureService, MyFeatureService, {
-    lifecycle: Lifecycle.Transient,
-  });
-}
+export const myRouter = base.myFeature.router({
+  doSomething: protectedProcedure.myFeature.doSomething.handler(async ({ context, input }) => {
+    const service = context.resolve(MyFeatureService);
+    return service.doSomething(input.value);
+  }),
+});
 ```
 
-### 4. Resolve and use the service
+### 4. Use in Hono routes (non-contract)
 
-#### In handlers
+Use `c.var.resolve(ServiceClass)`:
 
 ```typescript
-import { resolve } from '@~/di';
-import { TOKENS } from '@~/di/tokens';
+import { Hono } from 'hono';
+import { MyFeatureService } from '@~/features/my-feature/my-feature.service';
 
-export const myHandler = async (input, context) => {
-  const myService = resolve(TOKENS.MyFeatureService);
-  const result = await myService.doSomething(input.value);
-  return { result };
-};
+const router = new Hono();
+
+router.get('/my-route', async (c) => {
+  const service = c.var.resolve(MyFeatureService);
+  const result = await service.doSomething();
+  return c.json(result);
+});
 ```
 
-#### Create a getter for common access
+### 5. Use in loaders/middleware (global container)
 
-Getters automatically pick-up new services added to the registry, providing a convenient way to access them without importing tokens and resolve in every handler.
+For code that runs before the request context exists, use the global container:
 
 ```typescript
-import { GETTERS } from '@~/routers/di-getter';
+import { container } from 'tsyringe';
+import { MyFeatureService } from '@~/features/my-feature/my-feature.service';
 
-export const myHandler = async (input, context) => {
-  const myService = GETTERS.myFeatureService();
-  const result = await myService.doSomething(input.value);
-  return { result };
-};
+const myService = container.resolve(MyFeatureService);
 ```
 
 ## Constructor injection pattern
 
-For service-to-service dependencies, use constructor injection with `@inject()`:
+For service-to-service dependencies, tsyringe automatically resolves from parameter types:
 
 ```typescript
-import { injectable, inject } from 'tsyringe';
-import { TOKENS } from '@~/di/tokens';
-import type { iLogger } from '@~/di/tokens';
+import { singleton } from 'tsyringe';
+import { UserService } from '@~/features/user/user.service';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
+import type { iWithLogger } from '@~/features/logger/logger.types';
 
-@injectable()
-export class NotificationsService {
-  private readonly logger: iLogger;
+@singleton()
+export class NotificationsService implements iWithLogger {
+  public readonly logger: iWithLogger['logger'];
 
   constructor(
-    @inject(TOKENS.UserService) private userService: UserService,
-    @inject(TOKENS.LoggerFactory) loggerFactory: () => iLogger
+    private readonly userService: UserService,  // Auto-resolved from type
+    loggerFactory: LoggerFactory,               // Auto-resolved from type
   ) {
-    this.logger = loggerFactory();
+    this.logger = loggerFactory.create('notifications');
   }
 
   public async notifyUser(userId: string, message: string) {
@@ -136,16 +133,44 @@ export class NotificationsService {
 
 ## Service lifecycle
 
-Choose the appropriate lifecycle when registering:
+### `@singleton()` - Globally shared
+
+Use for stateless services shared across all requests:
 
 ```typescript
-// Singleton (default) - for stateless services
-container.registerSingleton(TOKENS.MyService, MyService);
+@singleton()
+export class LoggerFactory { ... }
+export class AuthService { ... }
+export class DatabaseService { ... }
+```
 
-// Transient - for stateful services
-container.register(TOKENS.MyService, MyService, {
-  lifecycle: Lifecycle.Transient,
-});
+**Use cases:** Loggers, auth, database connections, event bus, caches
+
+### `@injectable()` - Request-scoped
+
+Use for services that should be created fresh per request:
+
+```typescript
+@injectable()
+export class UserService { ... }
+export class OrderService { ... }
+```
+
+**Use cases:** Services that might cache request-specific data, services with request state
+
+## When to use tokens (rare)
+
+Only use tokens for interface-based injection. See `apps/server/src/di/tokens.ts` for documentation.
+
+```typescript
+// Define token for interface
+export const PAYMENT_SERVICE_TOKEN = Symbol.for('PaymentService');
+
+// Register implementation
+container.registerSingleton<iPaymentService>(PAYMENT_SERVICE_TOKEN, StripePaymentService);
+
+// Inject via @inject decorator
+constructor(@inject(PAYMENT_SERVICE_TOKEN) private payment: iPaymentService) {}
 ```
 
 **See [references/advanced-patterns.md](references/advanced-patterns.md) for testing patterns, best practices, and advanced service patterns.**

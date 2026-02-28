@@ -4,7 +4,7 @@ import { singleton } from 'tsyringe';
 import type { iEventPayloadMap, EventType } from '@~/features/events/events.constants';
 
 @singleton()
-export class TypedEventBus extends EventEmitter {
+export class EventBus extends EventEmitter {
   public on<K extends EventType>(event: K, listener: (payload: iEventPayloadMap[K]) => unknown): this {
     return super.on(event, listener);
   }

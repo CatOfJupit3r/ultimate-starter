@@ -1,9 +1,7 @@
 packages:
-  - 'apps/*'
-  - 'packages/*'
-  - 'configs/*'
-
-# Use pnpm catalogs for shared dependencies
+  - apps/*
+  - packages/*
+  - configs/*
 catalog:
   eslint: 9.39.2
   prettier: 3.7.4
@@ -16,6 +14,9 @@ catalog:
   '@types/node': 24.0.0
   tsdown: 0.18.4
   tsx: 4.19.2
+  '@swc/core': 1.15.17
+  '@swc-node/register': 1.10.10
+  unplugin-swc: 1.5.4
   vitest: 4.0.18
   '@vitest/ui': 4.0.18
   vite: 7.3.0
@@ -28,5 +29,7 @@ catalog:
   '@orpc/openapi': 1.13.2
   better-auth: 1.4.18
   '@typescript/native-preview': 7.0.0-dev.20251231.1
+onlyBuiltDependencies:
+  - '@swc/core'
 patchedDependencies:
   better-auth: patches/better-auth.patch

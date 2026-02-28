@@ -1,11 +1,12 @@
 import type { mongoose } from '@typegoose/typegoose';
+import { container } from 'tsyringe';
 
-import { resolve } from '@~/di';
-import { TOKENS } from '@~/di/tokens';
+import { AuthService } from '@~/features/auth/auth.service';
+import { ValkeyService } from '@~/features/valkey/valkey.service';
 
 export default async function authLoader(db: mongoose.mongo.Db) {
-  const authService = resolve(TOKENS.AuthService);
-  const valkeyService = resolve(TOKENS.ValkeyService);
+  const authService = container.resolve(AuthService);
+  const valkeyService = container.resolve(ValkeyService);
   const valkey = await valkeyService.connect();
 
   authService.connect(db, valkey);

@@ -1,6 +1,14 @@
+import type { InjectionToken } from 'tsyringe';
+import { container } from 'tsyringe';
+
 import { auth } from '../helpers/instance';
 
 type UserData = NonNullable<Prettify<Parameters<typeof auth.api.signUpEmail>[0]>>['body'];
+
+// Resolve function that mimics @hono/tsyringe's c.var.resolve
+function resolve<T>(token: InjectionToken<T>): T {
+  return container.resolve(token);
+}
 
 // ============================================================================
 // User Creation Utilities
@@ -45,6 +53,7 @@ export async function createUser(newUser: UserData = createRandomUser()) {
           user,
           session,
         },
+        resolve,
       },
     }),
   };

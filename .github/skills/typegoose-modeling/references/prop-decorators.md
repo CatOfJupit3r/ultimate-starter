@@ -1,226 +1,168 @@
 # Property Decorators Reference
 
-This project uses custom property decorators defined in `apps/server/src/db/prop.ts` to simplify Typegoose model definitions and provide better type inference.
+This project uses the standard `@prop` decorator from Typegoose with automatic type inference enabled via `emitDecoratorMetadata`, plus a convenience `@idProp` helper for `_id` fields.
 
-## Why custom decorators?
+## The `@idProp` Helper
 
-Typegoose requires explicit `type: () => Type` declarations for proper TypeScript inference. Without this, TypeScript cannot infer the correct types for model properties.
-
-### The problem with raw @prop
+For `_id` fields with auto-generated ObjectId strings, use the `idProp` helper from `../prop`:
 
 ```typescript
-// ❌ BAD: TypeScript cannot infer the type
-@prop()
-public name!: string;  // Type is 'any' at runtime
+import { prop, modelOptions, getModelForClass } from '@typegoose/typegoose';
+import { idProp } from '../prop';
 
-// ✅ GOOD: But verbose
-@prop({ type: () => String })
-public name!: string;  // Type is correctly inferred
-```
-
-### The solution: Typed decorators
-
-```typescript
-// ✅ BEST: Clean and type-safe
-@stringProp()
-public name!: string;  // Type is correctly inferred, less boilerplate
-```
-
-## Available decorators
-
-### `@objectIdProp(options?)`
-
-Automatically generates MongoDB ObjectId strings for `_id` fields.
-
-```typescript
-@objectIdProp()
-public _id!: string;
-
-// With options
-@objectIdProp({ required: true })
-public _id!: string;
-```
-
-**Equivalent to:**
-```typescript
-@prop({ type: () => String, default: () => ObjectIdString() })
-public _id!: string;
-```
-
-### `@stringProp(options?)`
-
-For string fields.
-
-```typescript
-@stringProp({ required: true })
-public name!: string;
-
-@stringProp({ default: '', maxlength: 500 })
-public bio!: string;
-
-@stringProp({ required: true, unique: true, index: true })
-public email!: string;
-```
-
-**Equivalent to:**
-```typescript
-@prop({ type: String, required: true })
-public name!: string;
-```
-
-### `@numberProp(options?)`
-
-For number fields.
-
-```typescript
-@numberProp({ required: true })
-public age!: number;
-
-@numberProp({ default: 0, min: 0 })
-public score!: number;
-```
-
-**Equivalent to:**
-```typescript
-@prop({ type: Number, required: true })
-public age!: number;
-```
-
-### `@booleanProp(options?)`
-
-For boolean fields.
-
-```typescript
-@booleanProp({ default: false })
-public archived!: boolean;
-
-@booleanProp({ required: true })
-public isActive!: boolean;
-```
-
-**Equivalent to:**
-```typescript
-@prop({ type: Boolean, default: false })
-public archived!: boolean;
-```
-
-### `@dateProp(options?)`
-
-For Date fields.
-
-```typescript
-@dateProp({ required: true })
-public unlockedAt!: Date;
-
-@dateProp({ default: () => new Date() })
-public lastSeen!: Date;
-```
-
-**Equivalent to:**
-```typescript
-@prop({ type: Date, required: true })
-public unlockedAt!: Date;
-```
-
-### `@stringArrayProp(options?)`
-
-For arrays of strings.
-
-```typescript
-@stringArrayProp({ default: [] })
-public tags!: string[];
-
-@stringArrayProp({ required: true })
-public roles!: string[];
-```
-
-**Equivalent to:**
-```typescript
-@prop({ type: () => [String], default: [] })
-public tags!: string[];
-```
-
-### `@numberArrayProp(options?)` and `@booleanArrayProp(options?)`
-
-For arrays of numbers or booleans.
-
-```typescript
-@numberArrayProp({ default: [] })
-public scores!: number[];
-
-@booleanArrayProp({ default: [] })
-public flags!: boolean[];
-```
-
-### `@arrayProp(itemType, options?)`
-
-For arrays of embedded documents.
-
-```typescript
-class StepClass {
-  @objectIdProp()
+@modelOptions({ schemaOptions: { collection: 'users' } })
+class UserClass {
+  @idProp({ required: true })
   public _id!: string;
 
-  @stringProp({ required: true })
-  public title!: string;
+  @prop({ required: true })
+  public name!: string;
 }
-
-@arrayProp(StepClass, { default: [] })
-public steps!: StepClass[];
 ```
 
-**Equivalent to:**
+This is equivalent to:
 ```typescript
-@prop({ type: () => [StepClass], default: [] })
-public steps!: StepClass[];
+@prop({ required: true, default: () => ObjectIdString() })
+public _id!: string;
 ```
 
-### `@objectProp(objectType, options?)`
+## Basic Usage
 
-For nested/embedded documents.
+With `emitDecoratorMetadata` enabled, Typegoose automatically infers types from TypeScript annotations:
+
+```typescript
+import { prop, modelOptions, getModelForClass } from '@typegoose/typegoose';
+
+@modelOptions({ schemaOptions: { collection: 'users' } })
+class UserClass {
+  @prop({ required: true })
+  public name!: string;  // Type automatically inferred as String
+
+  @prop({ required: true })
+  public age!: number;   // Type automatically inferred as Number
+
+  @prop({ default: false })
+  public isActive!: boolean;  // Type automatically inferred as Boolean
+
+  @prop()
+  public createdAt!: Date;  // Type automatically inferred as Date
+}
+```
+
+## Common Options
+
+All standard Typegoose/Mongoose options are supported:
+
+```typescript
+// Required field
+@prop({ required: true })
+public name!: string;
+
+// Default value
+@prop({ default: '' })
+public bio!: string;
+
+// Default with function (for dynamic values)
+@prop({ default: () => new Date() })
+public createdAt!: Date;
+
+// Unique constraint
+@prop({ required: true, unique: true })
+public email!: string;
+
+// Index
+@prop({ required: true, index: true })
+public userId!: string;
+
+// Combined options
+@prop({ required: true, unique: true, index: true })
+public slug!: string;
+
+// String constraints
+@prop({ maxlength: 500 })
+public description!: string;
+
+// Number constraints
+@prop({ min: 0, max: 100 })
+public score!: number;
+
+// Enum values
+@prop({ enum: ['ACTIVE', 'INACTIVE', 'PENDING'], default: 'PENDING' })
+public status!: string;
+```
+
+## Optional Fields
+
+```typescript
+// Optional (can be undefined)
+@prop()
+public nickname?: string;
+
+// Nullable (can be null)
+@prop({ default: null })
+public deletedAt!: Date | null;
+```
+
+## Arrays
+
+```typescript
+// Array of primitives
+@prop({ type: () => [String], default: [] })
+public tags!: string[];
+
+@prop({ type: () => [Number], default: [] })
+public scores!: number[];
+
+// Array of embedded documents
+@prop({ type: () => [AddressClass], default: [] })
+public addresses!: AddressClass[];
+```
+
+## Embedded Documents
 
 ```typescript
 class AddressClass {
-  @stringProp({ required: true })
+  @prop({ required: true })
   public street!: string;
+
+  @prop({ required: true })
+  public city!: string;
 }
 
-@objectProp(AddressClass)
-public address?: AddressClass;
+class UserClass {
+  @prop({ type: () => AddressClass })
+  public homeAddress?: AddressClass;
+
+  @prop({ type: () => [AddressClass], default: [] })
+  public addresses!: AddressClass[];
+}
 ```
 
-**Equivalent to:**
-```typescript
-@prop({ type: () => AddressClass })
-public address?: AddressClass;
-```
+## Mixed/Dynamic Data
 
-## Common options
+For unstructured data, use `allowMixed`:
 
-All decorators accept standard Typegoose options (except `type` and `default` which are handled by the decorator):
-
-- `required: boolean` - Field must be present
-- `default: any | () => any` - Default value (function for complex values)
-- `index: boolean` - Create a single-field index
-- `unique: boolean` - Enforce uniqueness
-- `enum: any[]` - Restrict to specific values
-- `minlength: number` - Minimum string length
-- `maxlength: number` - Maximum string length
-- `min: number` - Minimum number value
-- `max: number` - Maximum number value
-
-## When to use raw @prop
-
-Use the raw `@prop` decorator only for:
-
-1. **Mixed/dynamic data** (with `allowMixed: Severity.ALLOW`)
 ```typescript
 import { prop, Severity } from '@typegoose/typegoose';
 
 @prop({ type: () => Object, allowMixed: Severity.ALLOW })
-public data?: Record<string, unknown>;
+public metadata?: Record<string, unknown>;
 ```
 
-2. **Special Typegoose features** not supported by helpers (rare)
+## When to Specify Type Explicitly
 
-For 99% of cases, use the typed decorators for better developer experience and type safety.
+While types are usually inferred automatically, specify `type` explicitly for:
+
+1. **Arrays** - Always use `type: () => [ItemType]`
+2. **Embedded documents** - Use `type: () => EmbeddedClass`
+3. **Mixed data** - Use `type: () => Object` with `allowMixed`
+
+```typescript
+// Arrays require explicit type
+@prop({ type: () => [String], default: [] })
+public tags!: string[];
+
+// Embedded documents require explicit type
+@prop({ type: () => AddressClass })
+public address?: AddressClass;
+```

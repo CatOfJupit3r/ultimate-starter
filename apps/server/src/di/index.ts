@@ -1,1 +1,1 @@
-export { container, registerServices, resolve } from './container';
+export { container, registerServices } from './container';

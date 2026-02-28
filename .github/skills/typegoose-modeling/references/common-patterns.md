@@ -16,12 +16,12 @@ export type Visibility = z.infer<typeof visibilitySchema>;
 Use in models with `enum` option:
 
 ```typescript
-import { stringProp } from '../prop';
+import { prop, modelOptions } from '@typegoose/typegoose';
 import { VISIBILITY, type Visibility } from '@startername/shared/enums/visibility';
 
 @modelOptions({ schemaOptions: { collection: 'challenges' } })
 class ChallengeClass {
-  @stringProp({
+  @prop({
     required: true,
     enum: Object.values(VISIBILITY),
     default: VISIBILITY.PUBLIC,
@@ -35,6 +35,9 @@ class ChallengeClass {
 Enable automatic `createdAt` and `updatedAt`:
 
 ```typescript
+import { prop, modelOptions } from '@typegoose/typegoose';
+import { idProp } from '../prop';
+
 @modelOptions({
   schemaOptions: {
     collection: 'entities',
@@ -42,10 +45,10 @@ Enable automatic `createdAt` and `updatedAt`:
   },
 })
 class EntityClass {
-  @objectIdProp()
+  @idProp()
   public _id!: string;
 
-  @stringProp({ required: true })
+  @prop({ required: true })
   public name!: string;
 
   // Declare without decorators—Mongoose populates automatically
@@ -60,14 +63,14 @@ Use string IDs for references—no Mongoose ref field needed:
 
 ```typescript
 // Simple reference
-@stringProp({ required: true, index: true })
+@prop({ required: true, index: true })
 public userId!: string;
 
-@stringProp({ required: true })
+@prop({ required: true })
 public creatorId!: string;
 
 // Optional reference
-@stringProp({ required: false })
+@prop()
 public parentChallengeId?: string;
 ```
 
@@ -75,21 +78,21 @@ public parentChallengeId?: string;
 
 **Option 1: Undefined (preferred)**
 ```typescript
-@stringProp({ required: false })
+@prop()
 public optionalField?: string;
 // Can be undefined
 ```
 
 **Option 2: Null**
 ```typescript
-@stringProp({ default: null })
+@prop({ default: null })
 public optionalField!: string | null;
 // Can be null but not undefined
 ```
 
 **Option 3: Default value**
 ```typescript
-@stringProp({ default: 'DEFAULT' })
+@prop({ default: 'DEFAULT' })
 public field!: string;
 // Always has a value
 ```
@@ -131,21 +134,21 @@ Provides:
 
 **Empty by default:**
 ```typescript
-@stringArrayProp({ default: [] })
+@prop({ type: () => [String], default: [] })
 public tags!: string[];
 
-@arrayProp(TagClass, { default: [] })
-public tags!: TagClass[];
+@prop({ type: () => [TagClass], default: [] })
+public embeddedTags!: TagClass[];
 ```
 
 **Always present:**
 ```typescript
-@stringArrayProp()
+@prop({ type: () => [String], required: true })
 public tags!: string[];  // Required, must be array
 ```
 
 **Optional:**
 ```typescript
-@stringArrayProp()
+@prop({ type: () => [String] })
 public tags?: string[];  // May not exist
 ```

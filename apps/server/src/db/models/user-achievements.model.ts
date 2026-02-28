@@ -3,7 +3,7 @@ import type { DocumentType } from '@typegoose/typegoose';
 
 import type { UserAchievementId } from '@startername/shared/constants/achievements';
 
-import { dateProp, objectIdProp, stringProp } from '../prop';
+import { idProp } from '../prop';
 
 @index({ userId: 1, achievementId: 1 }, { unique: true })
 @modelOptions({
@@ -16,16 +16,16 @@ import { dateProp, objectIdProp, stringProp } from '../prop';
   },
 })
 export class UserAchievementClass {
-  @objectIdProp()
+  @idProp()
   public _id!: string;
 
-  @stringProp({ required: true, index: true })
+  @prop({ required: true, index: true })
   public userId!: string;
 
-  @stringProp({ required: true, index: true })
+  @prop({ type: String, required: true, index: true })
   public achievementId!: UserAchievementId;
 
-  @dateProp({ required: true })
+  @prop({ required: true })
   public unlockedAt!: Date;
 
   @prop({ type: () => Object, allowMixed: Severity.ALLOW })

@@ -7,10 +7,12 @@ Use indexes to optimize frequently queried field combinations.
 Add `index: true` to frequently queried fields:
 
 ```typescript
-@stringProp({ required: true, index: true })
+import { prop } from '@typegoose/typegoose';
+
+@prop({ required: true, index: true })
 public ownerId!: string;
 
-@stringProp({ required: true, index: true })
+@prop({ required: true, index: true })
 public email!: string;
 ```
 
@@ -19,10 +21,10 @@ public email!: string;
 Use `unique: true` for fields requiring uniqueness:
 
 ```typescript
-@stringProp({ required: true, unique: true })
+@prop({ required: true, unique: true })
 public email!: string;
 
-@stringProp({ required: true, unique: true })
+@prop({ required: true, unique: true })
 public username!: string;
 ```
 
@@ -31,8 +33,8 @@ public username!: string;
 Use `@index` decorator for multi-field indexes optimizing common query patterns:
 
 ```typescript
-import { index, modelOptions } from '@typegoose/typegoose';
-import { objectIdProp, stringProp } from '../prop';
+import { index, modelOptions, prop } from '@typegoose/typegoose';
+import { idProp } from '../prop';
 
 @index({ ownerId: 1, createdAt: -1 })        // Sort by date descending
 @index({ visibility: 1, archived: 1 })       // Filter both
@@ -41,16 +43,16 @@ import { objectIdProp, stringProp } from '../prop';
   schemaOptions: { collection: 'challenges' },
 })
 class ChallengeClass {
-  @objectIdProp()
+  @idProp()
   public _id!: string;
 
-  @stringProp({ required: true })
+  @prop({ required: true })
   public ownerId!: string;
 
-  @stringProp({ required: true, enum: ['PUBLIC', 'PRIVATE'] })
+  @prop({ required: true, enum: ['PUBLIC', 'PRIVATE'] })
   public visibility!: string;
 
-  @booleanProp({ default: false })
+  @prop({ default: false })
   public archived!: boolean;
 
   public createdAt!: Date;
@@ -89,13 +91,13 @@ DON'T create multiple single-field indexes when one compound index handles them:
 
 ```typescript
 // ✗ BAD: Three separate indexes
-@stringProp({ index: true })
+@prop({ index: true })
 public visibility!: string;
 
-@booleanProp({ index: true })
+@prop({ index: true })
 public archived!: boolean;
 
-@stringProp({ index: true })
+@prop({ index: true })
 public createdAt!: Date;
 
 // ✓ GOOD: One compound index covers all
@@ -107,11 +109,11 @@ public createdAt!: Date;
 For documents that should auto-delete after a time:
 
 ```typescript
-import { index } from '@typegoose/typegoose';
+import { index, prop } from '@typegoose/typegoose';
 
 @index({ expiresAt: 1 }, { expireAfterSeconds: 0 })
 class SessionClass {
-  @dateProp({ required: true })
+  @prop({ required: true })
   public expiresAt!: Date;
 }
 // Deletes when expiresAt time is reached

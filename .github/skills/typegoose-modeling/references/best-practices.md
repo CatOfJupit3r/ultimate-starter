@@ -7,7 +7,7 @@ Models should be pure data structures—move logic to services.
 ❌ **Don't: Add methods to model classes**
 ```typescript
 class ChallengeClass {
-  @stringProp({ required: true })
+  @prop({ required: true })
   public title!: string;
 
   public async addParticipant(userId: string) {  // BAD
@@ -55,15 +55,17 @@ Benefits:
 Reuse nested structures across models:
 
 ```typescript
+import { prop, modelOptions } from '@typegoose/typegoose';
+
 // In apps/server/src/db/schemas/common.ts
 export class AuditableClass {
-  @stringProp({ required: true })
+  @prop({ required: true })
   public createdBy!: string;
 
-  @stringProp({ required: true })
+  @prop({ required: true })
   public lastModifiedBy!: string;
 
-  @dateProp({ required: true })
+  @prop({ required: true })
   public lastModifiedAt!: Date;
 }
 
@@ -75,7 +77,7 @@ export class TimestampedClass {
 // In models
 @modelOptions({ schemaOptions: { collection: 'challenges', timestamps: true } })
 class ChallengeClass extends AuditableClass {
-  @stringProp({ required: true })
+  @prop({ required: true })
   public title!: string;
 
   public createdAt!: Date;
@@ -84,7 +86,7 @@ class ChallengeClass extends AuditableClass {
 
 @modelOptions({ schemaOptions: { collection: 'submissions' } })
 class SubmissionClass extends AuditableClass {
-  @stringProp({ required: true })
+  @prop({ required: true })
   public challengeId!: string;
 
   public createdAt!: Date;

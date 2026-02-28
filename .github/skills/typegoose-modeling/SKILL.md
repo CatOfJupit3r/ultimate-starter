@@ -9,15 +9,15 @@ Modular guides for creating type-safe MongoDB models with Typegoose and Mongoose
 
 ## Core Concepts
 
-Models live in `apps/server/src/db/models` and use Typegoose to wrap Mongoose. Always use class-based schemas with `@modelOptions` and typed property decorators from `apps/server/src/db/prop.ts`.
+Models live in `apps/server/src/db/models` and use Typegoose to wrap Mongoose. Always use class-based schemas with `@modelOptions` and the standard `@prop` decorator from Typegoose.
 
-**CRITICAL**: This project uses custom property decorators (`objectIdProp`, `stringProp`, etc.) instead of raw `@prop` decorators. These provide proper type inference automatically. See [references/prop-decorators.md](references/prop-decorators.md) for complete details.
+**Note**: This project uses SWC for TypeScript compilation with `emitDecoratorMetadata` enabled, so Typegoose can automatically infer types from TypeScript annotations without explicit `type` declarations.
 
 ## Quick Reference
 
 | Guide | Use When |
 |-------|----------|
-| [Prop Decorators](references/prop-decorators.md) | Understanding available field decorators and type inference |
+| [Property Decorators](references/prop-decorators.md) | Understanding @prop options and patterns |
 | [Embedded Documents](references/embedded-documents.md) | Creating nested objects and arrays of documents |
 | [Indexes](references/indexes.md) | Optimizing queries with single and compound indexes |
 | [Common Patterns](references/common-patterns.md) | Enums, timestamps, references, optional fields, collections |

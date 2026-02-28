@@ -1,15 +1,14 @@
-import { inject, singleton } from 'tsyringe';
+import { singleton } from 'tsyringe';
 
-import { TOKENS } from '@~/di/tokens';
-
-import type { iWithLogger, LoggerFactory } from '../logger/logger.types';
+import { LoggerFactory } from '../logger/logger.factory';
+import type { iWithLogger } from '../logger/logger.types';
 import { BADGES_META } from './badges.constants';
 
 @singleton()
 export class BadgesService implements iWithLogger {
   public readonly logger: iWithLogger['logger'];
 
-  constructor(@inject(TOKENS.LoggerFactory) loggerFactory: LoggerFactory) {
+  constructor(loggerFactory: LoggerFactory) {
     this.logger = loggerFactory.create('badges');
   }
 

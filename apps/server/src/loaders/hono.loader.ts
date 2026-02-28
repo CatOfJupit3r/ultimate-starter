@@ -1,3 +1,4 @@
+import { tsyringe } from '@hono/tsyringe';
 import { OpenAPIHandler } from '@orpc/openapi/fetch';
 import { OpenAPIReferencePlugin } from '@orpc/openapi/plugins';
 import { onError } from '@orpc/server';
@@ -10,10 +11,11 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { isEmpty } from 'lodash-es';
 import { stringify } from 'safe-stable-stringify';
+import { container } from 'tsyringe';
 
 import env from '@~/constants/env';
-import { resolve } from '@~/di';
-import { TOKENS } from '@~/di/tokens';
+import { AuthService } from '@~/features/auth/auth.service';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
 import { requestContextMiddleware } from '@~/features/logger/logger.middleware';
 import type { iRequestContext } from '@~/features/logger/logger.types';
 import { appRouter } from '@~/routers';
@@ -26,8 +28,11 @@ interface iCreateContextOptions {
 function contextGenerator() {
   return async function createContext({ context }: iCreateContextOptions) {
     const session = context.get('session');
+    // eslint-disable-next-line @typescript-eslint/prefer-destructuring
+    const resolve = context.var.resolve;
     return {
       session,
+      resolve,
     };
   };
 }
@@ -42,10 +47,13 @@ export type Context = Awaited<ReturnType<ReturnType<typeof contextGenerator>>>;
 export default async function honoLoader() {
   const app = new Hono<iRequestContext>();
 
-  const auth = resolve(TOKENS.AuthService).getInstance();
-  const apiLogger = resolve(TOKENS.LoggerFactory).create('API');
+  const auth = container.resolve(AuthService).getInstance();
+  const apiLogger = container.resolve(LoggerFactory).create('API');
 
   const createContext = contextGenerator();
+
+  // Request-scoped DI container - creates a child container per request
+  app.use('/*', tsyringe());
   app.use('/*', requestContextMiddleware);
 
   app.use(contextStorage());

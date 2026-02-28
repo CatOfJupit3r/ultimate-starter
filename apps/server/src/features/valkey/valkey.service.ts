@@ -1,10 +1,10 @@
 import Redis from 'ioredis';
-import { inject, singleton } from 'tsyringe';
+import { singleton } from 'tsyringe';
 
 import env from '@~/constants/env';
-import { TOKENS } from '@~/di/tokens';
 
-import type { iWithLogger, LoggerFactory, LoggerType } from '../logger/logger.types';
+import { LoggerFactory } from '../logger/logger.factory';
+import type { iWithLogger, LoggerType } from '../logger/logger.types';
 
 @singleton()
 export class ValkeyService implements iWithLogger {
@@ -12,7 +12,7 @@ export class ValkeyService implements iWithLogger {
 
   private client: Redis | Nil = null;
 
-  constructor(@inject(TOKENS.LoggerFactory) loggerFactory: LoggerFactory) {
+  constructor(loggerFactory: LoggerFactory) {
     this.logger = loggerFactory.create('valkey');
   }
 

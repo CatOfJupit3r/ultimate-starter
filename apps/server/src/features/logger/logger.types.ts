@@ -2,9 +2,7 @@ import type { User, Session } from 'better-auth';
 import type { Env } from 'hono';
 
 import type { Logger } from './logger';
-import type { LoggerFactoryImpl } from './logger.factory';
 
-export type LoggerFactory = LoggerFactoryImpl;
 export type LoggerType = Logger;
 
 export interface iWithLogger {
