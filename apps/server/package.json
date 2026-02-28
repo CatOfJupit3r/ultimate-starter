@@ -9,7 +9,7 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "prettier": "@ultimate-starter/prettier-config",
+  "prettier": "@startername/prettier-config",
   "dependencies": {
     "@hono/node-server": "^1.19.9",
     "@hono/standard-validator": "0.2.1",
@@ -38,8 +38,8 @@
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
-    "@ultimate-starter/eslint-config": "workspace:*",
-    "@ultimate-starter/prettier-config": "workspace:*",
+    "@startername/eslint-config": "workspace:*",
+    "@startername/prettier-config": "workspace:*",
     "@vitest/ui": "catalog:",
     "eslint": "catalog:",
     "mongodb-memory-server": "11.0.1",

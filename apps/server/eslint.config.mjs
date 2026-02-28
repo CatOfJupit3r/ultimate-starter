@@ -1,4 +1,4 @@
-import { createBackendConfig } from '@ultimate-starter/eslint-config';
+import { createBackendConfig } from '@startername/eslint-config';
 
 export default createBackendConfig({
   rootDir: import.meta.url,

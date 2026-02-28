@@ -1,5 +1,5 @@
 /**
- * Shared Prettier Configuration for ultimate-starter Monorepo
+ * Shared Prettier Configuration for startername Monorepo
  * 
  * This is the base Prettier configuration used across all workspaces.
  * Individual workspaces can extend this configuration by importing it.

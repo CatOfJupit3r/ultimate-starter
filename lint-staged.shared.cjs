@@ -1,5 +1,5 @@
 /**
- * Shared lint-staged configuration for ultimate-starter monorepo
+ * Shared lint-staged configuration for startername monorepo
  *
  * This configuration runs linting and formatting on staged files before commit.
  * It's optimized for a monorepo structure with TypeScript/JavaScript files.

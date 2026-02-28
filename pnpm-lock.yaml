@@ -194,10 +194,10 @@ importers:
       '@typescript/native-preview':
         specifier: 'catalog:'
         version: 7.0.0-dev.20251231.1
-      '@ultimate-starter/eslint-config':
+      '@startername/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint-config
-      '@ultimate-starter/prettier-config':
+      '@startername/prettier-config':
         specifier: workspace:*
         version: link:../../configs/prettier-config
       '@vitest/ui':
@@ -375,10 +375,10 @@ importers:
       '@typescript/native-preview':
         specifier: 'catalog:'
         version: 7.0.0-dev.20251231.1
-      '@ultimate-starter/eslint-config':
+      '@startername/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint-config
-      '@ultimate-starter/prettier-config':
+      '@startername/prettier-config':
         specifier: workspace:*
         version: link:../../configs/prettier-config
       '@vitejs/plugin-react':
@@ -520,10 +520,10 @@ importers:
       '@typescript/native-preview':
         specifier: 'catalog:'
         version: 7.0.0-dev.20251231.1
-      '@ultimate-starter/eslint-config':
+      '@startername/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint-config
-      '@ultimate-starter/prettier-config':
+      '@startername/prettier-config':
         specifier: workspace:*
         version: link:../../configs/prettier-config
       eslint:

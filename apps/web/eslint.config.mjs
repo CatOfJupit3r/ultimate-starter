@@ -1,4 +1,4 @@
-import { createWebConfig } from '@ultimate-starter/eslint-config';
+import { createWebConfig } from '@startername/eslint-config';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 

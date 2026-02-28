@@ -1,9 +1,9 @@
 {
-  "name": "@ultimate-starter/eslint-config",
+  "name": "@startername/eslint-config",
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "description": "Shared ESLint configuration for ultimate-starter monorepo",
+  "description": "Shared ESLint configuration for startername monorepo",
   "exports": {
     ".": "./src/index.mjs"
   },

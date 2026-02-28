@@ -1,3 +1,3 @@
-# @ultimate-starter/eslint-config
+# @startername/eslint-config
 
-Shared ESLint configuration for ultimate-starter monorepo projects.
+Shared ESLint configuration for startername monorepo projects.

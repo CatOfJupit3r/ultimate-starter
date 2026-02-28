@@ -1,3 +1,3 @@
-# @ultimate-starter/prettier-config
+# @startername/prettier-config
 
-Shared Prettier configuration for ultimate-starter monorepo projects.
+Shared Prettier configuration for startername monorepo projects.

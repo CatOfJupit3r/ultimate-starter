@@ -1,9 +1,9 @@
 {
-  "name": "@ultimate-starter/prettier-config",
+  "name": "@startername/prettier-config",
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "description": "Shared Prettier configuration for ultimate-starter monorepo",
+  "description": "Shared Prettier configuration for startername monorepo",
   "main": "./prettier.config.mjs",
   "exports": {
     ".": "./prettier.config.mjs"

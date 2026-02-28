@@ -1,5 +1,5 @@
 /**
- * Shared ESLint Configuration Factory for ultimate-starter Monorepo
+ * Shared ESLint Configuration Factory for startername Monorepo
  * 
  * This module provides a factory function to create ESLint configurations
  * for different project types (backend, web) with consistent rules across
