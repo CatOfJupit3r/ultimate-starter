@@ -1,13 +1,15 @@
 ---
 name: dependency-injection-setup
-description: Set up and use dependency injection with tsyringe for server-side services. Use when creating services, registering tokens, implementing service-to-service dependencies, using the logger factory pattern, or resolving services in handlers.
+description: Set up and use dependency injection with tsyringe for server-side services. Use when creating services, implementing service-to-service dependencies, using the logger factory pattern, or resolving services in handlers.
 ---
 
 # Dependency Injection Setup
 
 ## Core concepts
 
-This codebase uses tsyringe's container with a small wrapper in `apps/server/src/di`. Services are registered with tokens and resolved through a type-safe registry.
+This codebase uses tsyringe for dependency injection with `emitDecoratorMetadata` enabled (via SWC). This allows tsyringe to automatically infer constructor dependencies from their types - no tokens required for concrete classes.
+
+**Key principle:** Inject classes directly. Only use tokens for interface-based injection patterns.
 
 ## Step-by-step procedure
 
@@ -18,9 +20,9 @@ Create your service in `apps/server/src/features/<feature>/<feature>.service.ts`
 **See [references/service-patterns.md](references/service-patterns.md) for complete service examples.**
 
 ```typescript
-import { injectable } from 'tsyringe';
+import { singleton } from 'tsyringe';
 
-@injectable()
+@singleton()
 export class MyFeatureService {
   constructor() {
     // Constructor logic
@@ -33,94 +35,78 @@ export class MyFeatureService {
 }
 ```
 
-### 2. Add a token to the registry
+### 2. Register the service (usually automatic)
 
-Add the token and type to `apps/server/src/di/tokens.ts`:
+Classes decorated with `@singleton()` are automatically registered when imported. For most services, no explicit registration is needed.
+
+If you need explicit registration (e.g., for transient lifecycle), add to `apps/server/src/di/container.ts`:
 
 ```typescript
-// Create a unique symbol
-const myFeatureServiceToken: unique symbol = Symbol.for('MyFeatureService');
-
-export const TOKENS = {
-  // ...existing tokens
-  MyFeatureService: myFeatureServiceToken,
-} as const;
-
-// Add type to registry
-export interface iTokenRegistry {
-  // ...existing entries
-  [TOKENS.MyFeatureService]: MyFeatureService;
+export async function registerServices() {
+  // Import the service (triggers @singleton() registration)
+  await import('@~/features/my-feature/my-feature.service');
+  
+  // For transient services (new instance per resolution):
+  const { MyFeatureService } = await import('@~/features/my-feature/my-feature.service');
+  container.register(MyFeatureService, { useClass: MyFeatureService }, { lifecycle: Lifecycle.Transient });
 }
 ```
 
-### 3. Register the service
+### 3. Add a getter for router access
 
-Register in `apps/server/src/di/container.ts`:
+Add to `apps/server/src/routers/di-getter.ts`:
 
 ```typescript
 import { MyFeatureService } from '@~/features/my-feature/my-feature.service';
-import { TOKENS } from './tokens';
 
-export async function registerServices() {
-  // ...other registrations
-  
-  // For stateless services (most cases)
-  container.registerSingleton(TOKENS.MyFeatureService, MyFeatureService);
-  
-  // For stateful services that need per-usage instances
-  container.register(TOKENS.MyFeatureService, MyFeatureService, {
-    lifecycle: Lifecycle.Transient,
-  });
-}
+export const GETTERS = {
+  // ...existing getters
+  MyFeatureService: () => container.resolve(MyFeatureService),
+} as const;
 ```
 
 ### 4. Resolve and use the service
 
-#### In handlers
-
-```typescript
-import { resolve } from '@~/di';
-import { TOKENS } from '@~/di/tokens';
-
-export const myHandler = async (input, context) => {
-  const myService = resolve(TOKENS.MyFeatureService);
-  const result = await myService.doSomething(input.value);
-  return { result };
-};
-```
-
-#### Create a getter for common access
-
-Getters automatically pick-up new services added to the registry, providing a convenient way to access them without importing tokens and resolve in every handler.
+#### In handlers (via GETTERS)
 
 ```typescript
 import { GETTERS } from '@~/routers/di-getter';
 
 export const myHandler = async (input, context) => {
-  const myService = GETTERS.myFeatureService();
+  const myService = GETTERS.MyFeatureService();
   const result = await myService.doSomething(input.value);
   return { result };
 };
 ```
 
-## Constructor injection pattern
-
-For service-to-service dependencies, use constructor injection with `@inject()`:
+#### Direct resolution (in loaders/middleware)
 
 ```typescript
-import { injectable, inject } from 'tsyringe';
-import { TOKENS } from '@~/di/tokens';
-import type { iLogger } from '@~/di/tokens';
+import { container } from 'tsyringe';
+import { MyFeatureService } from '@~/features/my-feature/my-feature.service';
 
-@injectable()
-export class NotificationsService {
-  private readonly logger: iLogger;
+const myService = container.resolve(MyFeatureService);
+```
+
+## Constructor injection pattern
+
+For service-to-service dependencies, tsyringe automatically resolves from parameter types:
+
+```typescript
+import { singleton } from 'tsyringe';
+import { UserService } from '@~/features/user/user.service';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
+import type { iWithLogger } from '@~/features/logger/logger.types';
+
+@singleton()
+export class NotificationsService implements iWithLogger {
+  public readonly logger: iWithLogger['logger'];
 
   constructor(
-    @inject(TOKENS.UserService) private userService: UserService,
-    @inject(TOKENS.LoggerFactory) loggerFactory: () => iLogger
+    private readonly userService: UserService,  // Auto-resolved from type
+    loggerFactory: LoggerFactory,               // Auto-resolved from type
   ) {
-    this.logger = loggerFactory();
+    this.logger = loggerFactory.create('notifications');
   }
 
   public async notifyUser(userId: string, message: string) {
@@ -136,16 +122,34 @@ export class NotificationsService {
 
 ## Service lifecycle
 
-Choose the appropriate lifecycle when registering:
+Choose the appropriate decorator or registration:
 
 ```typescript
-// Singleton (default) - for stateless services
-container.registerSingleton(TOKENS.MyService, MyService);
+// Singleton (most common) - single instance shared across app
+@singleton()
+export class MyService { ... }
 
-// Transient - for stateful services
-container.register(TOKENS.MyService, MyService, {
-  lifecycle: Lifecycle.Transient,
-});
+// Injectable - must be explicitly registered with lifecycle
+@injectable()
+export class StatefulService { ... }
+
+// Register as transient in container.ts:
+container.register(StatefulService, { useClass: StatefulService }, { lifecycle: Lifecycle.Transient });
+```
+
+## When to use tokens (rare)
+
+Only use tokens for interface-based injection. See `apps/server/src/di/tokens.ts` for documentation.
+
+```typescript
+// Define token for interface
+export const PAYMENT_SERVICE_TOKEN = Symbol.for('PaymentService');
+
+// Register implementation
+container.registerSingleton<iPaymentService>(PAYMENT_SERVICE_TOKEN, StripePaymentService);
+
+// Inject via @inject decorator
+constructor(@inject(PAYMENT_SERVICE_TOKEN) private payment: iPaymentService) {}
 ```
 
 **See [references/advanced-patterns.md](references/advanced-patterns.md) for testing patterns, best practices, and advanced service patterns.**

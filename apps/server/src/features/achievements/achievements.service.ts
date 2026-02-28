@@ -1,23 +1,23 @@
-import { inject, singleton } from 'tsyringe';
+import { singleton } from 'tsyringe';
 
 import type { UserAchievementId } from '@startername/shared/constants/achievements';
 
 import { UserAchievementModel } from '@~/db/models/user-achievements.model';
-import { TOKENS } from '@~/di/tokens';
 import type { iAchievementContext, iAchievementDefinition } from '@~/features/achievements/achievements.types';
-import { TypedEventBus } from '@~/features/events/event-bus';
+import { EventBus } from '@~/features/events/event-bus';
 
-import type { iWithLogger, LoggerFactory } from '../logger/logger.types';
+import { LoggerFactory } from '../logger/logger.factory';
+import type { iWithLogger } from '../logger/logger.types';
 import { USER_ACHIEVEMENTS_META } from './achievements.constants';
 import { betaTesterAchievement } from './concrete-achievements/beta-tester.achievement';
 
 @singleton()
 export class AchievementsService implements iWithLogger {
-  private achievements: iAchievementDefinition[] = [betaTesterAchievement];
+  private readonly achievements: iAchievementDefinition[] = [betaTesterAchievement];
 
   public readonly logger: iWithLogger['logger'];
 
-  private context: iAchievementContext = {
+  private readonly context: iAchievementContext = {
     unlock: async (userId: string, achievementId: UserAchievementId, data?: Record<string, unknown>) => {
       const existingAchievement = await UserAchievementModel.findOne({ userId, achievementId });
 
@@ -35,10 +35,11 @@ export class AchievementsService implements iWithLogger {
   };
 
   constructor(
-    @inject(TOKENS.EventBus) private readonly eventBus: TypedEventBus,
-    @inject(TOKENS.LoggerFactory) loggerFactory: LoggerFactory,
+    private readonly eventBus: EventBus,
+    loggerFactory: LoggerFactory,
   ) {
     this.logger = loggerFactory.create('achievements');
+    this.logger.info('AchievementsService initialized');
     this.initialize();
   }
 

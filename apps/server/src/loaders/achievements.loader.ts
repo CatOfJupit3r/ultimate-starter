@@ -1,7 +1,8 @@
-import { resolve } from '@~/di';
-import { TOKENS } from '@~/di/tokens';
+import { container } from 'tsyringe';
+
+import { AchievementsService } from '@~/features/achievements/achievements.service';
 
 export default async function achievementsLoader() {
-  const achievementsService = resolve(TOKENS.AchievementsService);
+  const achievementsService = container.resolve(AchievementsService);
   achievementsService.initialize();
 }

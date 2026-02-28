@@ -1,47 +1,59 @@
-import type { DatabaseService } from '@~/db/database.service';
-import type { AchievementsService } from '@~/features/achievements/achievements.service';
-import type { AuthService } from '@~/features/auth/auth.service';
-import type { BadgesService } from '@~/features/badges/badges.service';
-import type { TypedEventBus } from '@~/features/events/event-bus';
-import type { LoggerFactory } from '@~/features/logger/logger.types';
-import type { UserService } from '@~/features/user/user.service';
-import type { ValkeyService } from '@~/features/valkey/valkey.service';
+/**
+ * DI Tokens for Interface-Based Injection
+ *
+ * This file demonstrates the token pattern for when you need to inject
+ * INTERFACES instead of concrete classes. With emitDecoratorMetadata enabled,
+ * concrete classes can be injected directly without tokens.
+ *
+ * When to use tokens:
+ * - Injecting an interface with multiple possible implementations
+ * - Swapping implementations for testing
+ * - Plugin/strategy patterns
+ *
+ * When NOT to use tokens (use class directly):
+ * - Injecting a concrete class with @singleton() or @injectable()
+ * - The class is the only implementation of itself
+ *
+ * @example Token-based injection for interfaces:
+ * ```typescript
+ * // Define interface
+ * interface iPaymentService {
+ *   processPayment(amount: number): Promise<void>;
+ * }
+ *
+ * // Create unique token
+ * export const PAYMENT_SERVICE_TOKEN = Symbol.for('PaymentService');
+ *
+ * // Register implementation
+ * container.registerSingleton<iPaymentService>(PAYMENT_SERVICE_TOKEN, StripePaymentService);
+ *
+ * // Inject via token
+ * @injectable()
+ * class CheckoutService {
+ *   constructor(@inject(PAYMENT_SERVICE_TOKEN) private payment: iPaymentService) {}
+ * }
+ *
+ * // Or resolve manually
+ * const payment = container.resolve<iPaymentService>(PAYMENT_SERVICE_TOKEN);
+ * ```
+ *
+ * @example Direct class injection (preferred for concrete classes):
+ * ```typescript
+ * @singleton()
+ * class DatabaseService {
+ *   async connect() { ... }
+ * }
+ *
+ * @injectable()
+ * class UserService {
+ *   // tsyringe infers DatabaseService from parameter type
+ *   constructor(private db: DatabaseService) {}
+ * }
+ *
+ * // Or resolve manually
+ * const db = container.resolve(DatabaseService);
+ * ```
+ */
 
-// Token creation macro - reduces each service from 3 lines to 1 line
-// Usage: T('ServiceName') creates both the token constant and adds it to the registry
-// Note: TypeScript requires unique symbol types for computed property keys, so we must declare them separately
-const databaseServiceToken: unique symbol = Symbol.for('DatabaseService');
-const authServiceToken: unique symbol = Symbol.for('AuthService');
-const achievementsServiceToken: unique symbol = Symbol.for('AchievementsService');
-const badgesServiceToken: unique symbol = Symbol.for('BadgesService');
-const eventBusToken: unique symbol = Symbol.for('EventBus');
-const userServiceToken: unique symbol = Symbol.for('UserService');
-const loggerFactoryToken: unique symbol = Symbol.for('LoggerFactory');
-const valkeyServiceToken: unique symbol = Symbol.for('ValkeyService');
-
-// Consolidated TOKENS object - single source of truth for all service tokens
-export const TOKENS = {
-  DatabaseService: databaseServiceToken,
-  AuthService: authServiceToken,
-  AchievementsService: achievementsServiceToken,
-  BadgesService: badgesServiceToken,
-  EventBus: eventBusToken,
-  UserService: userServiceToken,
-  LoggerFactory: loggerFactoryToken,
-  ValkeyService: valkeyServiceToken,
-} as const;
-
-// Type registry - using indexed access to reduce duplication
-// Each entry references the TOKENS constant and maps to its service type
-export interface iTokenRegistry {
-  [TOKENS.DatabaseService]: DatabaseService;
-  [TOKENS.AuthService]: AuthService;
-  [TOKENS.AchievementsService]: AchievementsService;
-  [TOKENS.BadgesService]: BadgesService;
-  [TOKENS.EventBus]: TypedEventBus;
-  [TOKENS.UserService]: UserService;
-  [TOKENS.LoggerFactory]: LoggerFactory;
-  [TOKENS.ValkeyService]: ValkeyService;
-}
-
-export type InjectionTokens = typeof TOKENS;
+// Example token for interface-based injection (uncomment and modify as needed):
+// export const EXAMPLE_SERVICE_TOKEN = Symbol.for('ExampleService');

@@ -1,5 +1,7 @@
-import { registerServices, resolve } from '@~/di';
-import { TOKENS } from '@~/di/tokens';
+import { container } from 'tsyringe';
+
+import { registerServices } from '@~/di';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
 
 import achievementsLoader from './achievements.loader';
 import authLoader from './auth.loader';
@@ -12,7 +14,7 @@ let cachedLoadersPromise: ReturnType<typeof bootstrap> | null = null;
 async function bootstrap() {
   await registerServices();
 
-  const logger = isTest ? null : resolve(TOKENS.LoggerFactory).global();
+  const logger = isTest ? null : container.resolve(LoggerFactory).global();
 
   if (logger) logger.info('Registering DI services...');
 

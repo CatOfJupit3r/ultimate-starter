@@ -1,18 +1,26 @@
-import { resolve } from '@~/di';
-import { TOKENS } from '@~/di/tokens';
-import type { iTokenRegistry, InjectionTokens } from '@~/di/tokens';
+import { container } from 'tsyringe';
 
-// Auto-generate GETTERS from TOKENS to eliminate manual maintenance
-// When a new service is added to TOKENS, it will automatically be available in GETTERS
-// This ensures type safety and reduces the risk of forgetting to add a getter
-type GettersMap = {
-  [K in keyof InjectionTokens]: () => iTokenRegistry[InjectionTokens[K]];
-};
+import { DatabaseService } from '@~/db/database.service';
+import { AchievementsService } from '@~/features/achievements/achievements.service';
+import { AuthService } from '@~/features/auth/auth.service';
+import { BadgesService } from '@~/features/badges/badges.service';
+import { EventBus } from '@~/features/events/event-bus';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
+import { UserService } from '@~/features/user/user.service';
+import { ValkeyService } from '@~/features/valkey/valkey.service';
 
-// Create GETTERS dynamically from TOKENS using Object.fromEntries
-export const GETTERS = Object.fromEntries(
-  Object.keys(TOKENS).map((key) => {
-    const tokenKey = key as keyof InjectionTokens;
-    return [tokenKey, () => resolve(TOKENS[tokenKey])];
-  }),
-) as GettersMap;
+/**
+ * Service getters for router handlers.
+ * These use native tsyringe resolution - classes with @singleton() or @injectable()
+ * decorators are automatically resolved from constructor parameter types.
+ */
+export const GETTERS = {
+  DatabaseService: () => container.resolve(DatabaseService),
+  AuthService: () => container.resolve(AuthService),
+  AchievementsService: () => container.resolve(AchievementsService),
+  BadgesService: () => container.resolve(BadgesService),
+  EventBus: () => container.resolve(EventBus),
+  UserService: () => container.resolve(UserService),
+  LoggerFactory: () => container.resolve(LoggerFactory),
+  ValkeyService: () => container.resolve(ValkeyService),
+} as const;

@@ -7,17 +7,29 @@
 ```typescript
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { TOKENS } from '@~/di/tokens';
-import type { MyService } from '@~/features/my-feature/my-feature.service';
+import { MyService } from '@~/features/my-feature/my-feature.service';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
 
 describe('MyHandler', () => {
   beforeEach(() => {
-    // Mock the service
-    const mockService: MyService = {
-      doSomething: vi.fn().mockResolvedValue('mocked result'),
+    // Create mock logger factory
+    const mockLoggerFactory = {
+      create: vi.fn().mockReturnValue({
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+        debug: vi.fn(),
+      }),
+      global: vi.fn().mockReturnValue({
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+        debug: vi.fn(),
+      }),
     };
 
-    container.register(TOKENS.MyService, { useValue: mockService });
+    // Register mock (overrides @singleton() registration)
+    container.register(LoggerFactory, { useValue: mockLoggerFactory });
   });
 
   afterEach(() => {
@@ -25,9 +37,9 @@ describe('MyHandler', () => {
   });
 
   it('should use the service', async () => {
-    const service = container.resolve(TOKENS.MyService);
+    const service = container.resolve(MyService);
     const result = await service.doSomething('test');
-    expect(result).toBe('mocked result');
+    expect(result).toBe('expected result');
   });
 });
 ```
@@ -64,7 +76,10 @@ export function createMyService(
 Use for stateless services that can be shared across requests:
 
 ```typescript
-container.registerSingleton(TOKENS.MyService, MyService);
+@singleton()
+export class MyService { ... }
+
+// No explicit registration needed - @singleton() handles it
 ```
 
 **When to use**:
@@ -78,9 +93,13 @@ container.registerSingleton(TOKENS.MyService, MyService);
 Use for stateful services that must be created per usage:
 
 ```typescript
-import { Lifecycle } from 'tsyringe';
+import { injectable, container, Lifecycle } from 'tsyringe';
 
-container.register(TOKENS.MyService, MyService, {
+@injectable()
+export class StatefulService { ... }
+
+// Explicit registration required for transient lifecycle
+container.register(StatefulService, { useClass: StatefulService }, {
   lifecycle: Lifecycle.Transient,
 });
 ```
@@ -96,7 +115,7 @@ container.register(TOKENS.MyService, MyService, {
 
 ❌ **Don't**: Store mutable state in singleton services
 ```typescript
-@injectable()
+@singleton()
 export class BadService {
   private cachedUsers: User[] = []; // BAD - shared state
 
@@ -108,7 +127,7 @@ export class BadService {
 
 ✅ **Do**: Keep services stateless or use transient lifecycle
 ```typescript
-@injectable()
+@singleton()
 export class GoodService {
   public async addUser(user: User) {
     return UserModel.create(user); // Stateless
@@ -116,29 +135,20 @@ export class GoodService {
 }
 ```
 
-### Prefer explicit dependencies
+### Dependencies are resolved from types
 
-❌ **Don't**: Hide dependencies behind static imports
+With `emitDecoratorMetadata` enabled, tsyringe automatically resolves dependencies from parameter types. No `@inject()` needed for concrete classes.
+
 ```typescript
-import { UserModel } from '@~/db/models/user.model';
-
-export class BadService {
-  public async getUser(id: string) {
-    return UserModel.findById(id); // Hard to mock
-  }
-}
-```
-
-✅ **Do**: Inject dependencies explicitly
-```typescript
-@injectable()
+@singleton()
 export class GoodService {
   constructor(
-    @inject(TOKENS.UserRepository) private userRepo: UserRepository,
+    private readonly userRepo: UserRepository,  // Auto-resolved
+    loggerFactory: LoggerFactory,               // Auto-resolved
   ) {}
 
   public async getUser(id: string) {
-    return this.userRepo.findById(id); // Easy to mock
+    return this.userRepo.findById(id);
   }
 }
 ```
@@ -163,19 +173,19 @@ Util
 
 ### Using the logger factory
 
-The repo exposes a `LoggerFactory` token. Use it to create contextual loggers:
+The repo has a `LoggerFactory` singleton. Use it to create contextual loggers:
 
 ```typescript
-import { injectable, inject } from 'tsyringe';
-import { TOKENS } from '@~/di/tokens';
-import type { iLogger } from '@~/di/tokens';
+import { singleton } from 'tsyringe';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
+import type { iWithLogger } from '@~/features/logger/logger.types';
 
-@injectable()
-export class MyService {
-  private readonly logger: iLogger;
+@singleton()
+export class MyService implements iWithLogger {
+  public readonly logger: iWithLogger['logger'];
 
-  constructor(@inject(TOKENS.LoggerFactory) loggerFactory: () => iLogger) {
-    this.logger = loggerFactory();
+  constructor(loggerFactory: LoggerFactory) {
+    this.logger = loggerFactory.create('my-service');
   }
 
   public async performAction() {
@@ -197,27 +207,27 @@ export class MyService {
 - Consistent logging format across services
 - Contextual logger names for filtering
 - Centralized configuration
-- Avoids global logger imports
+- Auto-resolved from constructor type
 
 ## Advanced Service Patterns
 
 ### Service with caching
 
 ```typescript
-import { injectable, inject } from 'tsyringe';
-import { TOKENS } from '@~/di/tokens';
-import type { iLogger } from '@~/di/tokens';
-import type { CacheService } from './cache.service';
+import { singleton } from 'tsyringe';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
+import { CacheService } from './cache.service';
+import type { iWithLogger } from '@~/features/logger/logger.types';
 
-@injectable()
-export class ChallengeService {
-  private readonly logger: iLogger;
+@singleton()
+export class ChallengeService implements iWithLogger {
+  public readonly logger: iWithLogger['logger'];
 
   constructor(
-    @inject(TOKENS.LoggerFactory) loggerFactory: () => iLogger,
-    @inject(TOKENS.CacheService) private readonly cache: CacheService
+    loggerFactory: LoggerFactory,
+    private readonly cache: CacheService,
   ) {
-    this.logger = loggerFactory();
+    this.logger = loggerFactory.create('challenge-service');
   }
 
   public async getChallenge(id: string): Promise<Challenge | null> {
@@ -244,21 +254,23 @@ export class ChallengeService {
 ### Service with transaction support
 
 ```typescript
-import { injectable, inject } from 'tsyringe';
-import { TOKENS } from '@~/di/tokens';
-import type { iLogger } from '@~/di/tokens';
+import { singleton } from 'tsyringe';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
+import { UserService } from '@~/features/user/user.service';
+import { ProfileService } from './profile.service';
 import mongoose from 'mongoose';
+import type { iWithLogger } from '@~/features/logger/logger.types';
 
-@injectable()
-export class UserRegistrationService {
-  private readonly logger: iLogger;
+@singleton()
+export class UserRegistrationService implements iWithLogger {
+  public readonly logger: iWithLogger['logger'];
 
   constructor(
-    @inject(TOKENS.LoggerFactory) loggerFactory: () => iLogger,
-    @inject(TOKENS.UserService) private readonly userService: UserService,
-    @inject(TOKENS.ProfileService) private readonly profileService: ProfileService
+    loggerFactory: LoggerFactory,
+    private readonly userService: UserService,
+    private readonly profileService: ProfileService,
   ) {
-    this.logger = loggerFactory();
+    this.logger = loggerFactory.create('user-registration');
   }
 
   public async registerUser(data: RegistrationData) {
@@ -291,20 +303,20 @@ export class UserRegistrationService {
 ### Service with event emission
 
 ```typescript
-import { injectable, inject } from 'tsyringe';
-import { TOKENS } from '@~/di/tokens';
-import type { iLogger } from '@~/di/tokens';
-import type { EventEmitter } from './event-emitter';
+import { singleton } from 'tsyringe';
+import { LoggerFactory } from '@~/features/logger/logger.factory';
+import { TypedEventBus } from '@~/features/events/event-bus';
+import type { iWithLogger } from '@~/features/logger/logger.types';
 
-@injectable()
-export class OrderService {
-  private readonly logger: iLogger;
+@singleton()
+export class OrderService implements iWithLogger {
+  public readonly logger: iWithLogger['logger'];
 
   constructor(
-    @inject(TOKENS.LoggerFactory) loggerFactory: () => iLogger,
-    @inject(TOKENS.EventEmitter) private readonly events: EventEmitter
+    loggerFactory: LoggerFactory,
+    private readonly events: TypedEventBus,
   ) {
-    this.logger = loggerFactory();
+    this.logger = loggerFactory.create('order-service');
   }
 
   public async createOrder(data: CreateOrderInput) {

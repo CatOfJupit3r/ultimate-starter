@@ -9,13 +9,13 @@ import { Logger } from './logger';
  * with proper namespace inheritance.
  *
  * @example
- * const factory = container.resolve(TOKENS.LoggerFactory);
+ * const factory = container.resolve(LoggerFactory);
  * const apiLogger = factory.create('api');        // namespace: 'api'
  * const usersLogger = apiLogger.child('users');   // namespace: 'api:users'
  */
 @singleton()
-export class LoggerFactoryImpl {
-  private instance: Logger;
+export class LoggerFactory {
+  private readonly instance: Logger;
 
   constructor() {
     this.instance = new Logger({

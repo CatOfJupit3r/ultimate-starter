@@ -1,10 +1,10 @@
 import type mongoose from 'mongoose';
+import { container } from 'tsyringe';
 
-import { resolve } from '@~/di';
-import { TOKENS } from '@~/di/tokens';
+import { DatabaseService } from '@~/db/database.service';
 
 export default async function databaseLoader(): Promise<mongoose.mongo.Db> {
-  const databaseService = resolve(TOKENS.DatabaseService);
+  const databaseService = container.resolve(DatabaseService);
   await databaseService.connect();
 
   return databaseService.getClient();
