@@ -46,6 +46,7 @@ jobs:
       # 2. Runs only affected tasks in correct dependency order
       # 3. Parallelizes independent tasks
       # 4. Restores cached outputs for unchanged projects
+      # Tests run in a dedicated job (runInCI: false in .moon/tasks.yml)
       - name: Run CI tasks
         run: pnpm exec moon ci
         env:

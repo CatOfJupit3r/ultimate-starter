@@ -1,4 +1,6 @@
 // sort-imports-ignore
+// Import connection first to ensure mongoose is connected before we load the app
+import './connection';
 import loaders from '../../src/loaders';
 
 if (process.env.NODE_ENV !== 'test') {

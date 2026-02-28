@@ -72,6 +72,7 @@ tasks:
   # ============================================
   
   # Run tests with Vitest
+  # Note: runInCI is false because tests run in a dedicated job with MongoDB setup
   test:
     command: "vitest run"
     inputs:
@@ -79,7 +80,7 @@ tasks:
       - "@group(tests)"
       - "vitest.config.{ts,js,mjs}"
     options:
-      runInCI: true
+      runInCI: false
       cache: false
       mergeDeps: "append"
 
