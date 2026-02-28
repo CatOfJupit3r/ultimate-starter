@@ -7,9 +7,16 @@ description: Set up and use dependency injection with tsyringe for server-side s
 
 ## Core concepts
 
-This codebase uses tsyringe for dependency injection with `emitDecoratorMetadata` enabled (via SWC). This allows tsyringe to automatically infer constructor dependencies from their types - no tokens required for concrete classes.
+This codebase uses tsyringe with `@hono/tsyringe` for request-scoped dependency injection. Key features:
 
-**Key principle:** Inject classes directly. Only use tokens for interface-based injection patterns.
+- **emitDecoratorMetadata enabled (via SWC)**: tsyringe automatically infers constructor dependencies from types
+- **Request-scoped containers**: `@hono/tsyringe` creates a child container per request
+- **No tokens needed**: Inject classes directly for concrete classes
+
+**Key principles:**
+- Use `@singleton()` for stateless services shared across requests (LoggerFactory, AuthService, etc.)
+- Use `@injectable()` for request-scoped services (UserService, etc.)
+- Access services via `context.resolve(ServiceClass)` in handlers
 
 ## Step-by-step procedure
 
@@ -20,66 +27,70 @@ Create your service in `apps/server/src/features/<feature>/<feature>.service.ts`
 **See [references/service-patterns.md](references/service-patterns.md) for complete service examples.**
 
 ```typescript
+// For stateless shared services
 import { singleton } from 'tsyringe';
 
 @singleton()
-export class MyFeatureService {
-  constructor() {
-    // Constructor logic
-  }
+export class MySharedService {
+  // Shared across all requests
+}
 
-  public async doSomething(input: string): Promise<string> {
-    // Business logic
-    return `Processed: ${input}`;
-  }
+// For request-scoped services
+import { injectable } from 'tsyringe';
+
+@injectable()
+export class MyRequestService {
+  // New instance per request
 }
 ```
 
-### 2. Register the service (usually automatic)
+### 2. Register the service
 
-Classes decorated with `@singleton()` are automatically registered when imported. For most services, no explicit registration is needed.
-
-If you need explicit registration (e.g., for transient lifecycle), add to `apps/server/src/di/container.ts`:
+Add the import to `apps/server/src/di/container.ts`:
 
 ```typescript
 export async function registerServices() {
-  // Import the service (triggers @singleton() registration)
+  // Import triggers @singleton()/@injectable() registration
   await import('@~/features/my-feature/my-feature.service');
-  
-  // For transient services (new instance per resolution):
-  const { MyFeatureService } = await import('@~/features/my-feature/my-feature.service');
-  container.register(MyFeatureService, { useClass: MyFeatureService }, { lifecycle: Lifecycle.Transient });
 }
 ```
 
-### 3. Add a getter for router access
+### 3. Use in oRPC handlers
 
-Add to `apps/server/src/routers/di-getter.ts`:
+Use `context.resolve(ServiceClass)` to get services:
 
 ```typescript
 import { MyFeatureService } from '@~/features/my-feature/my-feature.service';
+import { protectedProcedure, base } from '../lib/orpc';
 
-export const GETTERS = {
-  // ...existing getters
-  MyFeatureService: () => container.resolve(MyFeatureService),
-} as const;
+export const myRouter = base.myFeature.router({
+  doSomething: protectedProcedure.myFeature.doSomething.handler(async ({ context, input }) => {
+    const service = context.resolve(MyFeatureService);
+    return service.doSomething(input.value);
+  }),
+});
 ```
 
-### 4. Resolve and use the service
+### 4. Use in Hono routes (non-contract)
 
-#### In handlers (via GETTERS)
+Use `c.var.resolve(ServiceClass)`:
 
 ```typescript
-import { GETTERS } from '@~/routers/di-getter';
+import { Hono } from 'hono';
+import { MyFeatureService } from '@~/features/my-feature/my-feature.service';
 
-export const myHandler = async (input, context) => {
-  const myService = GETTERS.MyFeatureService();
-  const result = await myService.doSomething(input.value);
-  return { result };
-};
+const router = new Hono();
+
+router.get('/my-route', async (c) => {
+  const service = c.var.resolve(MyFeatureService);
+  const result = await service.doSomething();
+  return c.json(result);
+});
 ```
 
-#### Direct resolution (in loaders/middleware)
+### 5. Use in loaders/middleware (global container)
+
+For code that runs before the request context exists, use the global container:
 
 ```typescript
 import { container } from 'tsyringe';
@@ -122,20 +133,30 @@ export class NotificationsService implements iWithLogger {
 
 ## Service lifecycle
 
-Choose the appropriate decorator or registration:
+### `@singleton()` - Globally shared
+
+Use for stateless services shared across all requests:
 
 ```typescript
-// Singleton (most common) - single instance shared across app
 @singleton()
-export class MyService { ... }
-
-// Injectable - must be explicitly registered with lifecycle
-@injectable()
-export class StatefulService { ... }
-
-// Register as transient in container.ts:
-container.register(StatefulService, { useClass: StatefulService }, { lifecycle: Lifecycle.Transient });
+export class LoggerFactory { ... }
+export class AuthService { ... }
+export class DatabaseService { ... }
 ```
+
+**Use cases:** Loggers, auth, database connections, event bus, caches
+
+### `@injectable()` - Request-scoped
+
+Use for services that should be created fresh per request:
+
+```typescript
+@injectable()
+export class UserService { ... }
+export class OrderService { ... }
+```
+
+**Use cases:** Services that might cache request-specific data, services with request state
 
 ## When to use tokens (rare)
 

@@ -1,3 +1,4 @@
+import { tsyringe } from '@hono/tsyringe';
 import { OpenAPIHandler } from '@orpc/openapi/fetch';
 import { OpenAPIReferencePlugin } from '@orpc/openapi/plugins';
 import { onError } from '@orpc/server';
@@ -27,8 +28,11 @@ interface iCreateContextOptions {
 function contextGenerator() {
   return async function createContext({ context }: iCreateContextOptions) {
     const session = context.get('session');
+    // eslint-disable-next-line @typescript-eslint/prefer-destructuring
+    const resolve = context.var.resolve;
     return {
       session,
+      resolve,
     };
   };
 }
@@ -47,6 +51,9 @@ export default async function honoLoader() {
   const apiLogger = container.resolve(LoggerFactory).create('API');
 
   const createContext = contextGenerator();
+
+  // Request-scoped DI container - creates a child container per request
+  app.use('/*', tsyringe());
   app.use('/*', requestContextMiddleware);
 
   app.use(contextStorage());

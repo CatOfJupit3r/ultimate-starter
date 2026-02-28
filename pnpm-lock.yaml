@@ -124,6 +124,9 @@ importers:
       '@hono/standard-validator':
         specifier: 0.2.1
         version: 0.2.1(@standard-schema/spec@1.1.0)(hono@4.11.3)
+      '@hono/tsyringe':
+        specifier: ^1.0.1
+        version: 1.0.1(hono@4.11.3)(tsyringe@4.10.0)
       '@orpc/openapi':
         specifier: 'catalog:'
         version: 1.13.2(ws@8.19.0)
@@ -1182,6 +1185,12 @@ packages:
     peerDependencies:
       '@standard-schema/spec': 1.0.0
       hono: '>=3.9.0'
+
+  '@hono/tsyringe@1.0.1':
+    resolution: {integrity: sha512-DBKabjYEXFjNVpherMziWos9fnP1GcSbLbarPpc1pq+w4lWdfzFhn9E9bq9CbWb80q7UikCVs9peFAKWenKS/Q==}
+    peerDependencies:
+      hono: '>=4.*'
+      tsyringe: '>=4.*'
 
   '@hookform/resolvers@5.2.2':
     resolution: {integrity: sha512-A/IxlMLShx3KjV/HeTcTfaMxdwy690+L/ZADoeaTltLx+CVuzkeVIPuybK3jrRfw7YZnmdKsVVHAlEPIAEUNlA==}
@@ -7184,6 +7193,11 @@ snapshots:
     dependencies:
       '@standard-schema/spec': 1.1.0
       hono: 4.11.3
+
+  '@hono/tsyringe@1.0.1(hono@4.11.3)(tsyringe@4.10.0)':
+    dependencies:
+      hono: 4.11.3
+      tsyringe: 4.10.0
 
   '@hookform/resolvers@5.2.2(react-hook-form@7.71.1(react@19.2.3))':
     dependencies:

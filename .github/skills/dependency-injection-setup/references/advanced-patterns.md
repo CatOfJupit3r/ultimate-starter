@@ -2,6 +2,31 @@
 
 ## Testing with DI
 
+### Testing oRPC handlers
+
+When testing oRPC handlers that use `context.resolve()`, provide a resolve function in the test context:
+
+```typescript
+import { container } from 'tsyringe';
+import type { InjectionToken } from 'tsyringe';
+
+// Create a resolve function for test context
+function resolve<T>(token: InjectionToken<T>): T {
+  return container.resolve(token);
+}
+
+// Use in test context
+const ctx = () => ({
+  context: {
+    session: { user, session },
+    resolve,
+  },
+});
+
+// Call handler with context
+await call(appRouter.user.getUserProfile, null, ctx());
+```
+
 ### Mock services in tests
 
 ```typescript
@@ -71,9 +96,9 @@ export function createMyService(
 
 ## Service Lifecycle Patterns
 
-### Singleton (default, recommended)
+### Singleton (shared across requests)
 
-Use for stateless services that can be shared across requests:
+Use for stateless services:
 
 ```typescript
 @singleton()
@@ -84,25 +109,28 @@ export class MyService { ... }
 
 **When to use**:
 - Database access layers
-- Business logic services
-- Utility services
+- Auth services
 - Logger factories
+- Event buses
+- Any stateless service
 
-### Transient
+### Request-scoped (via @hono/tsyringe)
 
-Use for stateful services that must be created per usage:
+Use for services that should be created fresh per HTTP request:
 
 ```typescript
-import { injectable, container, Lifecycle } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 @injectable()
-export class StatefulService { ... }
-
-// Explicit registration required for transient lifecycle
-container.register(StatefulService, { useClass: StatefulService }, {
-  lifecycle: Lifecycle.Transient,
-});
+export class UserService { ... }
 ```
+
+With `@hono/tsyringe` middleware, `@injectable()` services are automatically request-scoped when resolved via `context.resolve()` or `c.var.resolve()`.
+
+**When to use**:
+- Services that cache request-specific data
+- Services with request state
+- Per-request business logic
 
 **When to use**:
 - Services with mutable state

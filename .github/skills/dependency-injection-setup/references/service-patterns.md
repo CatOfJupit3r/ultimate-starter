@@ -2,14 +2,16 @@
 
 Complete examples of common service patterns in the codebase.
 
-## Basic Service with Logger
+## Request-Scoped Service with Logger
+
+Services that may hold request-specific state use `@injectable()`:
 
 ```typescript
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import { LoggerFactory } from '@~/features/logger/logger.factory';
 import type { iWithLogger } from '@~/features/logger/logger.types';
 
-@singleton()
+@injectable()
 export class UserService implements iWithLogger {
   public readonly logger: iWithLogger['logger'];
 
@@ -36,7 +38,9 @@ export class UserService implements iWithLogger {
 }
 ```
 
-## Service with Dependencies
+## Singleton Service (Shared Across Requests)
+
+Stateless services that can be shared use `@singleton()`:
 
 ```typescript
 import { singleton } from 'tsyringe';
