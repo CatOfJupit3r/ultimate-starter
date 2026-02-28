@@ -53,7 +53,7 @@ tasks:
       - "eslint.config.{mjs,js}"
     options:
       runInCI: true
-      cache: true
+      cache: false
       mergeDeps: "append"
       mergeEnv: "append"
 
@@ -80,7 +80,7 @@ tasks:
       - "vitest.config.{ts,js,mjs}"
     options:
       runInCI: true
-      cache: true
+      cache: false
       mergeDeps: "append"
 
   # Run tests in watch mode

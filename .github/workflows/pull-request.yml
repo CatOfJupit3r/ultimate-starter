@@ -59,43 +59,49 @@ jobs:
       # - name: Build all
       #   run: pnpm exec moon run :build
 
-  # Optional: Run tests in a separate job with MongoDB
-  # test-server:
-  #   name: Server Tests
-  #   runs-on: ubuntu-latest
-  #   needs: ci
-  #   
-  #   services:
-  #     mongodb:
-  #       image: mongo:8.0
-  #       ports:
-  #         - 27017:27017
-  #   
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-  #     
-  #     - uses: pnpm/action-setup@v4
-  #       with:
-  #         version: 10.11.0
-  #     
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 24.11.1
-  #         cache: 'pnpm'
-  #     
-  #     - name: Restore moon cache
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: .moon/cache
-  #         key: moon-${{ runner.os }}-${{ github.sha }}
-  #         restore-keys: |
-  #           moon-${{ runner.os }}-
-  #     
-  #     - run: pnpm install --frozen-lockfile
-  #     
-  #     - name: Run server tests (affected only)
-  #       run: pnpm exec moon run server:test --affected
-  #       env:
-  #         MONGODB_URI: mongodb://localhost:27017/test
+  # Run tests with MongoDB Memory Server
+  test-server:
+    name: Server Tests
+    runs-on: ubuntu-latest
+    needs: ci
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.11.1
+          cache: 'pnpm'
+      
+      - name: Restore moon cache
+        uses: actions/cache@v4
+        with:
+          path: .moon/cache
+          key: moon-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            moon-${{ runner.os }}-
+      
+      # Cache MongoDB binaries for mongodb-memory-server
+      - name: Cache MongoDB binaries
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/mongodb-binaries
+          key: mongodb-binaries-${{ runner.os }}-8.0.4
+          restore-keys: |
+            mongodb-binaries-${{ runner.os }}-
+      
+      - run: pnpm install
+      
+      - name: Run server tests
+        run: pnpm exec moon run server:test
+        env:
+          NODE_ENV: test
+          BETTER_AUTH_SECRET: test-secret
+          BETTER_AUTH_URL: http://localhost:3000/auth
+          LOG_LEVEL: error
