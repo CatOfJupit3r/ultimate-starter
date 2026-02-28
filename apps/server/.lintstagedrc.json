@@ -1,4 +1,0 @@
-{
-  "*.ts": ["eslint --fix", "prettier --write", "bash -c 'pnpm run check-types'"],
-  "*.js": ["eslint --fix", "prettier --write"]
-}
