@@ -306,23 +306,107 @@ pnpm exec moon graph
 
 ## CI Integration
 
-### GitHub Actions Example
+Our unified CI workflow (`.github/workflows/pull-request.yml`) leverages moon for:
+
+1. **Affected detection** - Only runs tasks for changed projects
+2. **Dependency ordering** - Builds `shared` before `server`/`web` automatically
+3. **Task caching** - Restores previous build outputs
+4. **Parallelization** - Runs independent tasks concurrently
+
+### Full Workflow
 
 ```yaml
-- name: Setup moon
-  uses: moonrepo/setup-toolchain@v0
-  with:
-    auto-install: true
+name: Pull Request | CI
 
-- name: Run CI
-  run: moon ci
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for moon change detection
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.11.1
+          cache: 'pnpm'
+
+      # Cache moon task outputs between runs
+      - uses: actions/cache@v4
+        with:
+          path: .moon/cache
+          key: moon-${{ runner.os }}-${{ github.sha }}
+          restore-keys: moon-${{ runner.os }}-
+
+      - run: pnpm install --frozen-lockfile
+
+      # Runs check-types, lint, build for affected projects only
+      - run: pnpm exec moon ci
+        env:
+          VITE_SERVER_URL: http://localhost:3000
 ```
 
-### Running Only Affected Tasks
+### Key Points
 
-```powershell
-# Moon automatically detects changes and runs only affected tasks
-pnpm exec moon ci
+| Feature | How moon helps |
+|---------|----------------|
+| Changed file detection | `moon ci` uses git diff vs base branch |
+| No manual path filtering | Remove `on.paths` - moon handles it |
+| Dependency builds | `dependsOn` in moon.yml auto-orders tasks |
+| Cache across PRs | `.moon/cache` persists task outputs |
+
+### Running Specific Tasks in CI
+
+```yaml
+# Run all tasks tagged runInCI: true for affected projects
+- run: pnpm exec moon ci
+
+# Or run specific tasks for ALL projects
+- run: pnpm exec moon run :check-types :lint :build
+
+# Or run specific tasks for affected only
+- run: pnpm exec moon run :test --affected
+```
+
+### `moon ci` vs `moon run`
+
+| Command | Behavior |
+|---------|----------|
+| `moon ci` | Runs tasks with `runInCI: true` for affected projects only |
+| `moon run :task` | Runs task for ALL projects |
+| `moon run :task --affected` | Runs task for affected projects only |
+
+### Task Configuration for CI
+
+In `.moon/tasks.yml`, set `runInCI: true` for tasks that should run in CI:
+
+```yaml
+tasks:
+  check-types:
+    command: "tsgo --noEmit"
+    options:
+      runInCI: true   # Included in moon ci
+      cache: true
+
+  build:
+    command: "tsgo"
+    options:
+      runInCI: true
+      cache: true
+
+  test:
+    command: "vitest run"
+    options:
+      runInCI: true   # Set to true to include tests in moon ci
+      cache: true
 ```
 
 ## Tips & Tricks
