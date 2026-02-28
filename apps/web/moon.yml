@@ -33,6 +33,8 @@ tasks:
       - 'vite.config.ts'
     outputs:
       - 'dist'
+    deps:
+      - 'shared:build'
 
   serve:
     command: 'vite preview --host'
@@ -41,6 +43,10 @@ tasks:
     options:
       persistent: true
       cache: false
+
+  check-types:
+    deps:
+      - 'shared:build'
 
   lint:
     deps:
