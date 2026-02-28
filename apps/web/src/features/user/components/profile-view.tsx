@@ -25,7 +25,7 @@ export function ProfileView() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       {/* Main Content */}
       <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Profile Header Card */}
@@ -41,13 +41,13 @@ export function ProfileView() {
                   size="lg"
                 />
                 <div>
-                  <h1 className="text-2xl font-bold text-foreground">{user?.name || user?.username}</h1>
+                  <h1 className="text-foreground text-2xl font-bold">{user?.name || user?.username}</h1>
                   <p className="text-muted-foreground">@{user?.username}</p>
-                  {profile?.bio ? <p className="mt-2 text-sm text-muted-foreground">{profile.bio}</p> : null}
-                  <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                  {profile?.bio ? <p className="text-muted-foreground mt-2 text-sm">{profile.bio}</p> : null}
+                  <div className="text-muted-foreground mt-3 flex flex-wrap gap-2 text-xs">
                     {user?.createdAt ? (
                       <div className="flex items-center gap-1">
-                        <LuCalendar className="h-3 w-3" />
+                        <LuCalendar className="size-3" />
                         Joined{' '}
                         {new Date(user.createdAt).toLocaleDateString('en-US', {
                           year: 'numeric',
@@ -85,10 +85,10 @@ export function ProfileView() {
 
           {/* Achievements Tab */}
           <TabsContent value="achievements" className="mt-4">
-            <Empty className="border border-border">
+            <Empty className="border-border border">
               <EmptyHeader>
                 <EmptyMedia variant="icon">
-                  <LuTrophy className="h-6 w-6" />
+                  <LuTrophy className="size-6" />
                 </EmptyMedia>
                 <EmptyTitle>Achievements</EmptyTitle>
                 <EmptyDescription>Complete more challenges to unlock achievements!</EmptyDescription>

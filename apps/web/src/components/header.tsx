@@ -13,12 +13,12 @@ export default function Header() {
   const { isLoggedIn } = useMe();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <header className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur-sm">
       <div className="flex h-14 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo Section - Left */}
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2 text-lg font-semibold transition-opacity hover:opacity-80">
-            <Logo className="h-6 w-6 text-primary" />
+            <Logo className="text-primary size-6" />
             <span className="hidden sm:inline-block">startername</span>
           </Link>
         </div>
@@ -31,9 +31,9 @@ export default function Header() {
               <Link
                 key={to}
                 to={to}
-                className="w-32 rounded-md px-2 py-1 text-center text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[status=active]:bg-foreground data-[status=active]:font-semibold data-[status=active]:text-background"
+                className="text-muted-foreground hover:text-foreground data-[status=active]:bg-foreground data-[status=active]:text-background w-32 rounded-md px-2 py-1 text-center text-sm font-medium transition-colors data-[status=active]:font-semibold"
               >
-                <Icon className="mr-1 mb-0.5 inline-block h-4 w-4" />
+                <Icon className="mr-1 mb-0.5 inline-block size-4" />
                 {label}
               </Link>
             );

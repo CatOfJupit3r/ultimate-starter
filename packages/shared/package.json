@@ -42,26 +42,16 @@
     "check-types": "tsgo --noEmit",
     "lint": "eslint . --ext .ts"
   },
+  "prettier": "@ultimate-starter/prettier-config",
   "devDependencies": {
-    "@eslint/compat": "catalog:",
-    "@eslint/js": "catalog:",
-    "@stylistic/eslint-plugin": "catalog:",
-    "@trivago/prettier-plugin-sort-imports": "catalog:",
     "@types/node": "^24.0.0",
-    "@typescript-eslint/eslint-plugin": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "@ultimate-starter/eslint-config": "workspace:*",
+    "@ultimate-starter/prettier-config": "workspace:*",
     "eslint": "catalog:",
-    "eslint-config-airbnb-extended": "catalog:",
-    "eslint-config-prettier": "catalog:",
-    "eslint-import-resolver-typescript": "catalog:",
-    "eslint-plugin-import-x": "catalog:",
-    "eslint-plugin-n": "catalog:",
-    "eslint-plugin-prettier": "catalog:",
     "prettier": "catalog:",
     "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "typescript-eslint": "catalog:",
-    "@typescript/native-preview": "catalog:"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "typescript": "catalog:"

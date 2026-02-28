@@ -1,25 +1,25 @@
 # https://moonrepo.dev/docs/config/project
-$schema: "https://moonrepo.dev/schemas/project.json"
+$schema: 'https://moonrepo.dev/schemas/project.json'
 
-language: "typescript"
-type: "application"
-platform: "node"
+language: 'typescript'
+type: 'application'
+platform: 'node'
 
 dependsOn:
-  - "shared"
+  - 'shared'
 
 tags:
-  - "server"
-  - "backend"
+  - 'server'
+  - 'backend'
 
 tasks:
   dev:
-    command: "tsx watch ./src/index.ts"
+    command: 'tsx watch ./src/index.ts'
     env:
-      NODE_ENV: "development"
+      NODE_ENV: 'development'
 
   start:
-    command: "node --import tsx ./src/index.ts"
+    command: 'node --import tsx ./src/index.ts'
 
   build:
-    command: "rimraf ./dist && tsgo"
+    command: 'rimraf ./dist && tsgo'

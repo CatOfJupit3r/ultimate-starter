@@ -52,7 +52,7 @@ export function CopyButton({
 
   return (
     <Button variant="outline" size="icon" onClick={handleCopy} disabled={disabled} aria-label={ariaLabel}>
-      {isCopied ? <LuCheck className="h-4 w-4" /> : <LuCopy className="h-4 w-4" />}
+      {isCopied ? <LuCheck className="size-4" /> : <LuCopy className="size-4" />}
     </Button>
   );
 }
