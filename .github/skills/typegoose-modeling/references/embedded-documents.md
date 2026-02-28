@@ -1,48 +1,51 @@
 # Embedded Documents & Nested Objects
 
-Create reusable nested structures with `@objectProp` and `@arrayProp` decorators.
+Create reusable nested structures using the standard `@prop` decorator with explicit type declarations.
 
 ## Single nested object
 
-Use `@objectProp(Class)` for single nested objects:
+Use `@prop({ type: () => Class })` for single nested objects:
 
 ```typescript
+import { prop, modelOptions, getModelForClass } from '@typegoose/typegoose';
+import { idProp } from '../prop';
+
 class AddressClass {
-  @stringProp({ required: true })
+  @prop({ required: true })
   public street!: string;
 
-  @stringProp({ required: true })
+  @prop({ required: true })
   public city!: string;
 
-  @stringProp({ required: true })
+  @prop({ required: true })
   public zipCode!: string;
 }
 
 @modelOptions({ schemaOptions: { collection: 'users' } })
 class UserClass {
-  @objectIdProp()
+  @idProp()
   public _id!: string;
 
-  @objectProp(AddressClass)
+  @prop({ type: () => AddressClass })
   public homeAddress?: AddressClass;  // Optional single object
 
-  @objectProp(AddressClass)
+  @prop({ type: () => AddressClass, required: true })
   public workAddress!: AddressClass;  // Required single object
 }
 ```
 
 ## Array of embedded documents
 
-Use `@arrayProp(Class, options)` for arrays:
+Use `@prop({ type: () => [Class] })` for arrays:
 
 ```typescript
 class AddressClass {
-  @stringProp({ required: true })
+  @prop({ required: true })
   public street!: string;
 }
 
 class UserClass {
-  @arrayProp(AddressClass, { default: [] })
+  @prop({ type: () => [AddressClass], default: [] })
   public addresses!: AddressClass[];  // Always typed and initialized
 }
 ```
@@ -62,16 +65,20 @@ user.addresses.map(a => a.city)  // string[]
 
 ## Arrays of primitives
 
-Use dedicated decorators for primitive arrays:
+Use explicit type declarations for primitive arrays:
 
 ```typescript
 // String array
-@stringArrayProp({ default: [] })
+@prop({ type: () => [String], default: [] })
 public tags!: string[];
 
 // Number array
-@numberArrayProp({ default: [] })
+@prop({ type: () => [Number], default: [] })
 public scores!: number[];
+
+// Boolean array
+@prop({ type: () => [Boolean], default: [] })
+public flags!: boolean[];
 ```
 
 ## Deeply nested structures
@@ -80,23 +87,23 @@ Nest as many levels as needed:
 
 ```typescript
 class PhoneClass {
-  @stringProp({ required: true })
+  @prop({ required: true })
   public number!: string;
 
-  @stringProp({ enum: ['MOBILE', 'HOME', 'WORK'], default: 'MOBILE' })
+  @prop({ enum: ['MOBILE', 'HOME', 'WORK'], default: 'MOBILE' })
   public type!: string;
 }
 
 class ContactClass {
-  @stringProp({ required: true })
+  @prop({ required: true })
   public email!: string;
 
-  @arrayProp(PhoneClass, { default: [] })
+  @prop({ type: () => [PhoneClass], default: [] })
   public phones!: PhoneClass[];
 }
 
 class UserClass {
-  @objectProp(ContactClass)
+  @prop({ type: () => ContactClass })
   public contact!: ContactClass;  // contact.phones[0].number access
 }
 ```
@@ -105,15 +112,15 @@ class UserClass {
 
 ```typescript
 // Optional (may not exist)
-@objectProp(MetadataClass)
+@prop({ type: () => MetadataClass })
 public metadata?: MetadataClass;
 
 // Required but can be null
-@objectProp(MetadataClass, { default: null })
+@prop({ type: () => MetadataClass, default: null })
 public metadata!: MetadataClass | null;
 
 // Required, always present
-@objectProp(MetadataClass, { default: () => new MetadataClass() })
+@prop({ type: () => MetadataClass, default: () => new MetadataClass() })
 public metadata!: MetadataClass;
 ```
 
@@ -124,21 +131,21 @@ Reuse nested structures across multiple models:
 ```typescript
 // In apps/server/src/db/schemas/common.ts
 export class GeoPointClass {
-  @numberProp({ required: true })
+  @prop({ required: true })
   public latitude!: number;
 
-  @numberProp({ required: true })
+  @prop({ required: true })
   public longitude!: number;
 }
 
 // In models
 class VenueClass {
-  @objectProp(GeoPointClass)
+  @prop({ type: () => GeoPointClass })
   public location!: GeoPointClass;
 }
 
 class EventClass {
-  @objectProp(GeoPointClass)
+  @prop({ type: () => GeoPointClass })
   public coordinates!: GeoPointClass;
 }
 ```

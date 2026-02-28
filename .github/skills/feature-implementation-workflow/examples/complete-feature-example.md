@@ -8,9 +8,9 @@ Complete examples showing the full lifecycle of feature implementation.
 
 ```typescript
 // apps/server/src/db/models/user-profile.model.ts
-import { getModelForClass, modelOptions } from '@typegoose/typegoose';
+import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import type { DocumentType } from '@typegoose/typegoose';
-import { objectIdProp, stringProp, stringArrayProp } from '../prop';
+import { idProp } from '../prop';
 
 @modelOptions({
   schemaOptions: {
@@ -22,19 +22,19 @@ import { objectIdProp, stringProp, stringArrayProp } from '../prop';
   },
 })
 class UserProfileClass {
-  @objectIdProp()
+  @idProp()
   public _id!: string;
 
-  @stringProp({ required: true, unique: true, index: true })
+  @prop({ required: true, unique: true, index: true })
   public userId!: string;
 
-  @stringProp({ default: '' })
+  @prop({ default: '' })
   public bio!: string;
 
-  @stringProp({ default: '' })
+  @prop({ default: '' })
   public avatarUrl!: string;
 
-  @stringArrayProp({ default: [] })
+  @prop({ type: () => [String], default: [] })
   public interests!: string[];
 
   public createdAt!: Date;
