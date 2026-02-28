@@ -25,13 +25,12 @@ tasks:
       runDepsInParallel: false
 
   build:
-    command: 'tsc && vite build'
+    command: 'vite build'
     inputs:
       - 'src/**/*.ts'
       - 'src/**/*.tsx'
       - 'tsconfig.json'
       - 'vite.config.ts'
-      - 'index.html'
     outputs:
       - 'dist'
 

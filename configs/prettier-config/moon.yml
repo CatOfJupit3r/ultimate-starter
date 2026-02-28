@@ -18,3 +18,4 @@ workspace:
       - 'dev'
       - 'start'
       - 'check-types'
+      - 'lint'
