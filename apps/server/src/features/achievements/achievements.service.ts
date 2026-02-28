@@ -5,6 +5,9 @@ import type { UserAchievementId } from '@startername/shared/constants/achievemen
 import { UserAchievementModel } from '@~/db/models/user-achievements.model';
 import type { iAchievementContext, iAchievementDefinition } from '@~/features/achievements/achievements.types';
 import { EventBus } from '@~/features/events/event-bus';
+import { AchievementUnlockedListener } from '@~/features/events/listeners/achievements.listeners';
+import { buildCacheKey, CACHE_TTL } from '@~/features/valkey/valkey.constants';
+import { ValkeyService } from '@~/features/valkey/valkey.service';
 
 import { LoggerFactory } from '../logger/logger.factory';
 import type { iWithLogger } from '../logger/logger.types';
@@ -31,11 +34,15 @@ export class AchievementsService implements iWithLogger {
         unlockedAt: new Date(),
         data,
       });
+
+      // Emit event for cache invalidation
+      this.eventBus.emit(AchievementUnlockedListener, { userId, achievementId });
     },
   };
 
   constructor(
     private readonly eventBus: EventBus,
+    private readonly valkey: ValkeyService,
     loggerFactory: LoggerFactory,
   ) {
     this.logger = loggerFactory.create('achievements');
@@ -44,6 +51,7 @@ export class AchievementsService implements iWithLogger {
   }
 
   public initialize() {
+    // Register achievement event handlers
     for (const achievement of this.achievements) {
       for (const listener of achievement.listensTo) {
         this.eventBus.on(listener, async (payload) => {
@@ -55,27 +63,39 @@ export class AchievementsService implements iWithLogger {
         });
       }
     }
+
+    // Register cache invalidation handler
+    this.eventBus.on(AchievementUnlockedListener, async ({ userId, achievementId }) => {
+      await this.valkey.cacheDel(buildCacheKey.userAchievements(userId));
+      this.logger.debug('Achievement unlocked, invalidated user achievements cache', { userId, achievementId });
+    });
   }
 
   public async listAllAchievements() {
-    return USER_ACHIEVEMENTS_META;
+    return this.valkey.cached(buildCacheKey.achievements(), CACHE_TTL.STATIC, async () => {
+      this.logger.debug('Cache miss for achievements list, returning static data');
+      return USER_ACHIEVEMENTS_META;
+    });
   }
 
   public async getUserAchievements(userId: string) {
-    const userAchievements = await UserAchievementModel.find({ userId });
+    return this.valkey.cached(buildCacheKey.userAchievements(userId), CACHE_TTL.USER_DATA, async () => {
+      this.logger.debug('Cache miss for user achievements', { userId });
+      const userAchievements = await UserAchievementModel.find({ userId });
 
-    return userAchievements.map((achievement) => {
-      const meta = USER_ACHIEVEMENTS_META.find((m) => m.id === achievement.achievementId);
-      return {
-        id: achievement.achievementId,
-        unlockedAt: achievement.unlockedAt,
-        data: achievement.data,
-        meta: meta ?? {
+      return userAchievements.map((achievement) => {
+        const meta = USER_ACHIEVEMENTS_META.find((m) => m.id === achievement.achievementId);
+        return {
           id: achievement.achievementId,
-          label: achievement.achievementId,
-          description: 'Achievement',
-        },
-      };
+          unlockedAt: achievement.unlockedAt,
+          data: achievement.data,
+          meta: meta ?? {
+            id: achievement.achievementId,
+            label: achievement.achievementId,
+            description: 'Achievement',
+          },
+        };
+      });
     });
   }
 }
