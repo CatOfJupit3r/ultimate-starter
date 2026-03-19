@@ -19,3 +19,4 @@ workspace:
       - 'start'
       - 'check-types'
       - 'lint'
+      - 'prettify'

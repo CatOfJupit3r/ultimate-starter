@@ -7,7 +7,7 @@
     "build": "moon run :build",
     "test": "moon run :test",
     "check-types": "moon run :check-types",
-    "prettier": "moon run :prettier",
+    "prettify": "moon run :prettify",
     "dev:web": "moon run web:dev",
     "dev:server": "moon run server:dev",
     "lint": "moon run :lint",
