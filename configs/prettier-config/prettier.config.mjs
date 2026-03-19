@@ -1,3 +1,4 @@
+import sortImports from '@trivago/prettier-plugin-sort-imports';
 /**
  * Shared Prettier Configuration for startername Monorepo
  * 
@@ -29,7 +30,7 @@ const config = {
   semi: true,
   singleQuote: true,
   printWidth: 120,
-  plugins: ['@trivago/prettier-plugin-sort-imports'],
+  plugins: [sortImports],
   endOfLine: 'lf',
   importOrderParserPlugins: ['typescript', 'jsx', 'classProperties', 'decorators-legacy'],
   importOrderSeparation: true,

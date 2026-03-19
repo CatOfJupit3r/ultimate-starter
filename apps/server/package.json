@@ -11,7 +11,7 @@
   },
   "prettier": "@startername/prettier-config",
   "dependencies": {
-    "@hono/node-server": "^1.19.9",
+    "@hono/node-server": "^1.19.11",
     "@hono/standard-validator": "0.2.1",
     "@hono/tsyringe": "^1.0.1",
     "@orpc/openapi": "catalog:",
@@ -33,13 +33,13 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@startername/eslint-config": "workspace:*",
+    "@startername/prettier-config": "workspace:*",
     "@swc-node/register": "catalog:",
     "@swc/core": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
-    "@startername/eslint-config": "workspace:*",
-    "@startername/prettier-config": "workspace:*",
     "@vitest/ui": "catalog:",
     "eslint": "catalog:",
     "mongodb-memory-server": "11.0.1",
