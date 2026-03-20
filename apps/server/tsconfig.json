@@ -8,21 +8,16 @@
     "skipLibCheck": true,
     "paths": {
       "@~/*": ["./src/*"],
-      "@startername/shared/globals": ["../../packages/shared/src/globals.d.ts"]
+      "@startername/shared": ["../../packages/shared/src/index.ts"],
+      "@startername/shared/*": ["../../packages/shared/src/*"]
     },
     "outDir": "./dist",
     "types": ["node", "vitest"],
-    "composite": true,
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "references": [
-    {
-      "path": "../../packages/shared"
-    }
-  ],
   "files": ["../../packages/shared/src/globals.d.ts"],
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "test/**/*.ts", "test/**/*.tsx"]
 }
