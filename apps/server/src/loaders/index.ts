@@ -7,6 +7,7 @@ import achievementsLoader from './achievements.loader';
 import authLoader from './auth.loader';
 import databaseLoader from './database.loader';
 import honoLoader from './hono.loader';
+import userProfileLoader from './user-profile.loader';
 
 const isTest = process.env.NODE_ENV === 'test';
 let cachedLoadersPromise: ReturnType<typeof bootstrap> | null = null;
@@ -25,6 +26,9 @@ async function bootstrap() {
   logger?.info('Loading authentication...');
   const instance = await authLoader(db);
   logger?.info('Authentication loaded.');
+  logger?.info('Loading user profile...');
+  await userProfileLoader();
+  logger?.info('User profile loaded.');
   logger?.info('Loading achievements...');
   await achievementsLoader();
   logger?.info('Achievements loaded.');

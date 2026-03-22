@@ -7,13 +7,14 @@ import { isNil } from 'lodash-es';
 import { singleton } from 'tsyringe';
 
 import env from '@~/constants/env';
-import { UserProfileModel } from '@~/db/models/user-profile.model';
 
+import type { EventBus } from '../events/event-bus';
+import { UserAfterRegisteredListener } from '../events/listeners/user.listeners';
 import { LoggerFactory } from '../logger/logger.factory';
 import type { iWithLogger, LoggerType } from '../logger/logger.types';
 import { devImpersonatePlugin } from './better-auth-plugins/dev-impersonate.plugin';
 
-const createInstance = (db: mongoose.mongo.Db, logger: LoggerType, valkey: Redis | Nil) =>
+const createInstance = (db: mongoose.mongo.Db, logger: LoggerType, valkey: Redis | Nil, eventBus: EventBus) =>
   betterAuth({
     // @ts-expect-error - ignore for now
     database: mongodbAdapter(db),
@@ -53,11 +54,7 @@ const createInstance = (db: mongoose.mongo.Db, logger: LoggerType, valkey: Redis
       user: {
         create: {
           async after(user) {
-            try {
-              await UserProfileModel.create({ userId: user.id });
-            } catch (e) {
-              logger.error('Please pay attention to this error! User profile creation failed.', { error: e });
-            }
+            eventBus.emit(UserAfterRegisteredListener, { userId: user.id });
           },
         },
       },
@@ -74,8 +71,8 @@ export class AuthService implements iWithLogger {
     this.logger = loggerFactory.create('auth');
   }
 
-  public connect(db: mongoose.mongo.Db, valkey: Redis | Nil) {
-    this.instance = createInstance(db, this.logger, valkey);
+  public connect(db: mongoose.mongo.Db, valkey: Redis | Nil, eventBus: EventBus) {
+    this.instance = createInstance(db, this.logger, valkey, eventBus);
   }
 
   public getInstance() {

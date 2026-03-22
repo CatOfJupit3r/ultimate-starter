@@ -57,13 +57,13 @@ export default function UserMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link to="/profile" className="flex w-full cursor-pointer items-center gap-2">
-            <LuUser className="h-4 w-4" />
+            <LuUser className="size-4" />
             Profile
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link to="/settings" className="flex w-full cursor-pointer items-center gap-2">
-            <LuSettings className="h-4 w-4" />
+            <LuSettings className="size-4" />
             Settings
           </Link>
         </DropdownMenuItem>
@@ -75,7 +75,7 @@ export default function UserMenu() {
             className="flex w-full cursor-pointer items-center gap-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
             onClick={handleSignOut}
           >
-            <LuLogOut className="h-4 w-4" />
+            <LuLogOut className="size-4" />
             Sign Out
           </Link>
         </DropdownMenuItem>
