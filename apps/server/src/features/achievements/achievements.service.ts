@@ -36,7 +36,7 @@ export class AchievementsService implements iWithLogger {
       });
 
       // Emit event for cache invalidation
-      this.eventBus.emit(AchievementUnlockedListener, { userId, achievementId });
+      await this.eventBus.emit(AchievementUnlockedListener, { userId, achievementId });
     },
   };
 

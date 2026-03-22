@@ -54,7 +54,7 @@ const createInstance = (db: mongoose.mongo.Db, logger: LoggerType, valkey: Redis
       user: {
         create: {
           async after(user) {
-            eventBus.emit(UserAfterRegisteredListener, { userId: user.id });
+            await eventBus.emit(UserAfterRegisteredListener, { userId: user.id });
           },
         },
       },
