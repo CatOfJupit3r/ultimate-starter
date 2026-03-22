@@ -16,7 +16,6 @@ export class UserEventsService implements iWithLogger {
     loggerFactory: LoggerFactory,
   ) {
     this.logger = loggerFactory.create('user-events');
-    this.logger.info('UserEventsService initialized');
     this.initialize();
   }
 
