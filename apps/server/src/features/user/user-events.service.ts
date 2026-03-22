@@ -8,15 +8,15 @@ import { LoggerFactory } from '../logger/logger.factory';
 import type { iWithLogger } from '../logger/logger.types';
 
 @singleton()
-export class UserProfileService implements iWithLogger {
+export class UserEventsService implements iWithLogger {
   public readonly logger: iWithLogger['logger'];
 
   constructor(
     private readonly eventBus: EventBus,
     loggerFactory: LoggerFactory,
   ) {
-    this.logger = loggerFactory.create('user-profile');
-    this.logger.info('UserProfileService initialized');
+    this.logger = loggerFactory.create('user-events');
+    this.logger.info('UserEventsService initialized');
     this.initialize();
   }
 
