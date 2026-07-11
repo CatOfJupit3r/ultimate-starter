@@ -59,11 +59,9 @@ export function ErrorBoundary({ error, reset }: iErrorBoundaryProps) {
                 <HiOutlineRefresh className="mr-2 size-4" />
                 Try Again
               </Button>
-              <Button variant="outline" asChild>
-                <Link to="/">
-                  <HiOutlineHome className="mr-2 size-4" />
-                  Go Home
-                </Link>
+              <Button variant="outline" render={<Link to="/" />}>
+                <HiOutlineHome className="mr-2 size-4" />
+                Go Home
               </Button>
             </div>
           </CardContent>
@@ -97,11 +95,9 @@ export function ErrorBoundary({ error, reset }: iErrorBoundaryProps) {
               <HiOutlineRefresh className="mr-2 size-4" />
               Try Again
             </Button>
-            <Button variant="outline" asChild>
-              <Link to="/">
-                <HiOutlineHome className="mr-2 size-4" />
-                Go Home
-              </Link>
+            <Button variant="outline" render={<Link to="/" />}>
+              <HiOutlineHome className="mr-2 size-4" />
+              Go Home
             </Button>
           </div>
         </CardContent>
