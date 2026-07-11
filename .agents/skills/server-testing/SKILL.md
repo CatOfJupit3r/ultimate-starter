@@ -169,6 +169,19 @@ expect(value).not.toBeNil();
 
 Defined in `test/helpers/matchers.ts` and auto-loaded for all tests.
 
+## oRPC Error Assertions
+
+Use the shared `expectORPCError` helper from `test/helpers/orpc-errors.ts` when asserting rejected oRPC calls. It verifies the structured error code and message, and can optionally verify the transport-level message.
+
+```typescript
+import { expectORPCError } from '../helpers/orpc-errors';
+
+await expectORPCError(
+  call(appRouter.feature.action, input, ctx()),
+  { code: errorCodes.FEATURE_ERROR },
+);
+```
+
 ## Test Database
 
 Tests use PGlite (an in-memory PostgreSQL implementation) for isolation:
