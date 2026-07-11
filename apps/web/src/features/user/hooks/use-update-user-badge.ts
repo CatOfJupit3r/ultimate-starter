@@ -1,5 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
+import { BadgeIdSchema } from '@startername/shared/constants/badges';
+
 import { toastError, toastSuccess } from '@~/components/toastifications';
 import type { ORPCOutputs } from '@~/utils/orpc';
 import { tanstackRPC } from '@~/utils/tanstack-orpc';
@@ -14,8 +16,12 @@ export const updateUserBadgeMutationOptions = tanstackRPC.user.updateUserBadge.m
 
     const previous = ctx.client.getQueryData<UserProfileQueryReturnType>(key);
 
+    // variables.badgeId is the contract's raw input type; parse it back into
+    // the branded output type the optimistic cache entry expects.
+    const optimisticBadgeId = BadgeIdSchema.parse(variables.badgeId);
+
     ctx.client.setQueryData<UserProfileQueryReturnType>(key, (current) =>
-      current ? { ...current, selectedBadge: variables.badgeId } : current,
+      current ? { ...current, selectedBadge: optimisticBadgeId } : current,
     );
 
     return { previous };

@@ -1,10 +1,13 @@
-import z from 'zod';
+import { Enumwaii } from '@startername/enumwaii/enumwaii';
+import type { InferEnumwaii } from '@startername/enumwaii/enumwaii';
 
-const EventsSchema = z.enum(['BETA_EVENT']);
+const eventsEnumwaii = new Enumwaii('EventType', ['BETA_EVENT']);
 
-export const EVENTS = EventsSchema.enum;
+export const EVENTS = eventsEnumwaii.enum;
 
-export type EventType = z.infer<typeof EventsSchema>;
+export type EventType = InferEnumwaii<typeof eventsEnumwaii>;
+
+export const eventTypeSchema = eventsEnumwaii.schema;
 
 export interface iBetaEventPayload {
   userId: string;

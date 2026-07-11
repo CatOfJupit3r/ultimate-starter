@@ -1,9 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 
+import { USER_THEME } from './constants';
 import type { UserTheme } from './constants';
 import { ThemeContext } from './context';
-import { getSystemTheme, handleThemeChange, setStoredTheme, setupPreferredListener } from './helpers';
+import {
+  getInitialThemeClass,
+  getSystemTheme,
+  handleThemeChange,
+  setStoredTheme,
+  setupPreferredListener,
+} from './helpers';
 
 interface iThemeProviderProps {
   children: ReactNode;
@@ -16,13 +23,13 @@ export function ThemeProvider({ children, initialTheme }: iThemeProviderProps) {
   useEffect(() => {
     handleThemeChange(userTheme);
 
-    if (userTheme === 'system') {
+    if (userTheme === USER_THEME.SYSTEM) {
       return setupPreferredListener();
     }
     return undefined;
   }, [userTheme]);
 
-  const appTheme = userTheme === 'system' ? getSystemTheme() : userTheme;
+  const appTheme = userTheme === USER_THEME.SYSTEM ? getSystemTheme() : getInitialThemeClass(userTheme);
 
   const setTheme = (newUserTheme: UserTheme) => {
     setUserTheme(newUserTheme);

@@ -1,10 +1,11 @@
-import z from 'zod';
+import { Enumwaii } from '@startername/enumwaii/enumwaii';
+import type { InferEnumwaii } from '@startername/enumwaii/enumwaii';
 
-const userThemeZod = z.enum(['light', 'dark', 'system']);
-export const USER_THEME = userThemeZod.enum;
-export const userThemeValidator = userThemeZod.clone().catch(USER_THEME.dark);
+const userThemeEnumwaii = new Enumwaii('UserTheme', ['LIGHT', 'DARK', 'SYSTEM']);
+export const USER_THEME = userThemeEnumwaii.enum;
+export const userThemeValidator = userThemeEnumwaii.schema.clone().catch(USER_THEME.DARK);
 
-export type UserTheme = z.infer<typeof userThemeZod>;
-export type AppTheme = Exclude<UserTheme, 'system'>;
+export type UserTheme = InferEnumwaii<typeof userThemeEnumwaii>;
+export type AppTheme = typeof USER_THEME.LIGHT | typeof USER_THEME.DARK;
 
 export const THEME_COOKIE = 'startername.theme';

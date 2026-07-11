@@ -1,7 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
 import { errorCodes } from '@startername/shared';
-import type { UserAchievementId } from '@startername/shared/constants/achievements';
 import type { BadgeId } from '@startername/shared/constants/badges';
 
 import { generatePublicCode } from '@~/db/helpers';
@@ -50,7 +49,7 @@ export class UserService {
     if (badgeMeta.requiresAchievement) {
       const hasAchievement = await this.userAchievementRepository.findByAchievement(
         userId,
-        badgeMeta.requiresAchievement as UserAchievementId,
+        badgeMeta.requiresAchievement,
       );
       if (!hasAchievement) throw ORPCForbiddenError(errorCodes.USER_BADGE_NOT_ALLOWED);
     }
