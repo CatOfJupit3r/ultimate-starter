@@ -9,31 +9,30 @@ so that agentic tools work efficiently.
 ## Project Overview
 
 - **Contract-first development.** API endpoints start as shared `zod` schemas in `packages/shared`, ensuring server and client stay type-safe.
-- **Real-time challenge lifecycle.** Hono-based routes expose public and authenticated procedures, backed by MongoDB via Typegoose models.
+- **Real-time challenge lifecycle.** Hono-based routes expose public and authenticated procedures, backed by PostgreSQL via Drizzle ORM.
 - **Typed React client.** The web app consumes the generated oRPC client, TanStack Router, and Query utilities for fully typed data interactions.
-- **Developer-focused tooling.** Node.js 24, pnpm, moonrepo, and Husky hooks enable quick local feedback loops and consistent commits.
+- **Developer-focused tooling.** Node.js 24, pnpm workspaces, and Husky hooks enable quick local feedback loops and consistent commits.
 
 ## Tech Stack
 
-- **Runtime & Tooling:** Node.js 24, pnpm, moonrepo, Commitizen, Husky
-- **Backend:** TypeScript, Hono, oRPC, Typegoose/Mongoose, Better Auth, Zod, Vitest
+- **Runtime & Tooling:** Node.js 24, pnpm workspaces, Commitizen, Husky
+- **Backend:** TypeScript, Hono, oRPC, Drizzle ORM/PostgreSQL, Better Auth, Zod, Vitest
 - **Frontend:** React 19, Vite, TanStack Stack/Query/Form, Tailwind CSS, Vitest
 - **Shared Contracts:** `@startername/shared` with oRPC + OpenAPI generation
 
 ## Repository Structure
 
-- `apps/server` – Node.js + Hono API, oRPC routers, Typegoose models, Better Auth setup
+- `apps/server` – Node.js + Hono API, oRPC routers, Drizzle schema, Better Auth setup
 - `apps/web` – React 19 client, TanStack Router tree, authentication flows, Tailwind config
 - `packages/shared` – Contract definitions, shared types, and schema exports
 - `docs` – Product requirements, roadmap, risk registers, and supporting documentation
-- `mongo` – Docker-managed MongoDB volume (keep uncommitted)
-- `.moon/` – moonrepo configuration files
+- `postgres-data` – Docker-managed PostgreSQL volume (keep uncommitted)
 - `tsconfig*.json` – TypeScript project references
 
 ## Prerequisites
 
 - Git ≥ 2.40
-- Docker Desktop (required for the MongoDB container)
+- Docker Desktop (required for the PostgreSQL container)
 - Node.js **exactly** v24 (use nvm or similar)
 - pnpm ≥ 10.0.0
 
@@ -71,18 +70,21 @@ pnpm install
 ```
 
 1. Copy environment templates: duplicate `.env.example` to `.env` in both `apps/server` and `apps/web`.
-2. Start Docker Desktop so MongoDB can launch.
+2. Start Docker Desktop so PostgreSQL can launch.
 3. Boot everything with `pnpm run dev`:
     - Web client: `http://localhost:3030`
     - API + Better Auth: `http://localhost:5050`
-    - MongoDB starts via `docker compose -f docker-compose.dev.yml up -d`
+    - PostgreSQL starts via `docker compose -f docker-compose.dev.yml --profile postgres up -d --wait`
 
 ## Workspace Commands
 
-- `pnpm run dev` – start API, web app, and MongoDB
+- `pnpm run dev` – start API, web app, and PostgreSQL
+- `pnpm run db:generate` – generate a Drizzle migration from the schema
+- `pnpm run db:migrate` – apply Drizzle migrations to PostgreSQL
+- `pnpm run db:push` – push the schema directly during local development
 - `pnpm run check-types` – TypeScript project references (server + shared)
 - `pnpm run lint` – ESLint across the monorepo
-- `pnpm run prettier` – formatting audit (no write)
+- `pnpm run prettify` – format workspace source files
 - `pnpm run prepare` – reinstall Husky hooks if they go missing
 - `pnpm test` – run all tests with Vitest
 
@@ -108,7 +110,7 @@ pnpm install
 
 ## Tips & Conventions
 
-- Keep `pnpm run dev` active regularly to refresh seeded Mongo data.
+- Keep `pnpm run dev` active regularly to keep local PostgreSQL available.
 - Avoid rebasing on `main`; prefer merging.
 - Use the shared contract utilities (`tanstackRPC` helpers, shared schemas) instead of duplicating types or query keys.
 - When extending the API, register new routes in `apps/server/src/routers/index.ts` and add error codes to `apps/server/src/enums/errors.ts`.

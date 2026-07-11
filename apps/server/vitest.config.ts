@@ -12,16 +12,14 @@ const commonTestConfig = {
   clearMocks: true,
   restoreMocks: true,
   mockReset: true,
-  watchExclude: ['mongo/**', 'dist/**', '.vitest/**'],
+  watchExclude: ['dist/**', '.vitest/**'],
   env: {
     NODE_ENV: 'test',
     BETTER_AUTH_SECRET: 'test-secret',
     BETTER_AUTH_URL: 'http://localhost:3000/auth',
     VALKEY_HOST: 'localhost',
     VALKEY_PORT: '6379',
-    MONGO_USER: 'username',
-    MONGO_PASSWORD: 'password',
-    MONGO_DATABASE_NAME: 'startername-test',
+    POSTGRES_URL: 'postgresql://postgres:postgres@localhost:5432/startername-test',
     LOG_LEVEL: 'error',
   },
   coverage: {
@@ -58,6 +56,9 @@ export default defineConfig({
           exclude: ['test/integration/**', 'test/**/*.int.test.ts'],
           setupFiles: ['./test/helpers/matchers.ts'],
           isolate: true,
+          sequence: {
+            groupOrder: 0,
+          },
         },
       },
       {
@@ -72,6 +73,12 @@ export default defineConfig({
           testTimeout: 10000,
           hookTimeout: 10000,
           isolate: false,
+          fileParallelism: false,
+          maxWorkers: 1,
+          minWorkers: 1,
+          sequence: {
+            groupOrder: 1,
+          },
         },
       },
     ],

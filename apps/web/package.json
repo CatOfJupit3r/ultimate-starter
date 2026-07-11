@@ -4,6 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview --host",
+    "check-types": "tsgo --noEmit",
+    "lint": "eslint . --fix",
+    "prettify": "prettier --write ./src/",
+    "test": "vitest run",
     "test:watch": "vitest"
   },
   "prettier": "@startername/prettier-config",

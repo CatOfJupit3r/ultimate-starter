@@ -4,45 +4,19 @@ Complete examples showing the full lifecycle of feature implementation.
 
 ## Example 1: User Profile Feature
 
-### Models (Typegoose)
+### Database Schema (Drizzle)
 
 ```typescript
-// apps/server/src/db/models/user-profile.model.ts
-import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
-import type { DocumentType } from '@typegoose/typegoose';
-import { idProp } from '../prop';
+// apps/server/src/db/schema/user-profile.schema.ts
+import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
-@modelOptions({
-  schemaOptions: {
-    collection: 'user_profiles',
-    timestamps: true,
-  },
-  options: {
-    indexes: [{ userId: 1 }],
-  },
-})
-class UserProfileClass {
-  @idProp()
-  public _id!: string;
-
-  @prop({ required: true, unique: true, index: true })
-  public userId!: string;
-
-  @prop({ default: '' })
-  public bio!: string;
-
-  @prop({ default: '' })
-  public avatarUrl!: string;
-
-  @prop({ type: () => [String], default: [] })
-  public interests!: string[];
-
-  public createdAt!: Date;
-  public updatedAt!: Date;
-}
-
-export const UserProfileModel = getModelForClass(UserProfileClass);
-export type UserProfileDoc = DocumentType<UserProfileClass>;
+export const userProfiles = pgTable('profile', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').notNull().unique(),
+  bio: text('bio').notNull().default(''),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
 ```
 
 ### Contract (oRPC)

@@ -399,8 +399,7 @@ Access test environment configuration:
 ```typescript
 // Environment variables are set in vitest.config.ts
 process.env.NODE_ENV; // 'test'
-process.env.MONGO_DATABASE_NAME; // 'startername-test-{workerId}'
-process.env.MONGO_URI; // MongoDB Memory Server URI
+process.env.POSTGRES_URL; // PostgreSQL connection string used by the runtime service
 ```
 
 ## Async Test Utilities

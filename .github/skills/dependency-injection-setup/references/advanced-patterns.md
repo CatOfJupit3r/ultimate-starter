@@ -286,7 +286,7 @@ import { singleton } from 'tsyringe';
 import { LoggerFactory } from '@~/features/logger/logger.factory';
 import { UserService } from '@~/features/user/user.service';
 import { ProfileService } from './profile.service';
-import mongoose from 'mongoose';
+import { PostgresService } from '@~/db/postgres.service';
 import type { iWithLogger } from '@~/features/logger/logger.types';
 
 @singleton()
@@ -302,27 +302,19 @@ export class UserRegistrationService implements iWithLogger {
   }
 
   public async registerUser(data: RegistrationData) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
-    try {
+    const db = this.postgresService.getDb();
+    return db.transaction(async (transaction) => {
       // Create user and profile atomically
-      const user = await this.userService.create(data, { session });
+      const user = await this.userService.create(data, { transaction });
       const profile = await this.profileService.create(
-        { userId: user._id, ...data.profile },
-        { session }
+        { userId: user.id, ...data.profile },
+        { transaction }
       );
 
-      await session.commitTransaction();
-      this.logger.info('User registered successfully', { userId: user._id });
+      this.logger.info('User registered successfully', { userId: user.id });
 
       return { user, profile };
-    } catch (error) {
-      await session.abortTransaction();
-      this.logger.error('User registration failed', { error });
-      throw error;
-    } finally {
-      session.endSession();
+    });
     }
   }
 }
