@@ -10,6 +10,7 @@ switch (process.env.NODE_ENV) {
     console.log('Current environment expects variables to by passed by container');
     break;
   }
+  case undefined:
   case 'development':
     console.log('Using .development.env file');
     config({ quiet: true });

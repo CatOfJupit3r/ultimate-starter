@@ -14,7 +14,7 @@ export function getInitialThemeClass(theme: UserTheme): AppTheme {
 }
 
 export const setStoredTheme = createServerFn({ method: 'POST' })
-  .inputValidator((data: unknown) => userThemeValidator.parse(data))
+  .validator((data: unknown) => userThemeValidator.parse(data))
   .handler(({ data }) => {
     setCookie(THEME_COOKIE, String(data));
   });
