@@ -23,13 +23,13 @@ export function ThemeProvider({ children, initialTheme }: iThemeProviderProps) {
   useEffect(() => {
     handleThemeChange(userTheme);
 
-    if (userTheme === USER_THEME.system) {
+    if (userTheme === USER_THEME.SYSTEM) {
       return setupPreferredListener();
     }
     return undefined;
   }, [userTheme]);
 
-  const appTheme = userTheme === USER_THEME.system ? getSystemTheme() : getInitialThemeClass(userTheme);
+  const appTheme = userTheme === USER_THEME.SYSTEM ? getSystemTheme() : getInitialThemeClass(userTheme);
 
   const setTheme = (newUserTheme: UserTheme) => {
     setUserTheme(newUserTheme);
