@@ -8,7 +8,6 @@
     "skipLibCheck": true,
     "paths": {
       "@~/*": ["./src/*"],
-      "@startername/shared": ["../../packages/shared/src/index.ts"],
       "@startername/shared/*": ["../../packages/shared/src/*"]
     },
     "outDir": "./dist",

@@ -9,10 +9,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@~/components/ui/dropdown-menu';
-import { useMe } from '@~/features/user';
+import { useMe } from '@~/features/user/hooks/use-me';
 import AuthService from '@~/services/auth.service';
 
-import { Button } from './ui/button';
+import { Button } from './ui/button/button';
 import { Skeleton } from './ui/skeleton';
 
 export default function UserMenu() {

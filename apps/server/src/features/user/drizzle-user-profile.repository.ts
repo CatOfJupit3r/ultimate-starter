@@ -3,7 +3,7 @@ import { singleton } from 'tsyringe';
 
 import { generatePublicCode } from '@~/db/helpers';
 import { PostgresService } from '@~/db/postgres.service';
-import { userProfiles } from '@~/db/schema';
+import { userProfiles } from '@~/db/schema/user-profile.schema';
 
 import type { iUserProfileRepository } from './user-profile.repository';
 import { UserProfileResolver } from './user-profile.resolver';

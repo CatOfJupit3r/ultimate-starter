@@ -1,7 +1,7 @@
 import { call } from '@orpc/server';
 import { it, expect, describe, beforeEach } from 'vitest';
 
-import { USER_ACHIEVEMENTS } from '@startername/shared';
+import { USER_ACHIEVEMENTS } from '@startername/shared/constants/achievements';
 import { BADGE_IDS } from '@startername/shared/constants/badges';
 
 import { appRouter } from '../helpers/instance';

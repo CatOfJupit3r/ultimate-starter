@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 
-import type { accounts, users } from '@~/db/schema';
+import type { accounts, users } from '@~/db/schema/auth.schema';
 import { createRowResolver } from '@~/lib/row-resolver';
 
 import type { iAuthAccountRecordResponse, iAuthUserRecordResponse } from './auth-user.repository.types';

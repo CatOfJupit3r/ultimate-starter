@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
-import { errorCodes } from '@startername/shared';
 import type { BadgeId } from '@startername/shared/constants/badges';
+import { errorCodes } from '@startername/shared/enums/errors.enums';
 
 import { generatePublicCode } from '@~/db/helpers';
 import {

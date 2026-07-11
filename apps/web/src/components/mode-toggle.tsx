@@ -1,6 +1,6 @@
 import { LuMoon, LuSun } from 'react-icons/lu';
 
-import { Button } from '@~/components/ui/button';
+import { Button } from '@~/components/ui/button/button';
 import {
   DropdownMenu,
   DropdownMenuContent,

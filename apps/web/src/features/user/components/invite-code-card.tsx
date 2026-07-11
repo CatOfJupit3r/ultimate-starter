@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { LuRefreshCw } from 'react-icons/lu';
 
 import { CopyButton } from '@~/components/copy-button';
-import { Button } from '@~/components/ui/button';
+import { Button } from '@~/components/ui/button/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@~/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@~/components/ui/dialog';
 
@@ -49,7 +49,7 @@ export function PublicCodeCard({ publicCode }: iPublicCodeCardProps) {
             />
           </div>
           <Button variant="outline" size="sm" onClick={handleRegenerateClick} disabled={isPending} className="gap-2">
-            <LuRefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
+            <LuRefreshCw className={`size-4 ${isPending ? 'animate-spin' : ''}`} />
             Regenerate Code
           </Button>
         </CardContent>

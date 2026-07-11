@@ -1,4 +1,4 @@
-import { container } from '@~/di';
+import { container } from '@~/di/container';
 import { AUTH_USER_REPOSITORY_TOKEN } from '@~/di/tokens';
 import type { iAuthUserRepository } from '@~/features/auth/auth-user.repository';
 import { base, publicProcedure } from '@~/lib/orpc';

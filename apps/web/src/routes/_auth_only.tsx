@@ -3,7 +3,7 @@ import { createFileRoute, Navigate, Outlet, redirect } from '@tanstack/react-rou
 import { tryCatch } from '@startername/shared/helpers/std-utils';
 
 import PseudoPage from '@~/components/pseudo-page';
-import { useMe, meQueryOptions } from '@~/features/user';
+import { useMe, meQueryOptions } from '@~/features/user/hooks/use-me';
 
 export const Route = createFileRoute('/_auth_only')({
   beforeLoad: async ({ context }) => {

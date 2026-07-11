@@ -1,6 +1,6 @@
 import { container } from 'tsyringe';
 
-import { registerServices } from '@~/di';
+import { registerServices } from '@~/di/container';
 import { LoggerFactory } from '@~/features/logger/logger.factory';
 
 import achievementsLoader from './achievements.loader';

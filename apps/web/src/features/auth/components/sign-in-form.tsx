@@ -1,8 +1,8 @@
 import z from 'zod';
 
-import { Button } from '@~/components/ui/button';
+import { Button } from '@~/components/ui/button/button';
 import { useAppForm } from '@~/components/ui/field';
-import { QuickSignIn } from '@~/features/dev-tools';
+import { QuickSignIn } from '@~/features/dev-tools/components/quick-sign-in';
 
 import useLogin from '../hooks/use-login';
 

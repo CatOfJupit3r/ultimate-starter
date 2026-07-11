@@ -5,7 +5,7 @@ import { singleton } from 'tsyringe';
 
 import env from '@~/constants/env';
 
-import { schema } from './schema';
+import { schema } from './database-schema';
 
 const testPostgresDbKey = Symbol.for('startername.test.postgres.db');
 

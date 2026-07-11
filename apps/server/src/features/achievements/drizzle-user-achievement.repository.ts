@@ -5,7 +5,7 @@ import { singleton } from 'tsyringe';
 import type { UserAchievementId } from '@startername/shared/constants/achievements';
 
 import { PostgresService } from '@~/db/postgres.service';
-import { userAchievements } from '@~/db/schema';
+import { userAchievements } from '@~/db/schema/user-achievement.schema';
 
 import type { iUserAchievementRepository } from './user-achievement.repository';
 import { UserAchievementResolver } from './user-achievement.resolver';

@@ -18,7 +18,7 @@ import { AuthService } from '@~/features/auth/auth.service';
 import { LoggerFactory } from '@~/features/logger/logger.factory';
 import { requestContextMiddleware } from '@~/features/logger/logger.middleware';
 import type { iRequestContext } from '@~/features/logger/logger.types';
-import { appRouter } from '@~/routers';
+import { appRouter } from '@~/routers/app-router';
 import nonContractRouter from '@~/routers/non-contract.router';
 
 interface iCreateContextOptions {

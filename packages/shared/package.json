@@ -2,14 +2,7 @@
   "name": "@startername/shared",
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.mts",
-      "default": "./dist/index.mjs"
-    },
     "./globals": {
       "types": "./dist/globals.d.mts",
       "default": "./dist/globals.d.mts"

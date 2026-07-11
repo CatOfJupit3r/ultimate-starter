@@ -1,6 +1,6 @@
 import type { UserAchievementId } from '@startername/shared/constants/achievements';
 
-import type { userAchievements } from '@~/db/schema';
+import type { userAchievements } from '@~/db/schema/user-achievement.schema';
 
 type UserAchievementRow = typeof userAchievements.$inferSelect;
 
