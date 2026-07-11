@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { serve } from '@hono/node-server';
 
 import env from './constants/env';
-import loaders from './loaders';
+import loaders from './loaders/loaders';
 
 if (process.env.NODE_ENV === 'test') {
   throw new Error('Server should not be started in test environment');

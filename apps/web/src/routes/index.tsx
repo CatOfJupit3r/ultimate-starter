@@ -5,7 +5,7 @@ import { LuRocket, LuServerCog } from 'react-icons/lu';
 import { TbLayoutDashboard } from 'react-icons/tb';
 
 import { Badge } from '@~/components/ui/badge';
-import { Button } from '@~/components/ui/button';
+import { Button } from '@~/components/ui/button/button';
 import { Card, CardContent } from '@~/components/ui/card';
 import { Skeleton } from '@~/components/ui/skeleton';
 import { useHealthCheck } from '@~/hooks/queries/use-health-check';
@@ -62,17 +62,17 @@ const FEATURES = [
   {
     title: 'Contract-first approach',
     description: 'Start building with clear API contracts using oRPC',
-    icon: <LuServerCog className="h-8 w-8" />,
+    icon: <LuServerCog className="size-8" />,
   },
   {
     title: 'Shiny new tech',
     description: 'Built with Node.js, React, TanStack Router, and more modern technologies.',
-    icon: <HiOutlineSparkles className="h-8 w-8" />,
+    icon: <HiOutlineSparkles className="size-8" />,
   },
   {
     title: 'Ready-to-use template',
     description: 'Jumpstart your project with a full-stack starter template.',
-    icon: <LuRocket className="h-8 w-8" />,
+    icon: <LuRocket className="size-8" />,
   },
 ];
 
@@ -105,13 +105,13 @@ function HomeComponent() {
             <div className="mt-10 flex justify-center gap-4">
               <Link to="/dashboard">
                 <Button size="lg" variant="outline">
-                  <TbLayoutDashboard className="h-5 w-5" />
+                  <TbLayoutDashboard className="size-5" />
                   See Dashboard
                 </Button>
               </Link>
               <Link to="/profile">
                 <Button size="lg" className="gap-2">
-                  <FaUserCircle className="h-5 w-5" />
+                  <FaUserCircle className="size-5" />
                   See Profile
                 </Button>
               </Link>

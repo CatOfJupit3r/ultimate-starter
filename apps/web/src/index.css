@@ -134,6 +134,6 @@ body {
   }
 }
 
-.higher-than-radix-modal {
+.higher-than-modal {
   z-index: 1050 !important;
 }

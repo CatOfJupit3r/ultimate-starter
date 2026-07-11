@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 
-import type { userAchievements } from '@~/db/schema';
+import type { userAchievements } from '@~/db/schema/user-achievement.schema';
 import { createRowResolver } from '@~/lib/row-resolver';
 
 import type { iUserAchievementRecordResponse } from './user-achievement.types';

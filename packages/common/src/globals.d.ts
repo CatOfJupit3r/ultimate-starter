@@ -1,6 +1,6 @@
 /**
  * Ambient utility types shared across the monorepo.
- * Exported via @startername/shared and consumed globally by dependents.
+ * Exported via @startername/common and consumed globally by dependents.
  */
 // Define once, export for modules, and re-use for globals to avoid duplication.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

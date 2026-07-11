@@ -1,4 +1,4 @@
-import type { accounts, users } from '@~/db/schema';
+import type { accounts, users } from '@~/db/schema/auth.schema';
 
 type UserRow = typeof users.$inferSelect;
 type AccountRow = typeof accounts.$inferSelect;

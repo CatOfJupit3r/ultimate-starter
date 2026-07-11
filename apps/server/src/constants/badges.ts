@@ -1,6 +1,6 @@
-import { USER_ACHIEVEMENTS } from '@startername/shared/constants/achievements';
-import type { iBadgeMeta } from '@startername/shared/constants/badges';
-import { BADGE_IDS } from '@startername/shared/constants/badges';
+import { USER_ACHIEVEMENTS } from '@startername/common/constants/achievements';
+import type { iBadgeMeta } from '@startername/common/constants/badges';
+import { BADGE_IDS } from '@startername/common/constants/badges';
 
 export const BADGES_META: iBadgeMeta[] = [
   {

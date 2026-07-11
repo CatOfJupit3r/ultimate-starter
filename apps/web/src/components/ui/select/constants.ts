@@ -21,7 +21,7 @@ const selectStyles = {
   clearIndicatorStyles: 'p-1 rounded-md',
   indicatorSeparatorStyles: 'bg-muted',
   dropdownIndicatorStyles: 'p-1 rounded-md',
-  menu: 'mt-1.5 p-1.5 border border-input bg-background text-sm rounded-lg higher-than-radix-modal dark:bg-popover dark:border-popover-border shadow-md',
+  menu: 'mt-1.5 p-1.5 border border-input bg-background text-sm rounded-lg higher-than-modal dark:bg-popover dark:border-popover-border shadow-md',
   menuList: 'morel-scrollbar',
   groupHeadingStyles: 'py-2 px-1 text-secondary-foreground text-sm font-semibold',
   optionStyles: {
@@ -61,7 +61,7 @@ export const createClassNames = (
   loadingMessage: (state) => cn(selectStyles.loadingMessageStyles, classNames?.loadingMessage?.(state)),
   menu: (state) => cn(selectStyles.menu, classNames?.menu?.(state)),
   menuList: (state) => cn(classNames?.menuList?.(state)),
-  menuPortal: (state) => cn(classNames?.menuPortal?.(state), `higher-than-radix-modal pointer-events-auto`),
+  menuPortal: (state) => cn(classNames?.menuPortal?.(state), `higher-than-modal pointer-events-auto`),
   multiValue: (state) => cn(selectStyles.multiValueStyles, classNames?.multiValue?.(state)),
   multiValueLabel: (state) => cn(classNames?.multiValueLabel?.(state)),
   multiValueRemove: (state) => cn(classNames?.multiValueRemove?.(state)),

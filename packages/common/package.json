@@ -1,15 +1,8 @@
 {
-  "name": "@startername/shared",
+  "name": "@startername/common",
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.mts",
-      "default": "./dist/index.mjs"
-    },
     "./globals": {
       "types": "./dist/globals.d.mts",
       "default": "./dist/globals.d.mts"
@@ -21,10 +14,6 @@
     "./enums/*": {
       "types": "./dist/enums/*.d.mts",
       "default": "./dist/enums/*.mjs"
-    },
-    "./contract/*": {
-      "types": "./dist/contract/*.d.mts",
-      "default": "./dist/contract/*.mjs"
     },
     "./helpers/*": {
       "types": "./dist/helpers/*.d.mts",
@@ -40,7 +29,7 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint . --fix",
     "prettify": "prettier --write ./src/",
-    "test": "echo 'No tests for shared library yet'",
+    "test": "echo 'No tests for common library yet'",
     "prepare": "tsdown"
   },
   "prettier": "@startername/prettier-config",
@@ -58,11 +47,7 @@
     "typescript": "catalog:"
   },
   "dependencies": {
-    "@orpc/contract": "catalog:",
     "@startername/enumwaii": "workspace:*",
-    "dotenv": "catalog:",
-    "lodash-es": "catalog:",
-    "better-auth": "catalog:",
     "zod": "catalog:"
   }
 }

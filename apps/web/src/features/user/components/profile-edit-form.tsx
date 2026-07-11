@@ -12,7 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@~/components/ui/breadcrumb';
-import { Button } from '@~/components/ui/button';
+import { Button } from '@~/components/ui/button/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@~/components/ui/card';
 import { useAppForm } from '@~/components/ui/field';
 import { Input } from '@~/components/ui/input';
@@ -86,7 +86,7 @@ export function ProfileEditForm() {
             </div>
             <Link to="/profile">
               <Button variant="ghost" size="sm" className="gap-2">
-                <LuArrowLeft className="h-4 w-4" />
+                <LuArrowLeft className="size-4" />
                 <span className="hidden sm:inline">Back</span>
               </Button>
             </Link>

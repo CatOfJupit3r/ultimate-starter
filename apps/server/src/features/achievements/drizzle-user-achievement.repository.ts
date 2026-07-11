@@ -2,10 +2,12 @@ import { and, eq } from 'drizzle-orm';
 import crypto from 'node:crypto';
 import { singleton } from 'tsyringe';
 
-import type { UserAchievementId } from '@startername/shared/constants/achievements';
+import type { UserAchievementId } from '@startername/common/constants/achievements';
+import { errorCodes, errorMessages } from '@startername/common/enums/errors.enums';
 
 import { PostgresService } from '@~/db/postgres.service';
-import { userAchievements } from '@~/db/schema';
+import { userAchievements } from '@~/db/schema/user-achievement.schema';
+import { expectDefined } from '@~/lib/orpc-error-wrapper';
 
 import type { iUserAchievementRepository } from './user-achievement.repository';
 import { UserAchievementResolver } from './user-achievement.resolver';
@@ -53,7 +55,6 @@ export class DrizzleUserAchievementRepository implements iUserAchievementReposit
     if (inserted) return this.userAchievementResolver.toUserAchievementResponse(inserted);
 
     const existing = await this.findByAchievement(userId, achievementId);
-    if (!existing) throw new Error('User achievement upsert returned no row');
-    return existing;
+    return expectDefined(existing, errorMessages(errorCodes.USER_ACHIEVEMENT_UPSERT_FAILED));
   }
 }

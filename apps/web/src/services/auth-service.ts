@@ -6,7 +6,7 @@ import { createAuthClient } from 'better-auth/react';
 import { getBackendURL } from '@~/utils/ssr-helpers';
 
 const getInitialAuthHeaders = createIsomorphicFn()
-  .client(() => ({}) as Record<string, string>)
+  .client(() => ({}))
   .server(getRequestHeaders);
 
 const authInstance = createAuthClient({

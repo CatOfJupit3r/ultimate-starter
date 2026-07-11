@@ -1,0 +1,46 @@
+{
+  "name": "@startername/server-contract",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./app.contract": {
+      "types": "./dist/app.contract.d.mts",
+      "default": "./dist/app.contract.mjs"
+    },
+    "./contract/*": {
+      "types": "./dist/*.d.mts",
+      "default": "./dist/*.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsdown --watch --no-clean",
+    "build": "tsdown",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --fix",
+    "prettify": "prettier --write ./src/",
+    "test": "echo 'No tests for server contract library yet'",
+    "prepare": "tsdown"
+  },
+  "prettier": "@startername/prettier-config",
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "@startername/eslint-config": "workspace:*",
+    "@startername/prettier-config": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@orpc/contract": "catalog:",
+    "@startername/common": "workspace:*",
+    "zod": "catalog:"
+  }
+}

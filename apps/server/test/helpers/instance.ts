@@ -1,5 +1,5 @@
 // sort-imports-ignore
-import loaders from '../../src/loaders';
+import loaders from '../../src/loaders/loaders';
 
 if (process.env.NODE_ENV !== 'test') {
   throw new Error('Tests should be run in test environment');

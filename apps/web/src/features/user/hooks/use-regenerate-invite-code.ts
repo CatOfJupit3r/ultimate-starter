@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { toastError, toastSuccess } from '@~/components/toastifications';
+import { toastError, toastSuccess } from '@~/components/toastifications/create-jsx-toasts';
 import { tanstackRPC } from '@~/utils/tanstack-orpc';
 
 export const regeneratePublicCodeMutationOptions = tanstackRPC.user.regeneratePublicCode.mutationOptions({

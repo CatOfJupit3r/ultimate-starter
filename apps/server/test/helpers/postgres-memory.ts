@@ -5,7 +5,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { schema } from '@~/db/schema';
+import { schema } from '@~/db/database-schema';
 
 const testPostgresDbKey = Symbol.for('startername.test.postgres.db');
 const testPostgresReadyKey = Symbol.for('startername.test.postgres.ready');

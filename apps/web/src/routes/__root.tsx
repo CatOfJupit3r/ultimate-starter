@@ -12,7 +12,7 @@ import Header from '@~/components/header';
 import { getInitialThemeClass, getStoredTheme } from '@~/components/themes/helpers';
 import { ThemeProvider } from '@~/components/themes/theme-provider';
 import ToasterContainer from '@~/components/toastifications/toaster-container';
-import { meQueryOptions } from '@~/features/user';
+import { meQueryOptions } from '@~/features/user/hooks/use-me';
 import { seo } from '@~/utils/seo';
 import type { tanstackRPC } from '@~/utils/tanstack-orpc';
 

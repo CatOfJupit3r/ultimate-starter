@@ -1,6 +1,6 @@
 import { inject, singleton } from 'tsyringe';
 
-import type { UserAchievementId } from '@startername/shared/constants/achievements';
+import type { UserAchievementId } from '@startername/common/constants/achievements';
 
 import { USER_ACHIEVEMENT_REPOSITORY_TOKEN } from '@~/di/tokens';
 import type { iAchievementContext, iAchievementDefinition } from '@~/features/achievements/achievements.types';

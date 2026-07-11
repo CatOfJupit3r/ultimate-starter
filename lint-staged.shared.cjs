@@ -4,7 +4,7 @@
  * This configuration runs linting and formatting on staged files before commit.
  * It's optimized for a monorepo structure with TypeScript/JavaScript files.
  *
- * @param {string} workspace - The workspace name (e.g., 'server', 'web', '@startername/shared')
+ * @param {string} workspace - The workspace name (e.g., 'server', 'web', 'common')
  */
 module.exports = (workspace) => ({
   '*.{ts,tsx}': [

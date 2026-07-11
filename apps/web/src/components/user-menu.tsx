@@ -9,10 +9,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@~/components/ui/dropdown-menu';
-import { useMe } from '@~/features/user';
+import { useMe } from '@~/features/user/hooks/use-me';
 import AuthService from '@~/services/auth.service';
 
-import { Button } from './ui/button';
+import { Button } from './ui/button/button';
 import { Skeleton } from './ui/skeleton';
 
 export default function UserMenu() {
@@ -25,8 +25,8 @@ export default function UserMenu() {
 
   if (!isLoggedIn) {
     return (
-      <Button variant="outline" asChild>
-        <Link to="/auth">Sign In</Link>
+      <Button variant="outline" render={<Link to="/auth" />}>
+        Sign In
       </Button>
     );
   }
@@ -45,9 +45,7 @@ export default function UserMenu() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline">{user.name}</Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger render={<Button variant="outline" />}>{user.name}</DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 bg-card" align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -55,29 +53,27 @@ export default function UserMenu() {
           {user.email}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link to="/profile" className="flex w-full cursor-pointer items-center gap-2">
-            <LuUser className="size-4" />
-            Profile
-          </Link>
+        <DropdownMenuItem render={<Link to="/profile" className="flex w-full cursor-pointer items-center gap-2" />}>
+          <LuUser className="size-4" />
+          Profile
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link to="/settings" className="flex w-full cursor-pointer items-center gap-2">
-            <LuSettings className="size-4" />
-            Settings
-          </Link>
+        <DropdownMenuItem render={<Link to="/settings" className="flex w-full cursor-pointer items-center gap-2" />}>
+          <LuSettings className="size-4" />
+          Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link
-            to="/auth"
-            search={{ redirect: location.pathname }}
-            className="flex w-full cursor-pointer items-center gap-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-            onClick={handleSignOut}
-          >
-            <LuLogOut className="size-4" />
-            Sign Out
-          </Link>
+        <DropdownMenuItem
+          render={
+            <Link
+              to="/auth"
+              search={{ redirect: location.pathname }}
+              className="flex w-full cursor-pointer items-center gap-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+              onClick={handleSignOut}
+            />
+          }
+        >
+          <LuLogOut className="size-4" />
+          Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -2,9 +2,9 @@ import { useCopyToClipboard } from '@uidotdev/usehooks';
 import { useEffect, useState } from 'react';
 import { LuCheck, LuCopy } from 'react-icons/lu';
 
-import { Button } from '@~/components/ui/button';
+import { Button } from '@~/components/ui/button/button';
 
-import { toastError, toastSuccess } from './toastifications';
+import { toastError, toastSuccess } from './toastifications/create-jsx-toasts';
 
 interface iCopyButtonProps {
   value: string;

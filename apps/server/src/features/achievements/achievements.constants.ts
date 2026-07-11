@@ -1,5 +1,5 @@
-import type { iUserAchievementMeta } from '@startername/shared/constants/achievements';
-import { USER_ACHIEVEMENTS } from '@startername/shared/constants/achievements';
+import type { iUserAchievementMeta } from '@startername/common/constants/achievements';
+import { USER_ACHIEVEMENTS } from '@startername/common/constants/achievements';
 
 export const USER_ACHIEVEMENTS_META: iUserAchievementMeta[] = [
   {

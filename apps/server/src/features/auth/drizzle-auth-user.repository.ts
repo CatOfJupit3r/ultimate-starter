@@ -2,7 +2,7 @@ import { and, count as countFn, eq, gt } from 'drizzle-orm';
 import { singleton } from 'tsyringe';
 
 import { PostgresService } from '@~/db/postgres.service';
-import { accounts, sessions, users } from '@~/db/schema';
+import { accounts, sessions, users } from '@~/db/schema/auth.schema';
 
 import type { iAuthUserRepository } from './auth-user.repository';
 import type {

@@ -2,9 +2,9 @@ import { getTableName, sql } from 'drizzle-orm';
 import 'reflect-metadata';
 import { afterEach } from 'vitest';
 
+import { schema } from '@~/db/database-schema';
 import { PostgresService } from '@~/db/postgres.service';
-import { schema } from '@~/db/schema';
-import { container } from '@~/di';
+import { container } from '@~/di/container';
 
 import './matchers';
 import { initializeTestPostgres } from './postgres-memory';

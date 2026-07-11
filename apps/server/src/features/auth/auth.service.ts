@@ -4,7 +4,8 @@ import { username } from 'better-auth/plugins';
 import type Redis from 'ioredis';
 import { singleton } from 'tsyringe';
 
-import { isNil } from '@startername/shared/helpers/std-utils';
+import { errorCodes, errorMessages } from '@startername/common/enums/errors.enums';
+import { isNil } from '@startername/common/helpers/std-utils';
 
 import env from '@~/constants/env';
 import { PostgresService } from '@~/db/postgres.service';
@@ -19,6 +20,7 @@ import {
 } from '@~/db/schema/auth.schema';
 import { EventBus } from '@~/features/events/event-bus';
 import { UserAfterRegisteredListener } from '@~/features/events/listeners/user.listeners';
+import { UnexpectedServerError } from '@~/lib/orpc-error-wrapper';
 
 import { LoggerFactory } from '../logger/logger.factory';
 import type { iWithLogger, LoggerType } from '../logger/logger.types';
@@ -113,7 +115,7 @@ export class AuthService implements iWithLogger {
   }
 
   public getInstance() {
-    if (!this.instance) throw new Error('AuthService not initialized. Call connect() first.');
+    if (!this.instance) throw new UnexpectedServerError(errorMessages(errorCodes.AUTH_SERVICE_NOT_INITIALIZED));
 
     return this.instance;
   }

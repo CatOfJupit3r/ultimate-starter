@@ -1,10 +1,12 @@
 import { call } from '@orpc/server';
 import { it, expect, describe, beforeEach } from 'vitest';
 
-import { USER_ACHIEVEMENTS } from '@startername/shared';
-import { BADGE_IDS } from '@startername/shared/constants/badges';
+import { USER_ACHIEVEMENTS } from '@startername/common/constants/achievements';
+import { BADGE_IDS } from '@startername/common/constants/badges';
+import { errorCodes } from '@startername/common/enums/errors.enums';
 
 import { appRouter } from '../helpers/instance';
+import { expectORPCError } from '../helpers/orpc-errors';
 import { getUserAchievementRepository, getUserProfileRepository } from './fixtures/repository.fixtures';
 import { createUser } from './utilities';
 
@@ -23,13 +25,9 @@ describe('Badge Selection API', () => {
     it('should reject badge selection when user lacks required achievement', async () => {
       const { ctx } = await createUser();
 
-      try {
-        await call(appRouter.user.updateUserBadge, { badgeId: BADGE_IDS.BETA_TESTER }, ctx());
-        expect(true).toBe(false);
-      } catch (error: any) {
-        expect(error).toBeDefined();
-        expect(error.message).toContain('You do not have the required achievement to use this badge');
-      }
+      await expectORPCError(call(appRouter.user.updateUserBadge, { badgeId: BADGE_IDS.BETA_TESTER }, ctx()), {
+        code: errorCodes.USER_BADGE_NOT_ALLOWED,
+      });
     });
 
     it('should allow badge selection when user has required achievement', async () => {

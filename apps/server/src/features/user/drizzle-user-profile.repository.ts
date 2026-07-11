@@ -1,9 +1,12 @@
 import { eq } from 'drizzle-orm';
 import { singleton } from 'tsyringe';
 
+import { errorCodes, errorMessages } from '@startername/common/enums/errors.enums';
+
 import { generatePublicCode } from '@~/db/helpers';
 import { PostgresService } from '@~/db/postgres.service';
-import { userProfiles } from '@~/db/schema';
+import { userProfiles } from '@~/db/schema/user-profile.schema';
+import { expectDefined } from '@~/lib/orpc-error-wrapper';
 
 import type { iUserProfileRepository } from './user-profile.repository';
 import { UserProfileResolver } from './user-profile.resolver';
@@ -57,8 +60,7 @@ export class DrizzleUserProfileRepository implements iUserProfileRepository {
     if (inserted) return this.userProfileResolver.toUserProfileResponse(inserted);
 
     const existing = await this.findByUserId(userId);
-    if (!existing) throw new Error('User profile upsert returned no row');
-    return existing;
+    return expectDefined(existing, errorMessages(errorCodes.USER_PROFILE_UPSERT_FAILED));
   }
 
   public async upsert(userId: string, input: iUpsertUserProfileInput) {
@@ -82,7 +84,8 @@ export class DrizzleUserProfileRepository implements iUserProfileRepository {
       })
       .returning();
 
-    if (!profile) throw new Error('User profile upsert returned no row');
-    return this.userProfileResolver.toUserProfileResponse(profile);
+    return this.userProfileResolver.toUserProfileResponse(
+      expectDefined(profile, errorMessages(errorCodes.USER_PROFILE_UPSERT_FAILED)),
+    );
   }
 }

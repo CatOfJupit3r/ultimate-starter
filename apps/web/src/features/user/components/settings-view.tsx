@@ -5,7 +5,7 @@ import z from 'zod';
 
 import Loader from '@~/components/loader';
 import { Alert, AlertDescription } from '@~/components/ui/alert';
-import { Button } from '@~/components/ui/button';
+import { Button } from '@~/components/ui/button/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@~/components/ui/card';
 import { useAppForm } from '@~/components/ui/field';
 import { Input } from '@~/components/ui/input';
@@ -69,7 +69,7 @@ export function SettingsView() {
             </div>
             <Link to="/profile">
               <Button variant="ghost" size="sm" className="gap-2">
-                <LuArrowLeft className="h-4 w-4" />
+                <LuArrowLeft className="size-4" />
                 <span className="hidden sm:inline">Back</span>
               </Button>
             </Link>
@@ -176,7 +176,7 @@ export function SettingsView() {
             <Card className="border-red-200 bg-red-50/50 dark:border-red-900 dark:bg-red-950/20">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg text-red-900 dark:text-red-400">
-                  <LuTriangleAlert className="h-5 w-5" />
+                  <LuTriangleAlert className="size-5" />
                   Delete Account
                 </CardTitle>
                 <CardDescription className="text-xs text-red-800 dark:text-red-300">

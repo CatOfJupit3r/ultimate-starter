@@ -1,6 +1,6 @@
 import { index, jsonb, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
 
-import type { UserAchievementId } from '@startername/shared/constants/achievements';
+import type { UserAchievementId } from '@startername/common/constants/achievements';
 
 import { idColumn, idPrimaryKey } from '../schema.helpers';
 import { users } from './auth.schema';

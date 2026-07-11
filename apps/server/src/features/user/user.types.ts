@@ -1,6 +1,6 @@
-import type { BadgeId } from '@startername/shared/constants/badges';
+import type { BadgeId } from '@startername/common/constants/badges';
 
-import type { userProfiles } from '@~/db/schema';
+import type { userProfiles } from '@~/db/schema/user-profile.schema';
 
 type UserProfileRow = typeof userProfiles.$inferSelect;
 

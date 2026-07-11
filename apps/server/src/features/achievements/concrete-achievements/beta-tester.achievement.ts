@@ -1,4 +1,4 @@
-import { USER_ACHIEVEMENTS } from '@startername/shared/constants/achievements';
+import { USER_ACHIEVEMENTS } from '@startername/common/constants/achievements';
 
 import { BetaEventListener } from '@~/features/events/listeners/achievements.listeners';
 

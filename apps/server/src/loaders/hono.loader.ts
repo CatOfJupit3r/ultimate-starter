@@ -10,20 +10,28 @@ import { contextStorage } from 'hono/context-storage';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { isEmpty } from 'lodash-es';
-import { stringify } from 'safe-stable-stringify';
 import { container } from 'tsyringe';
+
+import { Enumwaii } from '@startername/enumwaii/enumwaii';
+import type { InferEnumwaii } from '@startername/enumwaii/enumwaii';
 
 import env from '@~/constants/env';
 import { AuthService } from '@~/features/auth/auth.service';
 import { LoggerFactory } from '@~/features/logger/logger.factory';
 import { requestContextMiddleware } from '@~/features/logger/logger.middleware';
 import type { iRequestContext } from '@~/features/logger/logger.types';
-import { appRouter } from '@~/routers';
+import { getORPCErrorMetadata, isORPCError, shouldLogORPCError } from '@~/lib/orpc-error-wrapper';
+import { appRouter } from '@~/routers/app-router';
 import nonContractRouter from '@~/routers/non-contract.router';
 
 interface iCreateContextOptions {
   context: HonoContext<iRequestContext>;
 }
+
+const orpcTransportsEnumwaii = new Enumwaii('ORPCTransport', ['API', 'RPC']);
+
+const ORPC_TRANSPORTS = orpcTransportsEnumwaii.enum;
+type ORPCTransport = InferEnumwaii<typeof orpcTransportsEnumwaii>;
 
 function contextGenerator() {
   return async function createContext({ context }: iCreateContextOptions) {
@@ -37,9 +45,40 @@ function contextGenerator() {
   };
 }
 
-function shouldLogError(_error: unknown) {
-  // Add logic to determine if the error should be logged
-  return false;
+function getOperationName(pathname: string | undefined) {
+  if (!pathname) {
+    return 'unknown-operation';
+  }
+
+  return pathname.replace(/^\/+/, '').replace(/\//g, '.');
+}
+
+function logTransportError(
+  apiLogger: ReturnType<LoggerFactory['create']>,
+  transport: ORPCTransport,
+  error: unknown,
+  pathname: string | undefined,
+) {
+  if (!shouldLogORPCError(error)) {
+    return;
+  }
+
+  const metadata = getORPCErrorMetadata(error);
+  const operation = metadata?.operation ?? getOperationName(pathname);
+
+  apiLogger.error(`${transport} unexpected error in ${operation}`, {
+    transport,
+    operation,
+    pathname,
+    ...(metadata?.context ?? {}),
+    ...(isORPCError(error)
+      ? {
+          errorCode: error.code,
+          errorStatus: error.status,
+          error: error.cause ?? error,
+        }
+      : { error }),
+  });
 }
 
 export type Context = Awaited<ReturnType<ReturnType<typeof contextGenerator>>>;
@@ -83,18 +122,16 @@ export default async function honoLoader() {
       }),
     ],
     interceptors: [
-      onError((error) => {
-        if (!shouldLogError(error)) return;
-        apiLogger.error(stringify(error) ?? 'Unknown API error');
+      onError((error, options) => {
+        logTransportError(apiLogger, ORPC_TRANSPORTS.API, error, options.request.url.pathname);
       }),
     ],
   });
 
   const rpcHandler = new RPCHandler(appRouter, {
     interceptors: [
-      onError((error) => {
-        if (!shouldLogError(error)) return;
-        apiLogger.error(stringify(error) ?? 'Unknown RPC error');
+      onError((error, options) => {
+        logTransportError(apiLogger, ORPC_TRANSPORTS.RPC, error, options.request.url.pathname);
       }),
     ],
   });

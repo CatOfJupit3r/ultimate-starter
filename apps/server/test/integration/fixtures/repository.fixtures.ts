@@ -1,4 +1,4 @@
-import { container } from '@~/di';
+import { container } from '@~/di/container';
 import { USER_ACHIEVEMENT_REPOSITORY_TOKEN, USER_PROFILE_REPOSITORY_TOKEN } from '@~/di/tokens';
 import type { iUserAchievementRepository } from '@~/features/achievements/user-achievement.repository';
 import type { iUserProfileRepository } from '@~/features/user/user-profile.repository';

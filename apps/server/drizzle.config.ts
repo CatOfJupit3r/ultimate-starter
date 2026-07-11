@@ -15,7 +15,7 @@ switch (process.env.NODE_ENV) {
 
 export default defineConfig({
   out: './src/db/migrations',
-  schema: './src/db/schema/index.ts',
+  schema: './src/db/schema/*.ts',
   dialect: 'postgresql',
   dbCredentials: {
     url: process.env.POSTGRES_URL ?? 'postgresql://postgres:postgres@localhost:5432/startername',

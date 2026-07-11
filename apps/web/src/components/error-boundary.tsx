@@ -1,10 +1,10 @@
 import { Link, useRouter } from '@tanstack/react-router';
 import { HiOutlineExclamationCircle, HiOutlineHome, HiOutlineRefresh } from 'react-icons/hi';
 
-import { IS_DEVELOPMENT } from '@~/constants';
+import { IS_DEVELOPMENT } from '@~/constants/constants';
 
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
-import { Button } from './ui/button';
+import { Button } from './ui/button/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 
 interface iErrorBoundaryProps {
@@ -59,11 +59,9 @@ export function ErrorBoundary({ error, reset }: iErrorBoundaryProps) {
                 <HiOutlineRefresh className="mr-2 size-4" />
                 Try Again
               </Button>
-              <Button variant="outline" asChild>
-                <Link to="/">
-                  <HiOutlineHome className="mr-2 size-4" />
-                  Go Home
-                </Link>
+              <Button variant="outline" render={<Link to="/" />}>
+                <HiOutlineHome className="mr-2 size-4" />
+                Go Home
               </Button>
             </div>
           </CardContent>
@@ -97,11 +95,9 @@ export function ErrorBoundary({ error, reset }: iErrorBoundaryProps) {
               <HiOutlineRefresh className="mr-2 size-4" />
               Try Again
             </Button>
-            <Button variant="outline" asChild>
-              <Link to="/">
-                <HiOutlineHome className="mr-2 size-4" />
-                Go Home
-              </Link>
+            <Button variant="outline" render={<Link to="/" />}>
+              <HiOutlineHome className="mr-2 size-4" />
+              Go Home
             </Button>
           </div>
         </CardContent>

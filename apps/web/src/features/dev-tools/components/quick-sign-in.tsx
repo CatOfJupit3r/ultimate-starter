@@ -3,7 +3,7 @@ import { createIsomorphicFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { useMemo } from 'react';
 
-import { SingleSelect } from '@~/components/ui/select';
+import { SingleSelect } from '@~/components/ui/select/select';
 import { USE_ME_QUERY_KEYS } from '@~/features/user/hooks/use-me';
 import { tanstackRPC } from '@~/utils/tanstack-orpc';
 

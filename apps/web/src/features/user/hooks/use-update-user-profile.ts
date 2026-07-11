@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { toastORPCError, toastSuccess } from '@~/components/toastifications';
+import { toastORPCError, toastSuccess } from '@~/components/toastifications/create-jsx-toasts';
 import type { ORPCOutputs } from '@~/utils/orpc';
 import { tanstackRPC } from '@~/utils/tanstack-orpc';
 

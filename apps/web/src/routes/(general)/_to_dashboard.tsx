@@ -1,9 +1,9 @@
 import { createFileRoute, Navigate, Outlet, redirect } from '@tanstack/react-router';
 
-import { tryCatch } from '@startername/shared/helpers/std-utils';
+import { tryCatch } from '@startername/common/helpers/error-handling.helper';
 
 import PseudoPage from '@~/components/pseudo-page';
-import { useMe, meQueryOptions } from '@~/features/user';
+import { useMe, meQueryOptions } from '@~/features/user/hooks/use-me';
 
 export const Route = createFileRoute('/(general)/_to_dashboard')({
   beforeLoad: async ({ context }) => {

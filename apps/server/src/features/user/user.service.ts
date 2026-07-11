@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
-import { errorCodes } from '@startername/shared';
-import type { BadgeId } from '@startername/shared/constants/badges';
+import type { BadgeId } from '@startername/common/constants/badges';
+import { errorCodes, errorMessages } from '@startername/common/enums/errors.enums';
 
 import { generatePublicCode } from '@~/db/helpers';
 import {
@@ -17,6 +17,8 @@ import {
   ORPCForbiddenError,
   ORPCInternalServerError,
   ORPCNotFoundError,
+  expectDefined,
+  rethrowUnexpectedError,
 } from '@~/lib/orpc-error-wrapper';
 
 import type { iUserProfileRepository } from './user-profile.repository';
@@ -39,7 +41,8 @@ export class UserService {
   }
 
   public async updateUserProfile(userId: string, bio: string) {
-    return this.userProfileRepository.upsert(userId, { bio });
+    const updatedProfile = await this.userProfileRepository.upsert(userId, { bio });
+    return expectDefined(updatedProfile, errorMessages(errorCodes.USER_PROFILE_UPSERT_FAILED));
   }
 
   public async updateUserBadge(userId: string, badgeId: BadgeId) {
@@ -54,7 +57,8 @@ export class UserService {
       if (!hasAchievement) throw ORPCForbiddenError(errorCodes.USER_BADGE_NOT_ALLOWED);
     }
 
-    return this.userProfileRepository.upsert(userId, { selectedBadge: badgeId });
+    const updatedProfile = await this.userProfileRepository.upsert(userId, { selectedBadge: badgeId });
+    return expectDefined(updatedProfile, errorMessages(errorCodes.USER_BADGE_UPDATE_FAILED));
   }
 
   public async regeneratePublicCode(userId: string) {
@@ -63,14 +67,20 @@ export class UserService {
       try {
         return await this.userProfileRepository.upsert(userId, { publicCode: generatePublicCode() });
       } catch (error) {
-        if (error && typeof error === 'object' && 'code' in error && (error as { code?: string }).code === '23505') {
+        if (
+          error &&
+          typeof error === 'object' &&
+          'code' in error &&
+          ((error as { code?: number | string }).code === 11000 ||
+            (error as { code?: number | string }).code === '23505')
+        ) {
           continue;
         }
-        throw ORPCInternalServerError();
+        rethrowUnexpectedError(error, { operation: 'user.regeneratePublicCode' });
       }
     }
 
-    throw ORPCInternalServerError(errorCodes.PUBLIC_CODE_GENERATION_FAILED);
+    throw ORPCInternalServerError(errorCodes.USER_PUBLIC_CODE_GENERATION_FAILED);
   }
 
   public async listAllUsers() {

@@ -1,6 +1,6 @@
 import { container } from 'tsyringe';
 
-import { registerServices } from '@~/di';
+import { registerServices } from '@~/di/container';
 import { LoggerFactory } from '@~/features/logger/logger.factory';
 
 import achievementsLoader from './achievements.loader';
@@ -17,7 +17,7 @@ async function bootstrap() {
 
   const logger = isTest ? null : container.resolve(LoggerFactory).global();
 
-  if (logger) logger.info('Registering DI services...');
+  logger?.info('Registering DI services...');
 
   logger?.info('DI services registered.');
   logger?.info('Loading database...');

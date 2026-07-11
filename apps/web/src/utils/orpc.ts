@@ -5,7 +5,7 @@ import { createIsomorphicFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { isError } from 'lodash-es';
 
-import type { CONTRACT } from '@startername/shared';
+import type { CONTRACT } from '@startername/server-contract/app.contract';
 
 import { getBackendURL, isOnClient } from './ssr-helpers';
 

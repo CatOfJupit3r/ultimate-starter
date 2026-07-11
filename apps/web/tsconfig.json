@@ -12,13 +12,13 @@
     "rootDirs": ["."],
     "paths": {
       "@~/*": ["./src/*"],
-      "@startername/shared": ["../../packages/shared/src/index.ts"],
-      "@startername/shared/*": ["../../packages/shared/src/*"]
+      "@startername/common/*": ["../../packages/common/src/*"],
+      "@startername/server-contract/*": ["../../packages/server-contract/src/*"]
     },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
   "exclude": ["./eslint.config.js"],
-  "files": ["../../packages/shared/src/globals.d.ts"],
+  "files": ["../../packages/common/src/globals.d.ts"],
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "src/types.d.ts"]
 }

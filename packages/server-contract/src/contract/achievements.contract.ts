@@ -1,7 +1,8 @@
 import { oc } from '@orpc/contract';
 import z from 'zod';
 
-import { UserAchievementIdSchema } from '../constants/achievements';
+import { UserAchievementIdSchema } from '@startername/common/constants/achievements';
+
 import { authProcedure } from './procedures';
 
 const USER_ACHIEVEMENT_META_SCHEMA = z.object({

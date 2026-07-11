@@ -1,4 +1,4 @@
-import type { BadgeId } from '@startername/shared/constants/badges';
+import type { BadgeId } from '@startername/common/constants/badges';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@~/components/ui/avatar';
 import { useBadges } from '@~/features/badges/hooks/use-badges';

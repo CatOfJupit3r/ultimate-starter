@@ -1,7 +1,7 @@
 import { LuAward, LuCheck, LuLock } from 'react-icons/lu';
 
 import { Alert, AlertDescription, AlertTitle } from '@~/components/ui/alert';
-import { Button } from '@~/components/ui/button';
+import { Button } from '@~/components/ui/button/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@~/components/ui/card';
 import { Skeleton } from '@~/components/ui/skeleton';
 import { useMyAchievements } from '@~/features/achievements/hooks/use-my-achievements';
@@ -79,7 +79,7 @@ export function BadgePicker() {
           {badges?.map((badge) => {
             const isUnlocked =
               !badge.requiresAchievement ||
-              (badge.requiresAchievement && unlockedAchievementIds.has(badge.requiresAchievement as never));
+              (badge.requiresAchievement && unlockedAchievementIds.has(badge.requiresAchievement));
             const isSelected = selectedBadge === badge.id;
 
             return (
