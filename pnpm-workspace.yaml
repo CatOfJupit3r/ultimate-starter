@@ -2,6 +2,10 @@ packages:
   - apps/*
   - packages/*
   - configs/*
+allowBuilds:
+  '@swc/core': true
+  esbuild: true
+  unrs-resolver: true
 catalog:
   eslint: 9.39.2
   prettier: 3.9.5
@@ -29,5 +33,7 @@ catalog:
   '@orpc/openapi': 1.14.7
   better-auth: 1.6.23
   '@typescript/native-preview': 7.0.0-dev.20260707.2
+minimumReleaseAgeExclude:
+  - eslint-plugin-n@18.2.2
 onlyBuiltDependencies:
   - '@swc/core'

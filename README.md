@@ -45,7 +45,7 @@ Update `.agents/skills/` once and both flows pick up the change.
 - Git ≥ 2.40
 - Docker Desktop (required for the PostgreSQL container)
 - Node.js **exactly** v24 (use nvm or similar)
-- pnpm ≥ 10.0.0
+- pnpm 11.5.0
 
 ### Install Node.js v24
 
@@ -64,12 +64,12 @@ nvm use
 
 ```bash
 corepack enable
-corepack prepare pnpm@10.0.0 --activate
+corepack prepare pnpm@11.5.0 --activate
 ```
 
 Or via npm:
 ```bash
-npm install -g pnpm@10
+npm install -g pnpm@11.5.0
 ```
 
 ## Getting Started
