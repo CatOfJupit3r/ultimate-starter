@@ -18,6 +18,7 @@
     "db:studio": "pnpm --filter=server run db:studio",
     "lint": "pnpm --recursive --stream run lint",
     "lint:fix": "pnpm run lint",
+    "verify": "tsx scripts/verify.ts",
     "clean:modules": "tsx scripts/clean.ts",
     "prepare": "husky",
     "commit": "cz",

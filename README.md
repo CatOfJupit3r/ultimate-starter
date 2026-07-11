@@ -3,8 +3,18 @@
 This starter is designed for me by me with all the shiny new things! (as of now)
 
 To finish setup, run `Replace All` to replace `startername` with name of your project.
-Also, make sure to customize `.github/instructions/copilot-instructions.md` with description of you project
+Also, make sure to customize `AGENTS.md` with a description of your project
 so that agentic tools work efficiently.
+
+## Agentic Tooling
+
+Both GitHub Copilot and Claude Code (or any AGENTS.md-aware agent) read from the same skill library under `.agents/skills/*/SKILL.md`:
+
+- `.github/copilot-instructions.md` and `.github/agents/*.md` (Copilot custom agents) point into `.agents/skills/`.
+- `AGENTS.md` (with `CLAUDE.md` symlinked to it) is the always-on guide for Claude Code and other AGENTS.md-aware tools, and points into the same `.agents/skills/` directory.
+- `.claude/settings.json` configures default tool permissions for Claude Code.
+
+Update `.agents/skills/` once and both flows pick up the change.
 
 ## Project Overview
 
