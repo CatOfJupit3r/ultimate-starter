@@ -4,7 +4,7 @@ applyTo: '**/*.ts'
 
 ## Guidelines, Structure, and Purpose
 - This file outlines the overall workspace structure, development guidelines, and key conventions for contributors to the monorepo
-- The repo is a moonrepo monorepo managed with pnpm (packageManager pinned at 10.0.0) and Docker-backed MongoDB; `pnpm run dev` boots both the API (http://localhost:3000) and web app (http://localhost:3001).
+- The repo is a pnpm workspace (packageManager pinned at 10.11.0) with Docker-backed MongoDB; `pnpm run dev` boots both the API (http://localhost:3000) and web app (http://localhost:3001).
 - Backend code uses TypeScript + Hono + oRPC on top of MongoDB via Mongoose; shared contracts live in packages/shared and drive both REST/OpenAPI and RPC layers.
 - Frontend code is React 19 with Vite, TanStack Router/Query/Form, Tailwind, Sonner, and the Better Auth client; shared types come from packages/shared.
 - Quality gates run locally via `pnpm run check-types`, `pnpm run lint`, and `pnpm run prettier`; Husky hooks (installed by `pnpm run prepare`) enforce these before commits.

@@ -11,11 +11,11 @@ so that agentic tools work efficiently.
 - **Contract-first development.** API endpoints start as shared `zod` schemas in `packages/shared`, ensuring server and client stay type-safe.
 - **Real-time challenge lifecycle.** Hono-based routes expose public and authenticated procedures, backed by MongoDB via Typegoose models.
 - **Typed React client.** The web app consumes the generated oRPC client, TanStack Router, and Query utilities for fully typed data interactions.
-- **Developer-focused tooling.** Node.js 24, pnpm, moonrepo, and Husky hooks enable quick local feedback loops and consistent commits.
+- **Developer-focused tooling.** Node.js 24, pnpm workspaces, and Husky hooks enable quick local feedback loops and consistent commits.
 
 ## Tech Stack
 
-- **Runtime & Tooling:** Node.js 24, pnpm, moonrepo, Commitizen, Husky
+- **Runtime & Tooling:** Node.js 24, pnpm workspaces, Commitizen, Husky
 - **Backend:** TypeScript, Hono, oRPC, Typegoose/Mongoose, Better Auth, Zod, Vitest
 - **Frontend:** React 19, Vite, TanStack Stack/Query/Form, Tailwind CSS, Vitest
 - **Shared Contracts:** `@startername/shared` with oRPC + OpenAPI generation
@@ -27,7 +27,6 @@ so that agentic tools work efficiently.
 - `packages/shared` – Contract definitions, shared types, and schema exports
 - `docs` – Product requirements, roadmap, risk registers, and supporting documentation
 - `mongo` – Docker-managed MongoDB volume (keep uncommitted)
-- `.moon/` – moonrepo configuration files
 - `tsconfig*.json` – TypeScript project references
 
 ## Prerequisites
@@ -82,7 +81,7 @@ pnpm install
 - `pnpm run dev` – start API, web app, and MongoDB
 - `pnpm run check-types` – TypeScript project references (server + shared)
 - `pnpm run lint` – ESLint across the monorepo
-- `pnpm run prettier` – formatting audit (no write)
+- `pnpm run prettify` – format workspace source files
 - `pnpm run prepare` – reinstall Husky hooks if they go missing
 - `pnpm test` – run all tests with Vitest
 

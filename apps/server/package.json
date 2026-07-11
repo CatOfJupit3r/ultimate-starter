@@ -3,6 +3,13 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
+    "dev": "node --import @swc-node/register/esm-register --watch ./src/index.ts",
+    "start": "node --import @swc-node/register/esm-register ./src/index.ts",
+    "build": "rimraf ./dist && tsgo",
+    "check-types": "tsgo --noEmit",
+    "lint": "eslint . --fix",
+    "prettify": "prettier --write ./src/",
+    "test": "vitest run",
     "test:watch": "NODE_ENV=test vitest",
     "test:ui": "NODE_ENV=test vitest --ui"
   },
