@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import { singleton } from 'tsyringe';
 
 import type { UserAchievementId } from '@startername/common/constants/achievements';
+import { errorCodes, errorMessages } from '@startername/common/enums/errors.enums';
 
 import { PostgresService } from '@~/db/postgres.service';
 import { userAchievements } from '@~/db/schema/user-achievement.schema';
@@ -54,6 +55,6 @@ export class DrizzleUserAchievementRepository implements iUserAchievementReposit
     if (inserted) return this.userAchievementResolver.toUserAchievementResponse(inserted);
 
     const existing = await this.findByAchievement(userId, achievementId);
-    return expectDefined(existing, 'User achievement upsert returned no row');
+    return expectDefined(existing, errorMessages(errorCodes.USER_ACHIEVEMENT_UPSERT_FAILED));
   }
 }

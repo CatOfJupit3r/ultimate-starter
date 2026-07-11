@@ -1,8 +1,9 @@
-import { ORPCError, implement } from '@orpc/server';
+import { implement } from '@orpc/server';
 
+import { errorCodes } from '@startername/common/enums/errors.enums';
 import { CONTRACT } from '@startername/server-contract/app.contract';
 
-import { rethrowUnexpectedError } from '@~/lib/orpc-error-wrapper';
+import { ORPCUnauthorizedError, rethrowUnexpectedError } from '@~/lib/orpc-error-wrapper';
 import type { Context } from '@~/loaders/hono.loader';
 
 export const base = implement(CONTRACT)
@@ -23,7 +24,7 @@ export const publicProcedure = base.use(unexpectedErrorBoundary);
 
 const requireAuth = base.middleware(async ({ context, next }) => {
   if (!context.session) {
-    throw new ORPCError('UNAUTHORIZED', { message: 'User is not authenticated' });
+    throw ORPCUnauthorizedError(errorCodes.UNAUTHORIZED);
   }
   return next({
     context: {

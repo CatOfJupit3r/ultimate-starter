@@ -1,6 +1,6 @@
 import { createFileRoute, Navigate, Outlet, redirect } from '@tanstack/react-router';
 
-import { tryCatch } from '@startername/common/helpers/std-utils';
+import { tryCatch } from '@startername/common/helpers/error-handling.helper';
 
 import PseudoPage from '@~/components/pseudo-page';
 import { useMe, meQueryOptions } from '@~/features/user/hooks/use-me';

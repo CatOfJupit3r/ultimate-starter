@@ -1,6 +1,6 @@
 import { ORPCError } from '@orpc/server';
 
-import { errorMessages } from '@startername/common/enums/errors.enums';
+import { errorCodes, errorMessages } from '@startername/common/enums/errors.enums';
 import type { ErrorCodesType } from '@startername/common/enums/errors.enums';
 import { handleError } from '@startername/common/helpers/error-handling.helper';
 import { Enumwaii } from '@startername/enumwaii/enumwaii';
@@ -80,8 +80,8 @@ function createORPCError<TCode extends string>(
 export function createErrorPayload(code: ErrorCodesType, additionalData?: Record<string, unknown>) {
   return {
     code,
-    message: errorMessages[code],
     ...additionalData,
+    message: errorMessages(code),
   };
 }
 
@@ -122,7 +122,11 @@ export function ORPCInternalServerError(
   additionalData?: Record<string, unknown>,
   options?: iORPCErrorHandlingOptions,
 ) {
-  return createORPCError('INTERNAL_SERVER_ERROR', code ? createErrorPayload(code, additionalData) : undefined, options);
+  return createORPCError(
+    'INTERNAL_SERVER_ERROR',
+    createErrorPayload(code ?? errorCodes.INTERNAL_SERVER_ERROR, additionalData),
+    options,
+  );
 }
 
 export function ORPCUnauthorizedError(
@@ -168,7 +172,7 @@ export function rethrowUnexpectedError(error: unknown, options: iUnexpectedError
     throw error;
   }
 
-  throw ORPCInternalServerError(options.code, undefined, {
+  throw ORPCInternalServerError(options.code ?? errorCodes.INTERNAL_SERVER_ERROR, undefined, {
     cause: error,
     kind: ORPC_ERROR_KINDS.UNEXPECTED,
     operation: options.operation,

@@ -2,9 +2,11 @@ import Redis from 'ioredis';
 import { isNil } from 'lodash-es';
 import { singleton } from 'tsyringe';
 
+import { errorCodes, errorMessages } from '@startername/common/enums/errors.enums';
 import { tryCatch } from '@startername/common/helpers/error-handling.helper';
 
 import env from '@~/constants/env';
+import { UnexpectedServerError } from '@~/lib/orpc-error-wrapper';
 
 import { LoggerFactory } from '../logger/logger.factory';
 import type { iWithLogger, LoggerType } from '../logger/logger.types';
@@ -47,7 +49,7 @@ export class ValkeyService implements iWithLogger {
   }
 
   public getClient() {
-    if (!this.client) throw new Error('Valkey client is not connected');
+    if (!this.client) throw new UnexpectedServerError(errorMessages(errorCodes.VALKEY_CLIENT_NOT_CONNECTED));
     return this.client;
   }
 

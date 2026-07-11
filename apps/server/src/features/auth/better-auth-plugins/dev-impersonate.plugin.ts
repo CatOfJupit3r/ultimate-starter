@@ -3,6 +3,8 @@ import { createAuthEndpoint, APIError } from 'better-auth/api';
 import { parseUserOutput } from 'better-auth/db';
 import { z } from 'zod';
 
+import { errorCodes, errorMessages } from '@startername/common/enums/errors.enums';
+
 /**
  * Auth helper utilities extracted from Better Auth internals
  * for use in custom plugins and endpoints.
@@ -141,7 +143,7 @@ export const devImpersonatePlugin = () =>
           // Only allow in non-production environments
           if (process.env.NODE_ENV === 'production') {
             throw new APIError('FORBIDDEN', {
-              message: 'Dev impersonation is not allowed in production',
+              message: errorMessages(errorCodes.DEV_IMPERSONATION_NOT_ALLOWED),
             });
           }
 
@@ -149,7 +151,7 @@ export const devImpersonatePlugin = () =>
 
           if (!targetUser) {
             throw new APIError('NOT_FOUND', {
-              message: 'User not found',
+              message: errorMessages(errorCodes.USER_NOT_FOUND),
             });
           }
 
@@ -161,7 +163,7 @@ export const devImpersonatePlugin = () =>
           console.log(`Impersonating user ${targetUser.id} (${targetUser.email}) with session ${session.token}`);
           if (!session) {
             throw new APIError('INTERNAL_SERVER_ERROR', {
-              message: 'Failed to create impersonation session',
+              message: errorMessages(errorCodes.IMPERSONATION_SESSION_CREATION_FAILED),
             });
           }
 

@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import type { BadgeId } from '@startername/common/constants/badges';
-import { errorCodes } from '@startername/common/enums/errors.enums';
+import { errorCodes, errorMessages } from '@startername/common/enums/errors.enums';
 
 import { generatePublicCode } from '@~/db/helpers';
 import {
@@ -42,7 +42,7 @@ export class UserService {
 
   public async updateUserProfile(userId: string, bio: string) {
     const updatedProfile = await this.userProfileRepository.upsert(userId, { bio });
-    return expectDefined(updatedProfile, 'User profile upsert returned no document');
+    return expectDefined(updatedProfile, errorMessages(errorCodes.USER_PROFILE_UPSERT_FAILED));
   }
 
   public async updateUserBadge(userId: string, badgeId: BadgeId) {
@@ -58,7 +58,7 @@ export class UserService {
     }
 
     const updatedProfile = await this.userProfileRepository.upsert(userId, { selectedBadge: badgeId });
-    return expectDefined(updatedProfile, 'User badge update returned no document');
+    return expectDefined(updatedProfile, errorMessages(errorCodes.USER_BADGE_UPDATE_FAILED));
   }
 
   public async regeneratePublicCode(userId: string) {
@@ -80,7 +80,7 @@ export class UserService {
       }
     }
 
-    throw ORPCInternalServerError(errorCodes.PUBLIC_CODE_GENERATION_FAILED);
+    throw ORPCInternalServerError(errorCodes.USER_PUBLIC_CODE_GENERATION_FAILED);
   }
 
   public async listAllUsers() {
