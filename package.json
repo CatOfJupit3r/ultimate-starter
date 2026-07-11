@@ -20,10 +20,11 @@
     "lint": "pnpm --recursive --stream run lint",
     "lint:fix": "pnpm run lint",
     "verify": "tsx scripts/verify.ts",
+    "build:server": "pnpm --filter=server... run build",
     "clean:modules": "tsx scripts/clean.ts",
     "prepare": "husky",
     "commit": "cz",
-    "build:deps": "pnpm --filter=@startername/common run build && pnpm --filter=@startername/server-contract run build",
+    "build:deps": "pnpm --filter=@startername/server-contract... run build",
     "update:workspaces": "pnpm update --interactive --recursive"
   },
   "devDependencies": {

@@ -1,11 +1,11 @@
 {
   "name": "server",
-  "main": "src/server.ts",
+  "main": "dist/server.mjs",
   "type": "module",
   "scripts": {
     "dev": "node --import @swc-node/register/esm-register --watch ./src/server.ts",
-    "start": "node --import @swc-node/register/esm-register ./src/server.ts",
-    "build": "rimraf ./dist && tsgo",
+    "start": "node ./dist/server.mjs",
+    "build": "tsdown",
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
     "db:push": "drizzle-kit push --config drizzle.config.ts",

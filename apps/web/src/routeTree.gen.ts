@@ -102,7 +102,7 @@ declare module '@tanstack/react-router' {
     '/_auth_only': {
       id: '/_auth_only';
       path: '';
-      fullPath: '';
+      fullPath: '/';
       preLoaderRoute: typeof Auth_onlyRouteImport;
       parentRoute: typeof rootRouteImport;
     };
