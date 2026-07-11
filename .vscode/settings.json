@@ -1,5 +1,5 @@
 {
-    "cSpell.words": ["orpc", "trivago", "valkey"],
+    "cSpell.words": ["orpc", "trivago", "valkey", "enumwaii"],
     "typescript.preferences.autoImportFileExcludePatterns": ["@radix-ui/*"],
     "javascript.preferences.autoImportFileExcludePatterns": ["@radix-ui/*"],
     "typescript.experimental.useTsgo": true
