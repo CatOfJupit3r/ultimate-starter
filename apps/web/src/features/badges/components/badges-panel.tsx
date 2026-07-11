@@ -92,7 +92,7 @@ export function BadgesPanel() {
           {allBadges?.map((badge) => {
             const isUnlocked =
               !badge.requiresAchievement ||
-              (badge.requiresAchievement && unlockedAchievementIds.has(badge.requiresAchievement as never));
+              (badge.requiresAchievement && unlockedAchievementIds.has(badge.requiresAchievement));
 
             return (
               <div

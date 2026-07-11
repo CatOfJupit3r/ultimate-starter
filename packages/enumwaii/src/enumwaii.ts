@@ -39,8 +39,7 @@ export interface iEnumwaiiSafeParseFailure {
 }
 
 export type EnumwaiiSafeParseResult<TRaw extends string, TIdentity extends string> =
-  | iEnumwaiiSafeParseSuccess<TRaw, TIdentity>
-  | iEnumwaiiSafeParseFailure;
+  iEnumwaiiSafeParseSuccess<TRaw, TIdentity> | iEnumwaiiSafeParseFailure;
 
 /**
  * Keys of the mapping must be exactly the enum members: missing keys fail the
@@ -191,6 +190,7 @@ export class Enumwaii<TRaw extends string, TIdentity extends string> {
         throw new EnumwaiiError(`[enumwaii] "${pickedName}" picks unknown member "${pickedValue}" of "${this.name}"`);
       }
     }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     return new Enumwaii(this.identityName, pickedValues as unknown as readonly [TRaw, ...TRaw[]], pickedName);
   };
 

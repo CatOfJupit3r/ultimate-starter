@@ -200,7 +200,7 @@ export interface iSingleSelectProps extends Omit<
 }
 
 export const SingleSelect = forwardRef<SelectInstance<iOptionType, false, GroupBase<iOptionType>>, iSingleSelectProps>(
-  // eslint-disable-next-line prefer-arrow-callback
+  // eslint-disable-next-line prefer-arrow-callback, @typescript-eslint/no-shadow
   function SingleSelect({ value, defaultValue, onValueChange, onOptionChange, options, ...rest }, ref) {
     const flatOptions = useMemo(() => flattenOptions(options), [options]);
 
@@ -244,7 +244,7 @@ export interface iMultiSelectProps extends Omit<
 }
 
 export const MultiSelect = forwardRef<SelectInstance<iOptionType, true, GroupBase<iOptionType>>, iMultiSelectProps>(
-  // eslint-disable-next-line prefer-arrow-callback
+  // eslint-disable-next-line prefer-arrow-callback, @typescript-eslint/no-shadow
   function MultiSelect(
     { value, defaultValue, onValueChange, onOptionChange, options, closeMenuOnSelect = false, ...rest },
     ref,

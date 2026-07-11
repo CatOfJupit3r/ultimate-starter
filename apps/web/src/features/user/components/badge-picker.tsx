@@ -79,7 +79,7 @@ export function BadgePicker() {
           {badges?.map((badge) => {
             const isUnlocked =
               !badge.requiresAchievement ||
-              (badge.requiresAchievement && unlockedAchievementIds.has(badge.requiresAchievement as never));
+              (badge.requiresAchievement && unlockedAchievementIds.has(badge.requiresAchievement));
             const isSelected = selectedBadge === badge.id;
 
             return (
