@@ -4,6 +4,7 @@ import { LuUser, LuSettings, LuLogOut } from 'react-icons/lu';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -47,20 +48,22 @@ export default function UserMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button variant="outline" />}>{user.name}</DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 bg-card" align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-          {user.email}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem render={<Link to="/profile" className="flex w-full cursor-pointer items-center gap-2" />}>
-          <LuUser className="size-4" />
-          Profile
-        </DropdownMenuItem>
-        <DropdownMenuItem render={<Link to="/settings" className="flex w-full cursor-pointer items-center gap-2" />}>
-          <LuSettings className="size-4" />
-          Settings
-        </DropdownMenuItem>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+            {user.email}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem render={<Link to="/profile" className="flex w-full cursor-pointer items-center gap-2" />}>
+            <LuUser className="size-4" />
+            Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link to="/settings" className="flex w-full cursor-pointer items-center gap-2" />}>
+            <LuSettings className="size-4" />
+            Settings
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           render={
