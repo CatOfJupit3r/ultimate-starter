@@ -3,7 +3,6 @@ import { createIsomorphicFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { useMemo } from 'react';
 
-import { SingleSelect } from '@~/components/ui/select/select';
 import { USE_ME_QUERY_KEYS } from '@~/features/user/hooks/use-me';
 import { tanstackRPC } from '@~/utils/tanstack-orpc';
 
@@ -45,8 +44,8 @@ const impersonateMutationOptions = mutationOptions({
 });
 
 function useImpersonate() {
-  const { mutateAsync } = useMutation(impersonateMutationOptions);
-  return { mutate: mutateAsync };
+  const { mutateAsync, isPending, isError } = useMutation(impersonateMutationOptions);
+  return { mutate: mutateAsync, isPending, isError };
 }
 
 function useAvailableUsers() {
@@ -57,21 +56,41 @@ function useAvailableUsers() {
   return { options, isPending };
 }
 
-export function QuickSignIn() {
-  const { options, isPending } = useAvailableUsers();
-  const { mutate } = useImpersonate();
+export function DevImpersonatePanel() {
+  const { options, isPending: isUsersPending } = useAvailableUsers();
+  const { mutate, isPending: isImpersonationPending, isError } = useImpersonate();
 
   return (
-    <div className="my-6">
-      <h3 className="mb-2 text-lg font-medium">Quick Sign In (Dev)</h3>
-      <SingleSelect
-        options={options}
-        onValueChange={(value) => {
-          if (!value) return;
-          void mutate(value);
-        }}
-        isDisabled={isPending}
-      />
+    <div className="size-full min-h-0 min-w-0">
+      <div className="w-full max-w-md space-y-3 p-4">
+        <div>
+          <h2 className="text-base font-semibold">Impersonate a user</h2>
+          <p className="text-sm text-muted-foreground">Switch the current development session to another user.</p>
+        </div>
+        {/* Exception: keep this menu native because react-select's portaled menu is not selectable in Devtools. */}
+        <select
+          id="dev-impersonate-user"
+          defaultValue=""
+          aria-label="Select a user to impersonate"
+          className="min-h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm transition-colors outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={isUsersPending || isImpersonationPending}
+          onChange={(event) => {
+            const userId = event.target.value;
+            if (!userId) return;
+            void mutate(userId);
+          }}
+        >
+          <option value="" disabled>
+            {isUsersPending ? 'Loading users...' : 'Select a user'}
+          </option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {isError ? <p className="text-sm text-destructive">Could not impersonate that user.</p> : null}
+      </div>
     </div>
   );
 }

@@ -2,7 +2,6 @@ import z from 'zod';
 
 import { Button } from '@~/components/ui/button/button';
 import { useAppForm } from '@~/components/ui/field';
-import { QuickSignIn } from '@~/features/dev-tools/components/quick-sign-in';
 
 import useLogin from '../hooks/use-login';
 
@@ -41,8 +40,6 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
           <form.SubmitButton>Sign In</form.SubmitButton>
         </form.Form>
       </form.AppForm>
-
-      <QuickSignIn />
 
       <div className="text-center">
         <Button variant="link" onClick={onSwitchToSignUp} className="text-lime-300 hover:text-lime-400">
