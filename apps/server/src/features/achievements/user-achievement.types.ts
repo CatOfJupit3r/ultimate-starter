@@ -1,13 +1,10 @@
 import type { UserAchievementId } from '@startername/shared/constants/achievements';
 
-export interface iUserAchievementRecordResponse {
-  id: string;
-  userId: string;
-  achievementId: UserAchievementId;
-  unlockedAt: Date;
-  data?: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type { userAchievements } from '@~/db/schema';
 
-export type UserAchievementRecordResponse = iUserAchievementRecordResponse;
+type UserAchievementRow = typeof userAchievements.$inferSelect;
+
+export type iUserAchievementRecordResponse = Omit<UserAchievementRow, 'achievementId' | 'data'> & {
+  achievementId: UserAchievementId;
+  data?: Record<string, unknown>;
+};

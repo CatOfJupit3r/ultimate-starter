@@ -1,20 +1,15 @@
 import type { BadgeId } from '@startername/shared/constants/badges';
 
-export interface iUserProfileResponse {
-  id: string;
-  userId: string;
-  bio: string;
+import type { userProfiles } from '@~/db/schema';
+
+type UserProfileRow = typeof userProfiles.$inferSelect;
+
+export type iUserProfileResponse = Omit<UserProfileRow, 'selectedBadge'> & {
   selectedBadge?: BadgeId | null;
-  publicCode: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+};
 
 export interface iUpsertUserProfileInput {
   bio?: string;
   selectedBadge?: BadgeId | null;
   publicCode?: string;
 }
-
-export type UserProfileResponse = iUserProfileResponse;
-export type UpsertUserProfileInput = iUpsertUserProfileInput;
