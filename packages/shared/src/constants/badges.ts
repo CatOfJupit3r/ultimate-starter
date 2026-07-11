@@ -1,15 +1,20 @@
-import { z } from 'zod';
+import { Enumwaii } from '@startername/enumwaii/enumwaii';
+import type { InferEnumwaii } from '@startername/enumwaii/enumwaii';
 
-export const BadgeIdSchema = z.enum(['BETA_TESTER', 'DEFAULT']);
+import type { UserAchievementId } from './achievements';
 
-export const BADGE_IDS = BadgeIdSchema.enum;
+const badgeIdEnumwaii = new Enumwaii('BadgeId', ['BETA_TESTER', 'DEFAULT']);
 
-export type BadgeId = z.infer<typeof BadgeIdSchema>;
+export const BADGE_IDS = badgeIdEnumwaii.enum;
+
+export type BadgeId = InferEnumwaii<typeof badgeIdEnumwaii>;
+
+export const BadgeIdSchema = badgeIdEnumwaii.schema;
 
 export interface iBadgeMeta {
   id: BadgeId;
   label: string;
   description: string;
   icon?: string;
-  requiresAchievement?: string;
+  requiresAchievement?: UserAchievementId;
 }

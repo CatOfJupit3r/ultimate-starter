@@ -1,6 +1,7 @@
 import { oc } from '@orpc/contract';
 import z from 'zod';
 
+import { UserAchievementIdSchema } from '../constants/achievements';
 import { BadgeIdSchema } from '../constants/badges';
 
 const BADGE_META_SCHEMA = z.object({
@@ -8,7 +9,7 @@ const BADGE_META_SCHEMA = z.object({
   label: z.string(),
   description: z.string(),
   icon: z.string().optional(),
-  requiresAchievement: z.string().optional(),
+  requiresAchievement: UserAchievementIdSchema.optional(),
 });
 
 const listBadges = oc

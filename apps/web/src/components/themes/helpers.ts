@@ -8,18 +8,15 @@ import type { AppTheme, UserTheme } from './constants';
 
 export const getStoredTheme = createServerFn().handler(async () => userThemeValidator.parse(getCookie(THEME_COOKIE)));
 
-export function getInitialThemeClass(theme: UserTheme): Exclude<UserTheme, typeof USER_THEME.system> {
-  if (theme === USER_THEME.system) {
-    // During SSR, default to light; client will adjust if needed
-    return USER_THEME.dark;
-  }
-  return theme;
+export function getInitialThemeClass(theme: UserTheme): AppTheme {
+  // SSR default is light when the theme is 'system'; client adjusts after mount.
+  return theme === USER_THEME.dark ? USER_THEME.dark : USER_THEME.light;
 }
 
 export const setStoredTheme = createServerFn({ method: 'POST' })
   .inputValidator((data: unknown) => userThemeValidator.parse(data))
   .handler(({ data }) => {
-    setCookie(THEME_COOKIE, data);
+    setCookie(THEME_COOKIE, String(data));
   });
 
 export function getSystemTheme(): AppTheme {
@@ -30,8 +27,8 @@ export function getSystemTheme(): AppTheme {
 export function handleThemeChange(theme: UserTheme) {
   const root = document.documentElement;
   root.classList.remove(USER_THEME.light, USER_THEME.dark);
-  const newTheme = theme === USER_THEME.system ? getSystemTheme() : theme;
-  root.classList.add(newTheme);
+  const newTheme = theme === USER_THEME.system ? getSystemTheme() : getInitialThemeClass(theme);
+  root.classList.add(String(newTheme));
 }
 
 export function setupPreferredListener() {

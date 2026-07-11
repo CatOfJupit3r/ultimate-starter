@@ -29,6 +29,7 @@
     "@orpc/openapi": "catalog:",
     "@orpc/server": "catalog:",
     "@orpc/zod": "catalog:",
+    "@startername/enumwaii": "workspace:*",
     "@startername/shared": "workspace:*",
     "better-auth": "catalog:",
     "dotenv": "catalog:",

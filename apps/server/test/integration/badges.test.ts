@@ -36,9 +36,10 @@ describe('Badge Selection API', () => {
       const { ctx, user } = await createUser();
 
       await Promise.all(
-        Object.keys(USER_ACHIEVEMENTS).map(async (achievementId) =>
-          getUserAchievementRepository().ensureUnlocked(user.id, achievementId as keyof typeof USER_ACHIEVEMENTS),
-        ),
+        Object.keys(USER_ACHIEVEMENTS).map(async (key) => {
+          const achievementId = USER_ACHIEVEMENTS[key as keyof typeof USER_ACHIEVEMENTS];
+          return getUserAchievementRepository().ensureUnlocked(user.id, achievementId);
+        }),
       );
 
       await Promise.all(

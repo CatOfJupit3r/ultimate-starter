@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "@orpc/contract": "catalog:",
+    "@startername/enumwaii": "workspace:*",
     "dotenv": "catalog:",
     "lodash-es": "catalog:",
     "better-auth": "catalog:",

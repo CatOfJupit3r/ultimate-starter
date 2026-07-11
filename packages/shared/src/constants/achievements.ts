@@ -1,10 +1,13 @@
-import { z } from 'zod';
+import { Enumwaii } from '@startername/enumwaii/enumwaii';
+import type { InferEnumwaii } from '@startername/enumwaii/enumwaii';
 
-export const UserAchievementIdSchema = z.enum(['BETA_TESTER']);
+const userAchievementIdEnumwaii = new Enumwaii('UserAchievementId', ['BETA_TESTER']);
 
-export const USER_ACHIEVEMENTS = UserAchievementIdSchema.enum;
+export const USER_ACHIEVEMENTS = userAchievementIdEnumwaii.enum;
 
-export type UserAchievementId = z.infer<typeof UserAchievementIdSchema>;
+export type UserAchievementId = InferEnumwaii<typeof userAchievementIdEnumwaii>;
+
+export const UserAchievementIdSchema = userAchievementIdEnumwaii.schema;
 
 export interface iUserAchievementMeta {
   id: UserAchievementId;
