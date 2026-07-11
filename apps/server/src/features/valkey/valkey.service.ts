@@ -2,7 +2,7 @@ import Redis from 'ioredis';
 import { isNil } from 'lodash-es';
 import { singleton } from 'tsyringe';
 
-import { tryCatch } from '@startername/shared/helpers/std-utils';
+import { tryCatch } from '@startername/common/helpers/std-utils';
 
 import env from '@~/constants/env';
 

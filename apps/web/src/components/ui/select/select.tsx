@@ -29,19 +29,19 @@ import type { iOptionType } from './types';
  */
 export const DropdownIndicator = (props: DropdownIndicatorProps<iOptionType>) => (
   <components.DropdownIndicator {...props}>
-    <LuChevronDown className="h-4 w-4 opacity-50" />
+    <LuChevronDown className="size-4 opacity-50" />
   </components.DropdownIndicator>
 );
 
 export const ClearIndicator = (props: ClearIndicatorProps<iOptionType>) => (
   <components.ClearIndicator {...props}>
-    <LuX className="h-4 w-4 opacity-50" />
+    <LuX className="size-4 opacity-50" />
   </components.ClearIndicator>
 );
 
 export const MultiValueRemove = (props: MultiValueRemoveProps<iOptionType>) => (
   <components.MultiValueRemove {...props}>
-    <LuX className="h-3.5 w-3.5 opacity-50" />
+    <LuX className="size-3.5 opacity-50" />
   </components.MultiValueRemove>
 );
 
@@ -54,7 +54,7 @@ export const Option = (props: OptionProps<iOptionType, boolean, GroupBase<iOptio
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-start gap-2">
           {icon ? (
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center text-muted-foreground">{icon}</span>
+            <span className="flex size-5 shrink-0 items-center justify-center text-muted-foreground">{icon}</span>
           ) : null}
           <div className="min-w-0 flex-1">
             <div className="truncate font-medium">{label}</div>
@@ -64,7 +64,7 @@ export const Option = (props: OptionProps<iOptionType, boolean, GroupBase<iOptio
         {meta || isSelected ? (
           <div className="flex shrink-0 items-center gap-2 text-muted-foreground">
             {meta}
-            {isSelected ? <LuCheck className="h-4 w-4" /> : null}
+            {isSelected ? <LuCheck className="size-4" /> : null}
           </div>
         ) : null}
       </div>
@@ -80,7 +80,7 @@ export const SingleValue = (props: SingleValueProps<iOptionType, boolean, GroupB
     <components.SingleValue {...props}>
       <div className="flex min-w-0 items-center gap-2">
         {icon ? (
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center text-muted-foreground">{icon}</span>
+          <span className="flex size-5 shrink-0 items-center justify-center text-muted-foreground">{icon}</span>
         ) : null}
         <div className="flex min-w-0 flex-1 flex-col leading-tight">
           <span className="truncate font-medium">{children}</span>

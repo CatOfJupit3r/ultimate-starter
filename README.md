@@ -18,7 +18,7 @@ Update `.agents/skills/` once and both flows pick up the change.
 
 ## Project Overview
 
-- **Contract-first development.** API endpoints start as shared `zod` schemas in `packages/shared`, ensuring server and client stay type-safe.
+- **Contract-first development.** API endpoints start as shared `zod` schemas in `packages/server-contract`, ensuring server and client stay type-safe.
 - **Real-time challenge lifecycle.** Hono-based routes expose public and authenticated procedures, backed by PostgreSQL via Drizzle ORM.
 - **Typed React client.** The web app consumes the generated oRPC client, TanStack Router, and Query utilities for fully typed data interactions.
 - **Developer-focused tooling.** Node.js 24, pnpm workspaces, and Husky hooks enable quick local feedback loops and consistent commits.
@@ -28,13 +28,14 @@ Update `.agents/skills/` once and both flows pick up the change.
 - **Runtime & Tooling:** Node.js 24, pnpm workspaces, Commitizen, Husky
 - **Backend:** TypeScript, Hono, oRPC, Drizzle ORM/PostgreSQL, Better Auth, Zod, Vitest
 - **Frontend:** React 19, Vite, TanStack Stack/Query/Form, Tailwind CSS, Vitest
-- **Shared Contracts:** `@startername/shared` with oRPC + OpenAPI generation
+- **Server Contracts:** `@startername/server-contract` with oRPC + OpenAPI generation
 
 ## Repository Structure
 
 - `apps/server` – Node.js + Hono API, oRPC routers, Drizzle schema, Better Auth setup
 - `apps/web` – React 19 client, TanStack Router tree, authentication flows, Tailwind config
-- `packages/shared` – Contract definitions, shared types, and schema exports
+- `packages/server-contract` – API contract definitions and schema exports
+- `packages/common` – Shared utilities, types, constants, and helpers
 - `docs` – Product requirements, roadmap, risk registers, and supporting documentation
 - `postgres-data` – Docker-managed PostgreSQL volume (keep uncommitted)
 - `tsconfig*.json` – TypeScript project references

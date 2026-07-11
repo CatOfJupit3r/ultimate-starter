@@ -1,8 +1,8 @@
 import { call } from '@orpc/server';
 import { it, expect, describe, beforeEach } from 'vitest';
 
-import { USER_ACHIEVEMENTS } from '@startername/shared/constants/achievements';
-import { BADGE_IDS } from '@startername/shared/constants/badges';
+import { USER_ACHIEVEMENTS } from '@startername/common/constants/achievements';
+import { BADGE_IDS } from '@startername/common/constants/badges';
 
 import { appRouter } from '../helpers/instance';
 import { getUserAchievementRepository, getUserProfileRepository } from './fixtures/repository.fixtures';

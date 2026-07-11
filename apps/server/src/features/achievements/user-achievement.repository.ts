@@ -1,4 +1,4 @@
-import type { UserAchievementId } from '@startername/shared/constants/achievements';
+import type { UserAchievementId } from '@startername/common/constants/achievements';
 
 import type { iUserAchievementRecordResponse } from './user-achievement.types';
 

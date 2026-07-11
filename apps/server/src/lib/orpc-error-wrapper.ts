@@ -1,7 +1,7 @@
 import { ORPCError } from '@orpc/server';
 
-import { errorMessages } from '@startername/shared/enums/errors.enums';
-import type { ErrorCodesType } from '@startername/shared/enums/errors.enums';
+import { errorMessages } from '@startername/common/enums/errors.enums';
+import type { ErrorCodesType } from '@startername/common/enums/errors.enums';
 
 export function createErrorPayload(code: ErrorCodesType, additionalData?: Record<string, unknown>) {
   return {

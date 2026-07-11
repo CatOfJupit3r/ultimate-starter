@@ -42,7 +42,8 @@ Examples:
 
 - `apps/server` contains the Hono API, oRPC routers, Drizzle schema, and server-side services.
 - `apps/web` contains the React 19 client, TanStack Router tree, UI components, and client-side state.
-- `packages/shared` contains shared contracts, schemas, and types used by both apps.
+- `packages/server-contract` contains the API contracts used by both apps.
+- `packages/common` contains shared utilities, types, constants, and helpers used by both apps.
 - `docs` contains product notes, roadmaps, and design documentation, if present.
 
 ## Core Conventions
@@ -93,7 +94,7 @@ Examples:
   ```
 - Repository response types should be derived from the Drizzle schema (`typeof table.$inferSelect`) with `Omit`/`Pick`/intersections rather than hand-duplicating every column. See the **drizzle-orm** skill.
 - Don't hand-write a field-by-field `toResponse(row)` mapper in a repository. Build it with `createRowResolver` (`@~/lib/row-resolver`) and group a feature's mappers on a `<feature>.resolver.ts` resolver class. Resolvers are `@singleton()` and constructor-injected into repositories like any other dependency (e.g. `PostgresService`) — never static classes/methods. See the **drizzle-orm** skill.
-- If your variable is reused across server and client, define it in `packages/shared/src/constants` and import it from `@startername/shared/constants`. Only do this for non-sensitive data.
+- If your variable is reused across server and client, define it in `packages/common/src/constants` and import it from `@startername/common/constants`. Only do this for non-sensitive data.
 - When resolving warnings or errors, prefer addressing the root cause instead of using `// @ts-ignore` or `as unknown as <Type>`. Use these only as a last resort with a comment explaining why.
 - If you encounter eslint warnings, run `pnpm run lint` to fix them in the file.
 - Use `satisfies` clauses to ensure object shapes without losing type inference. Example:
@@ -110,7 +111,7 @@ Examples:
 
 - Copy `.env.example` to `.env` in `apps/server` and `apps/web`; server validates configuration with `zod` in `src/constants/env.ts`.
 - The Better Auth server is mounted under `/auth/*` and expects HTTPS cookies (`sameSite: 'none'`, `secure: true`); keep this in mind when testing locally.
-- Aliases: `@~/` resolves to `apps/server/src` or `apps/web/src` depending on the package; `@startername/shared` surfaces shared types.
+- Aliases: `@~/` resolves to `apps/server/src` or `apps/web/src` depending on the package; `@startername/common` surfaces shared utilities and types, while `@startername/server-contract` surfaces API contracts.
 - PostgreSQL runs at `postgresql://postgres:postgres@localhost:5432/startername` by default; adjust via `POSTGRES_URL` and update docker-compose if ports change.
 - Node.js v24 is required; use nvm or similar to manage Node versions.
 - pnpm ≥10.0.0 is the package manager; use `corepack enable` to activate it.
@@ -145,12 +146,12 @@ Do not duplicate code blocks and prefer to extract shared code into utility func
 
 Our repository is organized to promote clarity, maintainability, and scalability. We use a feature-based structure for both backend and frontend code, ensuring that related files are grouped together.
 
-- Shared API contracts live in `packages/shared/src/contract/*.contract.ts`.
+- Shared API contracts live in `packages/server-contract/src/contract/*.contract.ts`.
 - Server schema files live in `apps/server/src/db/schema/*.ts`.
 - Repositories live under `apps/server/src/features/**/drizzle-*.repository.ts`.
 - Routers live under `apps/server/src/routers/*.router.ts`.
 - Error handling utilities live in `apps/server/src/lib/orpc-error-wrapper.ts`.
-- Shared error codes live in `packages/shared/src/enums/errors.ts`.
+- Shared error codes live in `packages/common/src/enums/errors.enums.ts`.
 - Tests should mirror the feature structure inside each app or package.
 ```
 apps/<workspace>/test/

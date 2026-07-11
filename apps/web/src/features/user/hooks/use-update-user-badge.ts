@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { BadgeIdSchema } from '@startername/shared/constants/badges';
+import { BadgeIdSchema } from '@startername/common/constants/badges';
 
 import { toastError, toastSuccess } from '@~/components/toastifications/create-jsx-toasts';
 import type { ORPCOutputs } from '@~/utils/orpc';

@@ -1,8 +1,8 @@
 import { oc } from '@orpc/contract';
 import z from 'zod';
 
-import { UserAchievementIdSchema } from '../constants/achievements';
-import { BadgeIdSchema } from '../constants/badges';
+import { UserAchievementIdSchema } from '@startername/common/constants/achievements';
+import { BadgeIdSchema } from '@startername/common/constants/badges';
 
 const BADGE_META_SCHEMA = z.object({
   id: BadgeIdSchema,

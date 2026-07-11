@@ -4,7 +4,7 @@ import { username } from 'better-auth/plugins';
 import type Redis from 'ioredis';
 import { singleton } from 'tsyringe';
 
-import { isNil } from '@startername/shared/helpers/std-utils';
+import { isNil } from '@startername/common/helpers/std-utils';
 
 import env from '@~/constants/env';
 import { PostgresService } from '@~/db/postgres.service';

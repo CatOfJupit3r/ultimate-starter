@@ -2,7 +2,7 @@ import { and, eq } from 'drizzle-orm';
 import crypto from 'node:crypto';
 import { singleton } from 'tsyringe';
 
-import type { UserAchievementId } from '@startername/shared/constants/achievements';
+import type { UserAchievementId } from '@startername/common/constants/achievements';
 
 import { PostgresService } from '@~/db/postgres.service';
 import { userAchievements } from '@~/db/schema/user-achievement.schema';

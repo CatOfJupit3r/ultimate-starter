@@ -1,7 +1,8 @@
 import { oc } from '@orpc/contract';
 import z from 'zod';
 
-import { BadgeIdSchema } from '../constants/badges';
+import { BadgeIdSchema } from '@startername/common/constants/badges';
+
 import { authProcedure } from './procedures';
 
 const USER_PROFILE_SCHEMA = z.object({

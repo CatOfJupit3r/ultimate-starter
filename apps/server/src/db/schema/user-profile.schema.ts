@@ -1,6 +1,6 @@
 import { pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
 
-import type { BadgeId } from '@startername/shared/constants/badges';
+import type { BadgeId } from '@startername/common/constants/badges';
 
 import { idColumn } from '../schema.helpers';
 import { users } from './auth.schema';

@@ -1,6 +1,6 @@
 import { ORPCError, implement } from '@orpc/server';
 
-import { CONTRACT } from '@startername/shared/contract/app.contract';
+import { CONTRACT } from '@startername/server-contract/app.contract';
 
 import type { Context } from '@~/loaders/hono.loader';
 

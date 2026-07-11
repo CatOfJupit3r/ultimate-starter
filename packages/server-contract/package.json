@@ -1,27 +1,11 @@
 {
-  "name": "@startername/shared",
+  "name": "@startername/server-contract",
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    "./globals": {
-      "types": "./dist/globals.d.mts",
-      "default": "./dist/globals.d.mts"
-    },
-    "./constants/*": {
-      "types": "./dist/constants/*.d.mts",
-      "default": "./dist/constants/*.mjs"
-    },
-    "./enums/*": {
-      "types": "./dist/enums/*.d.mts",
-      "default": "./dist/enums/*.mjs"
-    },
     "./contract/*": {
-      "types": "./dist/contract/*.d.mts",
-      "default": "./dist/contract/*.mjs"
-    },
-    "./helpers/*": {
-      "types": "./dist/helpers/*.d.mts",
-      "default": "./dist/helpers/*.mjs"
+      "types": "./dist/*.d.mts",
+      "default": "./dist/*.mjs"
     }
   },
   "files": [
@@ -33,7 +17,7 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint . --fix",
     "prettify": "prettier --write ./src/",
-    "test": "echo 'No tests for shared library yet'",
+    "test": "echo 'No tests for server contract library yet'",
     "prepare": "tsdown"
   },
   "prettier": "@startername/prettier-config",
@@ -52,10 +36,7 @@
   },
   "dependencies": {
     "@orpc/contract": "catalog:",
-    "@startername/enumwaii": "workspace:*",
-    "dotenv": "catalog:",
-    "lodash-es": "catalog:",
-    "better-auth": "catalog:",
+    "@startername/common": "workspace:*",
     "zod": "catalog:"
   }
 }
