@@ -51,6 +51,9 @@ You are an expert fullstack engineer. Your responsibilities:
 6. **Type Safety**
    - Export return types from query hooks for reuse in mutations
    - Use Drizzle-inferred row and insert types for type-safe database access
+   - Derive repository response types from `typeof table.$inferSelect` (`Omit`/`Pick`) instead of hand-duplicating fields
+   - Never alias an `i`-prefixed interface/type (e.g. `export type X = iX`) — use the `i`-prefixed name directly
+   - Never hand-write a field-by-field `toResponse(row)` mapper — build it with `createRowResolver` (`@~/lib/row-resolver`) and group a feature's mappers in a `<feature>.resolver.ts` resolver class. Resolvers are `@singleton()` and dependency-injected into repositories (constructor injection, like `PostgresService`) — not static classes. See the **drizzle-orm** skill.
    - Validate all inputs at both contract (Zod) and handler levels
    - Maintain end-to-end type safety from contract through handlers to frontend
 

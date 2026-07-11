@@ -1,8 +1,8 @@
-import type { UserProfileResponse, UpsertUserProfileInput } from './user.types';
+import type { iUserProfileResponse, iUpsertUserProfileInput } from './user.types';
 
 export interface iUserProfileRepository {
-  findByUserId: (userId: string) => Promise<UserProfileResponse | null>;
-  ensureExists: (userId: string) => Promise<UserProfileResponse>;
-  upsert: (userId: string, input: UpsertUserProfileInput) => Promise<UserProfileResponse>;
+  findByUserId: (userId: string) => Promise<iUserProfileResponse | null>;
+  ensureExists: (userId: string) => Promise<iUserProfileResponse>;
+  upsert: (userId: string, input: iUpsertUserProfileInput) => Promise<iUserProfileResponse>;
   deleteByUserId: (userId: string) => Promise<boolean>;
 }

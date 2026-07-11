@@ -22,6 +22,18 @@ applyTo: '**/*.ts'
 ### Code Style and Conventions
 - Follow standard TypeScript conventions with strict typing, `async/await`, and modular design. Avoid using `enum`, prefer `as const` objects.
 - Always name files with kebab-case, interfaces with `i` prefix.
+- Never create a type alias that just re-exports an `i`-prefixed interface/type (e.g. `export type UserResponse = iUserResponse`). Use the `i`-prefixed name directly everywhere. Example:
+  ```typescript
+  // GOOD
+  export interface iUserProfileResponse { ... }
+  // consumers import and use `iUserProfileResponse` directly
+
+  // BAD
+  export interface iUserProfileResponse { ... }
+  export type UserProfileResponse = iUserProfileResponse; // redundant alias, delete it
+  ```
+- Repository response types should be derived from the Drizzle schema (`typeof table.$inferSelect`) with `Omit`/`Pick`/intersections rather than hand-duplicating every column. See the **drizzle-orm** skill.
+- Don't hand-write a field-by-field `toResponse(row)` mapper in a repository. Build it with `createRowResolver` (`@~/lib/row-resolver`) and group a feature's mappers on a `<feature>.resolver.ts` resolver class. Resolvers are `@singleton()` and constructor-injected into repositories like any other dependency (e.g. `PostgresService`) — never static classes/methods. See the **drizzle-orm** skill.
 - In 90% of cases use `z.enum` instead of plain `as const` objects to create enums. Example:
   ```typescript
   import z from "zod";

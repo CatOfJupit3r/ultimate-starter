@@ -1,16 +1,16 @@
 import type { UserAchievementId } from '@startername/shared/constants/achievements';
 
-import type { UserAchievementRecordResponse } from './user-achievement.types';
+import type { iUserAchievementRecordResponse } from './user-achievement.types';
 
 export interface iUserAchievementRepository {
-  listByUserId: (userId: string) => Promise<UserAchievementRecordResponse[]>;
+  listByUserId: (userId: string) => Promise<iUserAchievementRecordResponse[]>;
   findByAchievement: (
     userId: string,
     achievementId: UserAchievementId,
-  ) => Promise<UserAchievementRecordResponse | null>;
+  ) => Promise<iUserAchievementRecordResponse | null>;
   ensureUnlocked: (
     userId: string,
     achievementId: UserAchievementId,
     data?: Record<string, unknown>,
-  ) => Promise<UserAchievementRecordResponse>;
+  ) => Promise<iUserAchievementRecordResponse>;
 }

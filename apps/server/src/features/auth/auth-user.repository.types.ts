@@ -1,18 +1,22 @@
-export interface iAuthUserRecordResponse {
-  id: string;
-  name: string;
-  email: string;
-  emailVerified: boolean;
-  image?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type { accounts, users } from '@~/db/schema';
 
-export interface iAuthAccountRecordResponse {
-  id: string;
-  accountId: string;
-  providerId: string;
-  userId: string;
+type UserRow = typeof users.$inferSelect;
+type AccountRow = typeof accounts.$inferSelect;
+
+export type iAuthUserRecordResponse = Omit<UserRow, 'username' | 'displayUsername' | 'image'> & {
+  image?: string;
+};
+
+type OptionalAuthAccountRecordFields =
+  | 'accessToken'
+  | 'refreshToken'
+  | 'idToken'
+  | 'accessTokenExpiresAt'
+  | 'refreshTokenExpiresAt'
+  | 'scope'
+  | 'password';
+
+export type iAuthAccountRecordResponse = Omit<AccountRow, OptionalAuthAccountRecordFields> & {
   accessToken?: string;
   refreshToken?: string;
   idToken?: string;
@@ -20,20 +24,12 @@ export interface iAuthAccountRecordResponse {
   refreshTokenExpiresAt?: Date;
   scope?: string;
   password?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+};
 
-export interface iAuthUserListItemResponse {
-  id: string;
-  name: string;
-}
+export type iAuthUserListItemResponse = Pick<iAuthUserRecordResponse, 'id' | 'name'>;
 
 export const AUTH_ACCOUNT_PROVIDER_IDS = {
   CREDENTIAL: 'credential',
 } as const;
 
 export type AuthAccountProviderId = (typeof AUTH_ACCOUNT_PROVIDER_IDS)[keyof typeof AUTH_ACCOUNT_PROVIDER_IDS];
-export type AuthUserRecordResponse = iAuthUserRecordResponse;
-export type AuthAccountRecordResponse = iAuthAccountRecordResponse;
-export type AuthUserListItemResponse = iAuthUserListItemResponse;

@@ -8,25 +8,14 @@ import { PostgresService } from '@~/db/postgres.service';
 import { userAchievements } from '@~/db/schema';
 
 import type { iUserAchievementRepository } from './user-achievement.repository';
-import type { UserAchievementRecordResponse } from './user-achievement.types';
-
-type UserAchievementRow = typeof userAchievements.$inferSelect;
-
-function toResponse(achievement: UserAchievementRow): UserAchievementRecordResponse {
-  return {
-    id: achievement.id,
-    userId: achievement.userId,
-    achievementId: achievement.achievementId,
-    unlockedAt: achievement.unlockedAt,
-    data: achievement.data ?? undefined,
-    createdAt: achievement.createdAt,
-    updatedAt: achievement.updatedAt,
-  };
-}
+import { UserAchievementResolver } from './user-achievement.resolver';
 
 @singleton()
 export class DrizzleUserAchievementRepository implements iUserAchievementRepository {
-  constructor(private readonly postgresService: PostgresService) {}
+  constructor(
+    private readonly postgresService: PostgresService,
+    private readonly userAchievementResolver: UserAchievementResolver,
+  ) {}
 
   public async listByUserId(userId: string) {
     const rows = await this.postgresService
@@ -34,7 +23,7 @@ export class DrizzleUserAchievementRepository implements iUserAchievementReposit
       .select()
       .from(userAchievements)
       .where(eq(userAchievements.userId, userId));
-    return rows.map(toResponse);
+    return rows.map((row) => this.userAchievementResolver.toUserAchievementResponse(row));
   }
 
   public async findByAchievement(userId: string, achievementId: UserAchievementId) {
@@ -44,7 +33,7 @@ export class DrizzleUserAchievementRepository implements iUserAchievementReposit
       .from(userAchievements)
       .where(and(eq(userAchievements.userId, userId), eq(userAchievements.achievementId, achievementId)))
       .limit(1);
-    return row ? toResponse(row) : null;
+    return row ? this.userAchievementResolver.toUserAchievementResponse(row) : null;
   }
 
   public async ensureUnlocked(userId: string, achievementId: UserAchievementId, data?: Record<string, unknown>) {
@@ -61,7 +50,7 @@ export class DrizzleUserAchievementRepository implements iUserAchievementReposit
       .onConflictDoNothing({ target: [userAchievements.userId, userAchievements.achievementId] })
       .returning();
 
-    if (inserted) return toResponse(inserted);
+    if (inserted) return this.userAchievementResolver.toUserAchievementResponse(inserted);
 
     const existing = await this.findByAchievement(userId, achievementId);
     if (!existing) throw new Error('User achievement upsert returned no row');
