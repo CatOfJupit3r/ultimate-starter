@@ -1,4 +1,6 @@
-import { User, Session } from '@~/db/models/auth.model';
+import { container } from '@~/di';
+import { AUTH_USER_REPOSITORY_TOKEN } from '@~/di/tokens';
+import type { iAuthUserRepository } from '@~/features/auth/auth-user.repository';
 import { base, publicProcedure } from '@~/lib/orpc';
 
 export const indexRouter = base.index.router({
@@ -6,10 +8,11 @@ export const indexRouter = base.index.router({
 
   metrics: publicProcedure.index.metrics.handler(async () => {
     const now = new Date();
+    const authUserRepository = container.resolve<iAuthUserRepository>(AUTH_USER_REPOSITORY_TOKEN);
 
     const [totalUsers, activeSessions] = await Promise.all([
-      User.countDocuments(),
-      Session.countDocuments({ expiresAt: { $gt: now } }),
+      authUserRepository.countUsers(),
+      authUserRepository.countActiveSessions(now),
     ]);
 
     return {

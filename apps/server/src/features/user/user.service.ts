@@ -1,12 +1,17 @@
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 
 import { errorCodes } from '@startername/shared';
+import type { UserAchievementId } from '@startername/shared/constants/achievements';
 import type { BadgeId } from '@startername/shared/constants/badges';
 
 import { generatePublicCode } from '@~/db/helpers';
-import { User } from '@~/db/models/auth.model';
-import { UserAchievementModel } from '@~/db/models/user-achievements.model';
-import { UserProfileModel } from '@~/db/models/user-profile.model';
+import {
+  AUTH_USER_REPOSITORY_TOKEN,
+  USER_ACHIEVEMENT_REPOSITORY_TOKEN,
+  USER_PROFILE_REPOSITORY_TOKEN,
+} from '@~/di/tokens';
+import type { iUserAchievementRepository } from '@~/features/achievements/user-achievement.repository';
+import type { iAuthUserRepository } from '@~/features/auth/auth-user.repository';
 import { BADGES_META } from '@~/features/badges/badges.constants';
 import {
   ORPCBadRequestError,
@@ -15,120 +20,61 @@ import {
   ORPCNotFoundError,
 } from '@~/lib/orpc-error-wrapper';
 
-import { LoggerFactory } from '../logger/logger.factory';
-import type { iWithLogger } from '../logger/logger.types';
+import type { iUserProfileRepository } from './user-profile.repository';
 
 @injectable()
-export class UserService implements iWithLogger {
-  public readonly logger: iWithLogger['logger'];
-
-  constructor(loggerFactory: LoggerFactory) {
-    this.logger = loggerFactory.create('user-service');
-  }
+export class UserService {
+  constructor(
+    @inject(USER_ACHIEVEMENT_REPOSITORY_TOKEN)
+    private readonly userAchievementRepository: iUserAchievementRepository,
+    @inject(AUTH_USER_REPOSITORY_TOKEN)
+    private readonly authUserRepository: iAuthUserRepository,
+    @inject(USER_PROFILE_REPOSITORY_TOKEN)
+    private readonly userProfileRepository: iUserProfileRepository,
+  ) {}
 
   public async getUserProfile(userId: string) {
-    const userProfile = await UserProfileModel.findOne({ userId });
-    if (!userProfile) throw ORPCNotFoundError(errorCodes.USER_PROFILE_NOT_FOUND);
-    return userProfile;
+    const profile = await this.userProfileRepository.findByUserId(userId);
+    if (!profile) throw ORPCNotFoundError(errorCodes.USER_PROFILE_NOT_FOUND);
+    return profile;
   }
 
   public async updateUserProfile(userId: string, bio: string) {
-    try {
-      const updatedProfile = await UserProfileModel.findOneAndUpdate(
-        { userId },
-        { bio },
-        { new: true, upsert: true, setDefaultsOnInsert: true },
-      );
-
-      if (!updatedProfile) {
-        throw ORPCInternalServerError();
-      }
-
-      return updatedProfile;
-    } catch (error) {
-      if (error instanceof Error && error.name !== 'ORPCError') {
-        throw ORPCInternalServerError();
-      }
-      throw error;
-    }
+    return this.userProfileRepository.upsert(userId, { bio });
   }
 
   public async updateUserBadge(userId: string, badgeId: BadgeId) {
-    const badgeMeta = BADGES_META.find((b) => b.id === badgeId);
-    if (!badgeMeta) {
-      throw ORPCBadRequestError(errorCodes.BADGE_NOT_FOUND);
-    }
+    const badgeMeta = BADGES_META.find((badge) => badge.id === badgeId);
+    if (!badgeMeta) throw ORPCBadRequestError(errorCodes.BADGE_NOT_FOUND);
 
     if (badgeMeta.requiresAchievement) {
-      const hasAchievement = await UserAchievementModel.findOne({
+      const hasAchievement = await this.userAchievementRepository.findByAchievement(
         userId,
-        achievementId: badgeMeta.requiresAchievement,
-      });
-
-      if (!hasAchievement) {
-        throw ORPCForbiddenError(errorCodes.USER_BADGE_NOT_ALLOWED);
-      }
-    }
-
-    try {
-      const updatedProfile = await UserProfileModel.findOneAndUpdate(
-        { userId },
-        { selectedBadge: badgeId },
-        { new: true, upsert: true, setDefaultsOnInsert: true },
+        badgeMeta.requiresAchievement as UserAchievementId,
       );
-
-      if (!updatedProfile) {
-        throw ORPCInternalServerError();
-      }
-
-      return updatedProfile;
-    } catch (error) {
-      if (error instanceof Error && error.name !== 'ORPCError') {
-        throw ORPCInternalServerError();
-      }
-      throw error;
+      if (!hasAchievement) throw ORPCForbiddenError(errorCodes.USER_BADGE_NOT_ALLOWED);
     }
+
+    return this.userProfileRepository.upsert(userId, { selectedBadge: badgeId });
   }
 
   public async regeneratePublicCode(userId: string) {
     const maxAttempts = 10;
-    const tryGenerateCode = async (attemptNumber: number): Promise<typeof UserProfileModel.prototype> => {
-      if (attemptNumber >= maxAttempts) {
-        throw ORPCInternalServerError(errorCodes.PUBLIC_CODE_GENERATION_FAILED);
-      }
-
-      const newPublicCode = generatePublicCode();
-
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
       try {
-        const updatedProfile = await UserProfileModel.findOneAndUpdate(
-          { userId },
-          { publicCode: newPublicCode },
-          { new: true, upsert: true, setDefaultsOnInsert: true },
-        );
-
-        if (!updatedProfile) {
-          throw ORPCInternalServerError();
-        }
-
-        return updatedProfile;
+        return await this.userProfileRepository.upsert(userId, { publicCode: generatePublicCode() });
       } catch (error) {
-        if (error && typeof error === 'object' && 'code' in error && (error as { code?: number }).code === 11000) {
-          return tryGenerateCode(attemptNumber + 1);
+        if (error && typeof error === 'object' && 'code' in error && (error as { code?: string }).code === '23505') {
+          continue;
         }
-
-        if (error instanceof Error && error.name !== 'ORPCError') {
-          throw ORPCInternalServerError();
-        }
-
-        throw error;
+        throw ORPCInternalServerError();
       }
-    };
+    }
 
-    return tryGenerateCode(0);
+    throw ORPCInternalServerError(errorCodes.PUBLIC_CODE_GENERATION_FAILED);
   }
 
   public async listAllUsers() {
-    const users = await User.find({}, { _id: 1, name: 1 });
-    return users.map(({ _id, name }) => ({ _id: _id.toString(), name }));
+    return this.authUserRepository.listUsers();
   }
 }

@@ -13,7 +13,7 @@ You are an expert fullstack engineer. Your responsibilities:
    - Refer to relevant skills in `.github/skills/` for detailed implementation guidance:
      - `.github/skills/orpc-contract-creation/` - Contract definition and design
      - `.github/skills/server-error-handling/` - Error handling patterns
-     - `.github/skills/typegoose-modeling/` - Data model design
+     - `.github/skills/drizzle-orm/` - Data model and query design
      - `.github/skills/server-router-implementation/` - Backend handler implementation
      - `.github/skills/tanstack-query-integration/` - Frontend data fetching
      - `.github/skills/react-component-patterns/` - Frontend patterns
@@ -33,11 +33,11 @@ You are an expert fullstack engineer. Your responsibilities:
    - For detailed error handling patterns and custom wrapper usage, see `.github/skills/server-error-handling/`
 
 4. **Data Model Accuracy**
-   - Ensure all MongoDB indexes are created as specified
-   - Use string object ID for all _id fields in Typegoose models
-   - Embed documents appropriately (e.g., ChallengeStep, ChallengeParticipant in Challenge)
-   - Maintain consistency with existing models (e.g., UserProfile, Challenge)
-   - For comprehensive data modeling patterns, see `.github/skills/typegoose-modeling/`
+   - Ensure all PostgreSQL indexes and foreign keys are created as specified
+   - Use Drizzle schemas and repositories for database access
+   - Keep relational data normalized and query it with typed Drizzle expressions
+   - Maintain consistency with existing schemas (e.g., UserProfile, UserAchievement)
+   - For comprehensive data modeling patterns, see `.github/skills/drizzle-orm/`
 
 5. **Frontend Best Practices**
    - Use `useMe()` hook for Better Auth user data (username, email, auth info)
@@ -50,7 +50,7 @@ You are an expert fullstack engineer. Your responsibilities:
 
 6. **Type Safety**
    - Export return types from query hooks for reuse in mutations
-   - Use `DocumentType` from Typegoose for type-safe model access
+   - Use Drizzle-inferred row and insert types for type-safe database access
    - Validate all inputs at both contract (Zod) and handler levels
    - Maintain end-to-end type safety from contract through handlers to frontend
 
@@ -58,9 +58,9 @@ You are an expert fullstack engineer. Your responsibilities:
 
 The workflow is detailed across several skills. Follow the order below:
 
-1. **Data Models & Contracts** - See `.github/skills/typegoose-modeling/` and `.github/skills/orpc-contract-creation/`
-   - Review existing models to understand all entity relationships
-   - Create Typegoose models with proper decorators, indexes, and exports
+1. **Data Models & Contracts** - See `.github/skills/drizzle-orm/` and `.github/skills/orpc-contract-creation/`
+   - Review existing schemas to understand all entity relationships
+   - Create Drizzle schemas with proper indexes, foreign keys, and exports
    - Define oRPC contracts with complete summary/description documentation
    - Register all new routers in the appropriate index files
    - Add all error codes to `src/enums/errors.ts`

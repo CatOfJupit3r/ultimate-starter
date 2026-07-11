@@ -1,18 +1,21 @@
-import { singleton } from 'tsyringe';
+import { inject, singleton } from 'tsyringe';
 
-import { UserProfileModel } from '@~/db/models/user-profile.model';
-import { EventBus } from '@~/features/events/event-bus';
-import { UserAfterRegisteredListener } from '@~/features/events/listeners/user.listeners';
+import { USER_PROFILE_REPOSITORY_TOKEN } from '@~/di/tokens';
 
+import { EventBus } from '../events/event-bus';
+import { UserAfterRegisteredListener } from '../events/listeners/user.listeners';
 import { LoggerFactory } from '../logger/logger.factory';
 import type { iWithLogger } from '../logger/logger.types';
+import type { iUserProfileRepository } from './user-profile.repository';
 
 @singleton()
 export class UserEventsService implements iWithLogger {
-  public readonly logger: iWithLogger['logger'];
+  public readonly logger;
 
   constructor(
     private readonly eventBus: EventBus,
+    @inject(USER_PROFILE_REPOSITORY_TOKEN)
+    private readonly userProfileRepository: iUserProfileRepository,
     loggerFactory: LoggerFactory,
   ) {
     this.logger = loggerFactory.create('user-events');
@@ -22,7 +25,7 @@ export class UserEventsService implements iWithLogger {
   public initialize() {
     this.eventBus.on(UserAfterRegisteredListener, async ({ userId }) => {
       try {
-        await UserProfileModel.create({ userId });
+        await this.userProfileRepository.ensureExists(userId);
         this.logger.info('User profile created successfully', { userId });
       } catch (error) {
         this.logger.error('User profile creation failed', { userId, error });

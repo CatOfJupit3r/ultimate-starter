@@ -1,25 +1,32 @@
 name:
   startername
 services:
-  mongo:
-    image: mongo:8.0
-    container_name: startername-mongo
+  postgres:
+    image: postgres:17-alpine
+    container_name: startername-postgres
     restart: unless-stopped
     environment:
-      - MONGO_INITDB_DATABASE=startername
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=verysecretpassword
-      - MONGO_USER=username
-      - MONGO_PASSWORD=password
-      - MONGO_DB=startername
+      - POSTGRES_DB=startername
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
-      - 6060:27017
+      - 5432:5432
     volumes:
-      - ./mongo/data:/data/db
-      - ./mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - postgres-data:/var/lib/postgresql/data
+    profiles:
+      - postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d startername"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
   valkey:
     image: valkey/valkey:8.0-alpine
     container_name: startername-valkey
     restart: unless-stopped
     ports:
       - 6379:6379
+
+volumes:
+  postgres-data:

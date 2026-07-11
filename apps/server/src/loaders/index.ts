@@ -21,10 +21,10 @@ async function bootstrap() {
 
   logger?.info('DI services registered.');
   logger?.info('Loading database...');
-  const db = await databaseLoader();
+  await databaseLoader();
   logger?.info('Database loaded.');
   logger?.info('Loading authentication...');
-  const instance = await authLoader(db);
+  const instance = await authLoader();
   logger?.info('Authentication loaded.');
   logger?.info('Loading events...');
   await eventsLoader();

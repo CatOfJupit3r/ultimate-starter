@@ -171,9 +171,9 @@ Defined in `test/helpers/matchers.ts` and auto-loaded for all tests.
 
 ## Test Database
 
-Tests use MongoDB Memory Server for isolation:
-- Each test worker gets a separate database
-- Database is cleared between tests (not dropped, for speed)
+Tests use PGlite (an in-memory PostgreSQL implementation) for isolation:
+- Each integration test project shares one migrated in-memory database
+- Database tables are truncated between tests with cascading foreign-key cleanup
 - No need to manually clean up—handled by `afterEach` in setup
 
 ## See Also

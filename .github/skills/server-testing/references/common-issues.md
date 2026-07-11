@@ -329,12 +329,12 @@ ls apps/server/src/db/models/user.model.ts
 ### The Error
 
 ```
-MONGO_URI was not provided to test setup
+PGlite could not apply the test migration
 ```
 
 ### Cause
 
-The global setup didn't run or failed to start MongoDB Memory Server.
+The integration setup did not initialize PGlite or a Drizzle migration failed.
 
 ### Solutions
 
@@ -344,9 +344,8 @@ The global setup didn't run or failed to start MongoDB Memory Server.
    globalSetup: ['./test/global-setup.ts'],
    ```
 
-2. **Check MongoDB Memory Server**:
+2. **Check the PostgreSQL migration setup**:
    ```bash
-   # May need to download MongoDB binary first time
    pnpm run test
    ```
 

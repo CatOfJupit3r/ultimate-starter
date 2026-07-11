@@ -89,7 +89,7 @@ it('should fetch and display feature', async () => {
 ✓ Planning API contracts  
 ✓ Establishing error codes  
 
-→ **Uses Skills**: typegoose-modeling, orpc-contract-creation
+→ **Uses Skills**: drizzle-orm, orpc-contract-creation
 
 ### Phase 2: Backend Implementation
 ✓ After contracts are defined  
@@ -154,7 +154,7 @@ pnpm run test         # Tests (phases 2, 5)
 
 ## Related Skills
 
-- **typegoose-modeling** - Data modeling with Typegoose
+- **drizzle-orm** - PostgreSQL data modeling and typed repository queries
 - **orpc-contract-creation** - Defining oRPC contracts
 - **dependency-injection-setup** - Service patterns and DI
 - **server-router-implementation** - Backend routing

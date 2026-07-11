@@ -1,9 +1,8 @@
 import { call } from '@orpc/server';
 import { it, expect, describe } from 'vitest';
 
-import { UserProfileModel } from '@~/db/models/user-profile.model';
-
 import { appRouter } from '../helpers/instance';
+import { getUserProfileRepository } from './fixtures/repository.fixtures';
 import { createUser } from './utilities';
 
 describe('User Profile API', () => {
@@ -16,7 +15,7 @@ describe('User Profile API', () => {
       expect(profile).not.toBeNil();
       expect(profile.bio).toBe('');
       expect(profile.userId).toBeDefined();
-      expect(profile._id).toBeDefined();
+      expect(profile.id).toBeDefined();
       expect(profile.createdAt).toBeDefined();
       expect(profile.updatedAt).toBeDefined();
     });
@@ -24,7 +23,7 @@ describe('User Profile API', () => {
     it('should fail if profile does not exist', async () => {
       const { ctx, user } = await createUser();
 
-      await UserProfileModel.deleteOne({ userId: user.id });
+      await getUserProfileRepository().deleteByUserId(user.id);
 
       try {
         await call(appRouter.user.getUserProfile, null, ctx());
@@ -48,14 +47,14 @@ describe('User Profile API', () => {
     it('should auto-create profile on first update if missing', async () => {
       const { ctx, user } = await createUser();
 
-      await UserProfileModel.deleteOne({ userId: user.id });
+      await getUserProfileRepository().deleteByUserId(user.id);
 
       const updatedProfile = await call(appRouter.user.updateUserProfile, { bio: 'New bio for new profile' }, ctx());
 
       expect(updatedProfile).not.toBeNil();
       expect(updatedProfile.bio).toBe('New bio for new profile');
       expect(updatedProfile.userId).toBeDefined();
-      expect(updatedProfile._id).toBeDefined();
+      expect(updatedProfile.id).toBeDefined();
     });
 
     it('should validate bio max length (500 chars)', async () => {
@@ -114,7 +113,7 @@ describe('User Profile API', () => {
 
       await call(appRouter.user.updateUserProfile, { bio: 'Test bio' }, ctx());
 
-      const dbProfile = await UserProfileModel.findOne({ userId: user.id });
+      const dbProfile = await getUserProfileRepository().findByUserId(user.id);
       expect(dbProfile).toBeDefined();
       expect(dbProfile?.bio).toBe('Test bio');
     });
@@ -187,7 +186,7 @@ describe('Public Code Management', () => {
     const profile = await call(appRouter.user.getUserProfile, null, ctx());
     const publicCode = profile.publicCode;
 
-    const dbProfile = await UserProfileModel.findOne({ userId: user.id });
+    const dbProfile = await getUserProfileRepository().findByUserId(user.id);
     expect(dbProfile?.publicCode).toBe(publicCode);
   });
 });

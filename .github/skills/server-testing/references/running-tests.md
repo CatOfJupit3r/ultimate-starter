@@ -131,7 +131,7 @@ The config defines two separate projects:
 
 2. **Integration Tests**:
    - Runs tests in `test/integration/**/*.test.ts` and `test/**/*.test.ts`
-   - Shared database via MongoDB Memory Server
+   - Shared database via PGlite with committed Drizzle migrations
    - Single-threaded execution for stability
    - Longer timeout (10 seconds)
 
@@ -143,9 +143,7 @@ Tests run with these environment variables (from `vitest.config.ts`):
 NODE_ENV=test
 BETTER_AUTH_SECRET=test-secret
 BETTER_AUTH_URL=http://localhost:3000/auth
-MONGO_USER=username
-MONGO_PASSWORD=password
-MONGO_DATABASE_NAME=startername-test
+POSTGRES_URL=postgresql://postgres:postgres@localhost:5432/startername-test
 LOG_LEVEL=error
 ```
 
@@ -171,7 +169,7 @@ Logs will appear in the terminal output.
 
 ### Inspect Test Database
 
-During test development, you can inspect the MongoDB Memory Server:
+During test development, you can inspect the PGlite database through the Drizzle service:
 
 ```typescript
 it('should check database state', async () => {
@@ -204,10 +202,7 @@ The test setup uses `deleteMany()` instead of `dropDatabase()` for faster cleanu
 ```typescript
 // test/helpers/setup.ts
 afterEach(async () => {
-  const collections = mongoose.connection.collections;
-  await Promise.all(
-    Object.values(collections).map((collection) => collection.deleteMany({}))
-  );
+  await container.resolve(PostgresService).getDb().execute(sql.raw('TRUNCATE TABLE ... CASCADE'));
 });
 ```
 
@@ -261,15 +256,15 @@ Run these locally before pushing to catch issues early.
 
 ### Database Connection Issues
 
-**Symptoms**: `MONGO_URI was not provided`, connection errors
+**Symptoms**: migration or PGlite initialization errors
 
 **Common causes**:
-1. MongoDB Memory Server not starting
-2. Environment variables not set
+1. The committed Drizzle migration is missing or invalid
+2. The test setup did not initialize PGlite
 
 **Solution**:
 - Check `test/global-setup.ts` is running
-- Verify `MONGO_URI` is provided by global setup
+- Verify `test/helpers/postgres-memory.ts` can apply all migrations
 - Restart test runner
 
 ### Import Errors

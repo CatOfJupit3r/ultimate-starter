@@ -37,7 +37,7 @@
   "scripts": {
     "dev": "tsdown --watch --no-clean",
     "build": "tsdown",
-    "check-types": "tsgo --noEmit",
+    "check-types": "tsc --noEmit",
     "lint": "eslint . --fix",
     "prettify": "prettier --write ./src/",
     "test": "echo 'No tests for shared library yet'",

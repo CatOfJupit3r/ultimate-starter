@@ -162,26 +162,21 @@ protectedProcedure
 ### Transaction pattern
 
 ```typescript
-import { startSession } from 'mongoose';
+import { PostgresService } from '@~/db/postgres.service';
 
 protectedProcedure
   .use(contract.transferOwnership)
   .handler(async ({ input, context }) => {
-    const session = await startSession();
-    session.startTransaction();
-    
-    try {
-      const challenge = await ChallengeModel.findById(input.challengeId).session(session);
-      const user = await UserModel.findById(input.newOwnerId).session(session);
+    const postgresService = context.resolve(PostgresService);
+    return postgresService.getDb().transaction(async (transaction) => {
+      const challenge = await challengeRepository.findById(input.challengeId, transaction);
+      const user = await userRepository.findById(input.newOwnerId, transaction);
       
       if (!challenge || !user) {
         throw ORPCNotFoundError(ERROR_CODES.RESOURCE_NOT_FOUND);
       }
       
-      challenge.creatorId = user._id;
-      await challenge.save({ session });
-      
-      await session.commitTransaction();
+      await challengeRepository.updateOwner(challenge.id, user.id, transaction);
       return challenge;
     } catch (error) {
       await session.abortTransaction();

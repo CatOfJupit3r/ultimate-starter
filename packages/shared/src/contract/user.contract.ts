@@ -5,7 +5,7 @@ import { BadgeIdSchema } from '../constants/badges';
 import { authProcedure } from './procedures';
 
 const USER_PROFILE_SCHEMA = z.object({
-  _id: z.string(),
+  id: z.string(),
   userId: z.string(),
   bio: z.string(),
   selectedBadge: BadgeIdSchema.optional().nullable(),
@@ -73,7 +73,7 @@ const devToolsListAllUsers = oc
   .output(
     z.array(
       z.object({
-        _id: z.string(),
+        id: z.string(),
         name: z.string(),
       }),
     ),

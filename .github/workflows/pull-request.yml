@@ -41,7 +41,7 @@ jobs:
         env:
           VITE_SERVER_URL: http://localhost:3000
 
-  # Run tests with MongoDB Memory Server
+  # Run tests with the in-memory PostgreSQL test database
   test-server:
     name: Server Tests
     runs-on: ubuntu-latest
@@ -58,15 +58,6 @@ jobs:
         with:
           node-version: 24.11.1
           cache: 'pnpm'
-      
-      # Cache MongoDB binaries for mongodb-memory-server
-      - name: Cache MongoDB binaries
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/mongodb-binaries
-          key: mongodb-binaries-${{ runner.os }}-8.0.4
-          restore-keys: |
-            mongodb-binaries-${{ runner.os }}-
       
       - run: pnpm install --frozen-lockfile
       

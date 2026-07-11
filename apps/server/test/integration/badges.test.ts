@@ -4,10 +4,8 @@ import { it, expect, describe, beforeEach } from 'vitest';
 import { USER_ACHIEVEMENTS } from '@startername/shared';
 import { BADGE_IDS } from '@startername/shared/constants/badges';
 
-import { UserAchievementModel } from '@~/db/models/user-achievements.model';
-import { UserProfileModel } from '@~/db/models/user-profile.model';
-
 import { appRouter } from '../helpers/instance';
+import { getUserAchievementRepository, getUserProfileRepository } from './fixtures/repository.fixtures';
 import { createUser } from './utilities';
 
 describe('Badge Selection API', () => {
@@ -39,11 +37,7 @@ describe('Badge Selection API', () => {
 
       await Promise.all(
         Object.keys(USER_ACHIEVEMENTS).map(async (achievementId) =>
-          UserAchievementModel.create({
-            userId: user.id,
-            achievementId: achievementId,
-            unlockedAt: new Date(),
-          }),
+          getUserAchievementRepository().ensureUnlocked(user.id, achievementId as keyof typeof USER_ACHIEVEMENTS),
         ),
       );
 
@@ -61,14 +55,14 @@ describe('Badge Selection API', () => {
     it('should auto-create profile on first badge selection if missing', async () => {
       const { ctx, user } = await createUser();
 
-      await UserProfileModel.deleteOne({ userId: user.id });
+      await getUserProfileRepository().deleteByUserId(user.id);
 
       const updatedProfile = await call(appRouter.user.updateUserBadge, { badgeId: BADGE_IDS.DEFAULT }, ctx());
 
       expect(updatedProfile).not.toBeNil();
       expect(updatedProfile.selectedBadge).toBe(BADGE_IDS.DEFAULT);
       expect(updatedProfile.userId).toBe(user.id);
-      expect(updatedProfile._id).toBeDefined();
+      expect(updatedProfile.id).toBeDefined();
     });
 
     it('should preserve bio when updating badge', async () => {
@@ -87,7 +81,7 @@ describe('Badge Selection API', () => {
 
       await call(appRouter.user.updateUserBadge, { badgeId: BADGE_IDS.DEFAULT }, ctx());
 
-      const dbProfile = await UserProfileModel.findOne({ userId: user.id });
+      const dbProfile = await getUserProfileRepository().findByUserId(user.id);
       expect(dbProfile).toBeDefined();
       expect(dbProfile?.selectedBadge).toBe(BADGE_IDS.DEFAULT);
     });

@@ -14,20 +14,20 @@ Establish the foundation for your feature by creating data models and defining A
 - Identified the data models needed
 - Planned the API contracts
 
-## Step 1: Review Existing Models
+## Step 1: Review Existing Schemas
 
-Check `apps/server/src/db/models/` to understand related entities and avoid duplication:
+Check `apps/server/src/db/schema/` to understand related entities and avoid duplication:
 
 ```typescript
 // Example: Review existing models before adding new ones
 const userFields = {
-  _id: string,
+  id: string,
   email: string,
   username: string,
 };
 
 const challengeFields = {
-  _id: string,
+  id: string,
   creatorId: string,
   title: string,
   steps: ChallengeStep[],
@@ -36,43 +36,25 @@ const challengeFields = {
 
 **See also**: `references/data-modeling-checklist.md`
 
-## Step 2: Create Typegoose Models
+## Step 2: Create Drizzle Schemas
 
-Use the **typegoose-modeling** skill to create models in `apps/server/src/db/models/`:
+Use the **drizzle-orm** skill to create schemas in `apps/server/src/db/schema/`:
 
 ```typescript
-// apps/server/src/db/models/feature.model.ts
-import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
-import type { DocumentType } from '@typegoose/typegoose';
-import { ObjectIdString } from '../helpers';
+// apps/server/src/db/schema/feature.schema.ts
+import { boolean, index, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
-@modelOptions({
-  schemaOptions: {
-    collection: 'features',
-    timestamps: true,
+export const features = pgTable(
+  'features',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    ownerId: uuid('owner_id').notNull(),
+    name: text('name').notNull(),
+    archived: boolean('archived').notNull().default(false),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
-  options: {
-    indexes: [
-      { fields: { ownerId: 1, createdAt: -1 } },
-    ],
-  },
-})
-class FeatureClass {
-  @prop({ default: () => ObjectIdString() })
-  public _id!: string;
-
-  @prop({ required: true, index: true })
-  public ownerId!: string;
-
-  @prop({ required: true })
-  public name!: string;
-
-  @prop({ default: false })
-  public archived!: boolean;
-}
-
-export const FeatureModel = getModelForClass(FeatureClass);
-export type FeatureDoc = DocumentType<FeatureClass>;
+  (table) => [index('features_owner_created_idx').on(table.ownerId, table.createdAt)],
+);
 ```
 
 ## Step 3: Define oRPC Contracts
@@ -181,4 +163,3 @@ See also:
 - `references/schema-design-checklist.md` for data structure validation
 - `references/contract-patterns.md` for contract design patterns
 - Full example in `examples/feature-model.ts`
-

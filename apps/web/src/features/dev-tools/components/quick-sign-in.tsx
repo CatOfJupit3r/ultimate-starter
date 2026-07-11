@@ -52,7 +52,7 @@ function useImpersonate() {
 function useAvailableUsers() {
   const { data, isPending } = useQuery(listAllUsersQueryOptions);
 
-  const options = useMemo(() => data?.map((user) => ({ label: user.name, value: user._id })) ?? [], [data]);
+  const options = useMemo(() => data?.map((user) => ({ label: user.name, value: user.id })) ?? [], [data]);
 
   return { options, isPending };
 }

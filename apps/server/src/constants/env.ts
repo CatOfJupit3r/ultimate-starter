@@ -24,11 +24,16 @@ const envSchema = z.object({
   BETTER_AUTH_SECRET: z.string(),
   BETTER_AUTH_URL: z.url(),
 
+  // AUTH COOKIE CONFIG
+  AUTH_COOKIE_SECURE: z
+    .string()
+    .optional()
+    .default('false')
+    .transform((value) => value === 'true'),
+  AUTH_COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).optional().default('lax'),
+
   // DB CONFIG
-  MONGO_URI: z.url().optional().default('mongodb://localhost:6060/startername'),
-  MONGO_USER: z.string().optional().default('username'),
-  MONGO_PASSWORD: z.string().optional().default('password'),
-  MONGO_DATABASE_NAME: z.string().optional().default('startername'),
+  POSTGRES_URL: z.string().optional().default('postgresql://postgres:postgres@localhost:5432/startername'),
 
   // VALKEY / REDIS CONFIG
   VALKEY_HOST: z.string().optional().default('localhost'),

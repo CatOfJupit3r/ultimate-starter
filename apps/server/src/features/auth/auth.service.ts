@@ -1,23 +1,53 @@
-import type { mongoose } from '@typegoose/typegoose';
+import { drizzleAdapter } from '@better-auth/drizzle-adapter';
 import { betterAuth } from 'better-auth';
-import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { username } from 'better-auth/plugins';
 import type Redis from 'ioredis';
-import { isNil } from 'lodash-es';
 import { singleton } from 'tsyringe';
 
-import env from '@~/constants/env';
+import { isNil } from '@startername/shared/helpers/std-utils';
 
-import type { EventBus } from '../events/event-bus';
-import { UserAfterRegisteredListener } from '../events/listeners/user.listeners';
+import env from '@~/constants/env';
+import { PostgresService } from '@~/db/postgres.service';
+import {
+  accounts,
+  accountsRelations,
+  sessions,
+  sessionsRelations,
+  users,
+  usersRelations,
+  verifications,
+} from '@~/db/schema/auth.schema';
+import { EventBus } from '@~/features/events/event-bus';
+import { UserAfterRegisteredListener } from '@~/features/events/listeners/user.listeners';
+
 import { LoggerFactory } from '../logger/logger.factory';
 import type { iWithLogger, LoggerType } from '../logger/logger.types';
 import { devImpersonatePlugin } from './better-auth-plugins/dev-impersonate.plugin';
 
-const createInstance = (db: mongoose.mongo.Db, logger: LoggerType, valkey: Redis | Nil, eventBus: EventBus) =>
+function createDatabaseAdapter(postgresService: PostgresService) {
+  return drizzleAdapter(postgresService.getDb(), {
+    provider: 'pg',
+    schema: {
+      users,
+      usersRelations,
+      sessions,
+      sessionsRelations,
+      accounts,
+      accountsRelations,
+      verifications,
+    },
+    usePlural: true,
+  });
+}
+
+const createInstance = (
+  postgresService: PostgresService,
+  logger: LoggerType,
+  valkey: Redis | Nil,
+  eventBus: EventBus,
+) =>
   betterAuth({
-    // @ts-expect-error - ignore for now
-    database: mongodbAdapter(db),
+    database: createDatabaseAdapter(postgresService),
     secret: env.BETTER_AUTH_SECRET,
     trustedOrigins: [process.env.CORS_ORIGIN ?? ''],
     plugins: [username(), devImpersonatePlugin()],
@@ -41,14 +71,17 @@ const createInstance = (db: mongoose.mongo.Db, logger: LoggerType, valkey: Redis
     },
     basePath: '/auth',
     advanced: {
+      database: {
+        generateId: 'uuid',
+      },
       defaultCookieAttributes: {
-        sameSite: 'none',
-        secure: true,
+        sameSite: env.AUTH_COOKIE_SAME_SITE,
+        secure: env.AUTH_COOKIE_SECURE,
         httpOnly: true,
       },
     },
     experimental: {
-      joins: true,
+      joins: false,
     },
     databaseHooks: {
       user: {
@@ -63,16 +96,20 @@ const createInstance = (db: mongoose.mongo.Db, logger: LoggerType, valkey: Redis
 
 @singleton()
 export class AuthService implements iWithLogger {
-  public readonly logger: iWithLogger['logger'];
+  public readonly logger;
 
   private instance: ReturnType<typeof createInstance> | null = null;
 
-  constructor(loggerFactory: LoggerFactory) {
+  constructor(
+    loggerFactory: LoggerFactory,
+    private readonly postgresService: PostgresService,
+    private readonly eventBus: EventBus,
+  ) {
     this.logger = loggerFactory.create('auth');
   }
 
-  public connect(db: mongoose.mongo.Db, valkey: Redis | Nil, eventBus: EventBus) {
-    this.instance = createInstance(db, this.logger, valkey, eventBus);
+  public connect(valkey: Redis | Nil) {
+    this.instance = createInstance(this.postgresService, this.logger, valkey, this.eventBus);
   }
 
   public getInstance() {
