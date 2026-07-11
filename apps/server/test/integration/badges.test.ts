@@ -3,6 +3,7 @@ import { it, expect, describe, beforeEach } from 'vitest';
 
 import { USER_ACHIEVEMENTS } from '@startername/common/constants/achievements';
 import { BADGE_IDS } from '@startername/common/constants/badges';
+import { errorCodes, errorMessages } from '@startername/common/enums/errors.enums';
 
 import { appRouter } from '../helpers/instance';
 import { getUserAchievementRepository, getUserProfileRepository } from './fixtures/repository.fixtures';
@@ -28,7 +29,13 @@ describe('Badge Selection API', () => {
         expect(true).toBe(false);
       } catch (error: any) {
         expect(error).toBeDefined();
-        expect(error.message).toContain('You do not have the required achievement to use this badge');
+        expect(error).toMatchObject({
+          code: 'FORBIDDEN',
+          data: {
+            code: errorCodes.USER_BADGE_NOT_ALLOWED,
+            message: errorMessages(errorCodes.USER_BADGE_NOT_ALLOWED),
+          },
+        });
       }
     });
 

@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
+    "./app.contract": {
+      "types": "./dist/app.contract.d.mts",
+      "default": "./dist/app.contract.mjs"
+    },
     "./contract/*": {
       "types": "./dist/*.d.mts",
       "default": "./dist/*.mjs"
