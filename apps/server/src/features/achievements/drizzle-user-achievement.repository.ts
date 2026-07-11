@@ -6,6 +6,7 @@ import type { UserAchievementId } from '@startername/common/constants/achievemen
 
 import { PostgresService } from '@~/db/postgres.service';
 import { userAchievements } from '@~/db/schema/user-achievement.schema';
+import { expectDefined } from '@~/lib/orpc-error-wrapper';
 
 import type { iUserAchievementRepository } from './user-achievement.repository';
 import { UserAchievementResolver } from './user-achievement.resolver';
@@ -53,7 +54,6 @@ export class DrizzleUserAchievementRepository implements iUserAchievementReposit
     if (inserted) return this.userAchievementResolver.toUserAchievementResponse(inserted);
 
     const existing = await this.findByAchievement(userId, achievementId);
-    if (!existing) throw new Error('User achievement upsert returned no row');
-    return existing;
+    return expectDefined(existing, 'User achievement upsert returned no row');
   }
 }

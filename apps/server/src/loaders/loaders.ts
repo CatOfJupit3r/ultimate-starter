@@ -17,7 +17,7 @@ async function bootstrap() {
 
   const logger = isTest ? null : container.resolve(LoggerFactory).global();
 
-  if (logger) logger.info('Registering DI services...');
+  logger?.info('Registering DI services...');
 
   logger?.info('DI services registered.');
   logger?.info('Loading database...');

@@ -1,15 +1,15 @@
 ---
 name: server-error-handling
-description: Handle errors correctly in server handlers using custom error wrappers and access control patterns. Use when implementing error handling, access control, permission checks, deciding between NOT_FOUND/FORBIDDEN/UNAUTHORIZED, adding new error codes, or handling edge cases and validation failures.
+description: Handle request, service, and transport errors with the repository's typed ORPC wrappers, unexpected-error boundary, metadata-aware logging, invariant helpers, and tryCatch patterns. Use when implementing access control, validation, retries, error mapping, or server error observability.
 ---
 
 ## Core principle
 
-All errors must use custom error wrappers from `apps/server/src/lib/orpc-error-wrapper.ts` with error codes from `packages/shared/src/enums/errors.enums.ts`. Never throw raw errors or use undefined error codes.
+Request-facing errors must use custom error wrappers from `apps/server/src/lib/orpc-error-wrapper.ts` with error codes from `packages/common/src/enums/errors.enums.ts`. Never throw raw errors from request-facing business logic or use undefined error codes. Internal invariant failures may use `UnexpectedServerError`; the oRPC procedure boundary normalizes them before they reach a client.
 
 Error wrappers accept typed error codes and optional additional data:
 ```typescript
-function errorWrapper(code: ErrorCodesType, additionalData?: Record<string, unknown>)
+function errorWrapper(code: ErrorCodesType, additionalData?: Record<string, unknown>, options?: iORPCErrorHandlingOptions)
 ```
 
 ## Error wrapper types
@@ -224,6 +224,57 @@ Has permissions? → No → ORPCForbiddenError
 
 **Don't reveal resource existence**: Use `NOT_FOUND` for both "doesn't exist" and "user can't access" cases to prevent information leakage.
 
-**Always use error codes**: Never throw raw errors or use undefined error codes. All codes must be defined in `packages/shared/src/enums/errors.ts`.
+**Always use error codes**: Never expose raw errors or use undefined error codes. All codes must be defined in `packages/common/src/enums/errors.enums.ts`.
 
 **Use enumwaii for closed-set decisions**: Import the owning `Enumwaii` accessor and compare against members such as `USER_ROLES.ADMIN`. Never introduce raw role/status/visibility strings, duplicate unions, or ad-hoc maps. Validate untrusted values with the enumwaii `.schema`, `.parse`, `.safeParse`, or `.is` before making an access-control decision.
+
+## Advanced error utilities
+
+`apps/server/src/lib/orpc-error-wrapper.ts` also provides metadata-aware factories and boundary helpers.
+
+### Metadata and logging
+
+The optional `iORPCErrorHandlingOptions` supports:
+
+- `kind`: use `ORPC_ERROR_KINDS.INFO` for expected client/domain errors or `ORPC_ERROR_KINDS.UNEXPECTED` for failures that require logging.
+- `operation`: a stable operation name used by transport logs.
+- `context`: safe structured context for logs.
+- `cause`: the original error through standard `ErrorOptions`.
+
+Use `getORPCErrorMetadata`, `isORPCError`, and `shouldLogORPCError` for transport logging and diagnostics. `apps/server/src/loaders/hono.loader.ts` already logs unexpected failures with operation, transport, pathname, and safe context. Expected authorization, validation, not-found, and domain-state errors should remain quiet.
+
+The available factories are `ORPCUnauthorizedError`, `ORPCNotFoundError`, `ORPCForbiddenError`, `ORPCBadRequestError`, `ORPCUnprocessableContentError`, `ORPCTooManyRequestsError`, and `ORPCInternalServerError`. Factories accept `(code, additionalData?, options?)`, except `ORPCInternalServerError`, whose code is optional. Never include stack traces, database errors, secrets, or provider responses in `additionalData`.
+
+### Normalizing unexpected failures
+
+`apps/server/src/lib/orpc.ts` applies an `unexpectedErrorBoundary` to every public procedure. It calls `rethrowUnexpectedError`, which preserves existing ORPC errors and converts unknown errors to `INTERNAL_SERVER_ERROR` with the original cause and `UNEXPECTED` metadata. Do not add broad, repetitive `try-catch` blocks to every router just to perform this conversion.
+
+Use `handleUnexpectedError` when one whole operation has one unexpected-error policy:
+
+```typescript
+return handleUnexpectedError(
+  () => provider.generate(input),
+  { operation: 'story.generateNarrative', context: { providerId } },
+);
+```
+
+Use `handleError` when a custom callback must translate every failure. Use `rethrowUnexpectedError` at a narrower boundary when the catch block needs to add operation-specific context. Both helpers preserve expected ORPC errors.
+
+Use `expectDefined` for internal invariants such as a database `returning()` row that must exist after a successful write. It throws `UnexpectedServerError`, which the procedure boundary safely converts. Do not use it for request validation or authorization.
+
+### Choosing `tryCatch` versus a catch block
+
+Use `tryCatch` and the generic `handleError` from `@startername/common/helpers/error-handling.helper` for framework-neutral error flow. `tryCatch` provides Go-like `{ data, error }` branching when the caller needs to inspect the error and continue, return a fallback, record a metric, or perform cleanup. It is appropriate for adapters such as Valkey operations and optional context reads.
+
+Prefer `handleUnexpectedError` or the procedure boundary when the operation should simply fail the request. Keep a local `try-catch` only when the catch has meaningful control flow, such as retrying a unique-key collision or translating one known external error while allowing other errors to be normalized. Do not use `tryCatch` and then immediately throw a generic error without inspecting its result.
+
+### Boundary decision guide
+
+```text
+Expected client/domain condition -> ORPC_*Error(code)
+Internal invariant               -> expectDefined(value, message)
+One operation, one error policy  -> handleUnexpectedError(operation, options)
+Need custom conversion callback  -> handleError(operation, onError)
+Need to branch and continue      -> tryCatch(operation)
+Unknown error at a boundary      -> rethrowUnexpectedError(error, options)
+```

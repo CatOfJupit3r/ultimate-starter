@@ -4,6 +4,7 @@ import { singleton } from 'tsyringe';
 import { generatePublicCode } from '@~/db/helpers';
 import { PostgresService } from '@~/db/postgres.service';
 import { userProfiles } from '@~/db/schema/user-profile.schema';
+import { expectDefined } from '@~/lib/orpc-error-wrapper';
 
 import type { iUserProfileRepository } from './user-profile.repository';
 import { UserProfileResolver } from './user-profile.resolver';
@@ -57,8 +58,7 @@ export class DrizzleUserProfileRepository implements iUserProfileRepository {
     if (inserted) return this.userProfileResolver.toUserProfileResponse(inserted);
 
     const existing = await this.findByUserId(userId);
-    if (!existing) throw new Error('User profile upsert returned no row');
-    return existing;
+    return expectDefined(existing, 'User profile upsert returned no row');
   }
 
   public async upsert(userId: string, input: iUpsertUserProfileInput) {
@@ -82,7 +82,8 @@ export class DrizzleUserProfileRepository implements iUserProfileRepository {
       })
       .returning();
 
-    if (!profile) throw new Error('User profile upsert returned no row');
-    return this.userProfileResolver.toUserProfileResponse(profile);
+    return this.userProfileResolver.toUserProfileResponse(
+      expectDefined(profile, 'User profile upsert returned no row'),
+    );
   }
 }

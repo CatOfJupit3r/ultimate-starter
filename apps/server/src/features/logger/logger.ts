@@ -1,7 +1,7 @@
 import { getContext } from 'hono/context-storage';
 import winston from 'winston';
 
-import { tryCatch } from '@startername/common/helpers/std-utils';
+import { tryCatch } from '@startername/common/helpers/error-handling.helper';
 
 import { WINSTON_LOGGER_FORMAT } from './logger.helpers';
 import type { iRequestContext } from './logger.types';
