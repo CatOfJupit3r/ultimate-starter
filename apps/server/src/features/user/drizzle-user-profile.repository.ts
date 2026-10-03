@@ -60,7 +60,7 @@ export class DrizzleUserProfileRepository implements iUserProfileRepository {
     if (inserted) return this.userProfileResolver.toUserProfileResponse(inserted);
 
     const existing = await this.findByUserId(userId);
-    return expectDefined(existing, errorMessages(errorCodes.USER_PROFILE_UPSERT_FAILED));
+    return expectDefined(existing, errorMessages.get(errorCodes.USER_PROFILE_UPSERT_FAILED));
   }
 
   public async upsert(userId: string, input: iUpsertUserProfileInput) {
@@ -85,7 +85,7 @@ export class DrizzleUserProfileRepository implements iUserProfileRepository {
       .returning();
 
     return this.userProfileResolver.toUserProfileResponse(
-      expectDefined(profile, errorMessages(errorCodes.USER_PROFILE_UPSERT_FAILED)),
+      expectDefined(profile, errorMessages.get(errorCodes.USER_PROFILE_UPSERT_FAILED)),
     );
   }
 }

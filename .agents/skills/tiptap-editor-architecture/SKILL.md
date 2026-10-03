@@ -7,7 +7,7 @@ description: Implement semantic-first Tiptap extensions for the chat editor, cov
 
 ## Closed-set values
 
-Use `Enumwaii` for every closed set introduced by an editor extension, node type, suggestion trigger, command, or serialization format. Export the accessor, inferred type, and `.schema`; compare against members such as `EDITOR_NODE_TYPES.CHARACTER_MENTION`, and use computed enum members in metadata maps. Tiptap's wire-facing names may retain their required spelling, but declare them once in the enumwaii value list and use `.rawValues` only at the serialization boundary. See the **enumwaii** skill.
+Use `Enumwaii` for every closed set introduced by an editor extension, node type, suggestion trigger, command, or serialization format. Export the accessor, inferred `(typeof enumeration)["~type"]` type, and `emToZodSchema(enumeration)` schema; compare against members such as `EDITOR_NODE_TYPES.CHARACTER_MENTION`, and use computed enum members in metadata maps. Tiptap's wire-facing names may retain their required spelling, but declare them once in the enumwaii value list and use `.rawValues` only at the serialization boundary. See the **enumwaii** skill.
 
 This skill documents the semantic editor stack that powers `apps/web/src/features/chats/components/chat-container`. Use it whenever you add a new rich-text primitive (mentions, template variables, future inline macros) so that UI, persistence, and AI exports stay in sync.
 

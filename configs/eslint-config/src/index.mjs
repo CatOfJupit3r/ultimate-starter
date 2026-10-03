@@ -7,8 +7,7 @@
  */
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
-import { noRawEnumComparisonRule } from '@startername/enumwaii/eslint-rules/no-raw-enum-comparison';
-import { noRawEnumMemberRule } from '@startername/enumwaii/eslint-rules/no-raw-enum-member';
+import enumwaiiPlugin from 'eslint-plugin-enumwaii';
 import { configs, plugins, rules } from 'eslint-config-airbnb-extended';
 import { rules as prettierConfigRules } from 'eslint-config-prettier';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
@@ -93,12 +92,7 @@ const getBaseConfig = (options) => {
 
   const sharedRules = {
     plugins: {
-      enumwaii: {
-        rules: {
-          'no-raw-enum-comparison': noRawEnumComparisonRule,
-          'no-raw-enum-member': noRawEnumMemberRule,
-        },
-      },
+      enumwaii: enumwaiiPlugin,
     },
     rules: {
       'enumwaii/no-raw-enum-comparison': 'error',

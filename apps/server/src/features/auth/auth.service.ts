@@ -115,7 +115,7 @@ export class AuthService implements iWithLogger {
   }
 
   public getInstance() {
-    if (!this.instance) throw new UnexpectedServerError(errorMessages(errorCodes.AUTH_SERVICE_NOT_INITIALIZED));
+    if (!this.instance) throw new UnexpectedServerError(errorMessages.get(errorCodes.AUTH_SERVICE_NOT_INITIALIZED));
 
     return this.instance;
   }

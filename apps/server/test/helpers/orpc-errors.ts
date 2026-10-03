@@ -36,7 +36,7 @@ export async function expectORPCError(
   expect(error.data?.code).toBe(options.code);
 
   const message = error.data?.message;
-  const expectedMessage = options.message ?? errorMessages(options.code);
+  const expectedMessage = options.message ?? errorMessages.get(options.code);
 
   if (typeof expectedMessage === 'string') {
     expect(message).toBe(expectedMessage);

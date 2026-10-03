@@ -1,11 +1,11 @@
-import { Enumwaii } from '@startername/enumwaii/enumwaii';
-import type { InferEnumwaii } from '@startername/enumwaii/enumwaii';
+import { em } from 'enumwaii';
+import { emToZodSchema } from 'enumwaii/zod';
 
-const userThemeEnumwaii = new Enumwaii('UserTheme', ['LIGHT', 'DARK', 'SYSTEM']);
+const userThemeEnumwaii = em(['LIGHT', 'DARK', 'SYSTEM']);
 export const USER_THEME = userThemeEnumwaii.enum;
-export const userThemeValidator = userThemeEnumwaii.schema.clone().catch(USER_THEME.DARK);
+export const userThemeValidator = emToZodSchema(userThemeEnumwaii).catch(USER_THEME.DARK);
 
-export type UserTheme = InferEnumwaii<typeof userThemeEnumwaii>;
+export type UserTheme = (typeof userThemeEnumwaii)['~type'];
 export type AppTheme = typeof USER_THEME.LIGHT | typeof USER_THEME.DARK;
 
 export const THEME_COOKIE = 'startername.theme';

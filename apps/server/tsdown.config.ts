@@ -6,5 +6,5 @@ export default defineConfig({
   platform: 'node',
   sourcemap: true,
   dts: false,
-  noExternal: ['@startername/common/**', '@startername/server-contract/**', '@startername/enumwaii/**'],
+  noExternal: ['@startername/common/**', '@startername/server-contract/**'],
 });
