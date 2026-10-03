@@ -49,7 +49,7 @@ export class ValkeyService implements iWithLogger {
   }
 
   public getClient() {
-    if (!this.client) throw new UnexpectedServerError(errorMessages(errorCodes.VALKEY_CLIENT_NOT_CONNECTED));
+    if (!this.client) throw new UnexpectedServerError(errorMessages.get(errorCodes.VALKEY_CLIENT_NOT_CONNECTED));
     return this.client;
   }
 

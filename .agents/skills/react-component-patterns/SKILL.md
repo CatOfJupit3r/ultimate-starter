@@ -17,7 +17,7 @@ description: Create React components following project conventions for UI compos
 
 ## Enumwaii requirement
 
-Use `Enumwaii` for every closed set used by a component, hook, URL state, select, default, or test fixture. Import the owning accessor and use members such as `SETTINGS_TABS.ACCOUNT`; do not introduce `z.enum`, raw string unions, duplicated literals, or `Record<string, ...>` maps for enum-backed values. Use the enumwaii `.schema` in form validation and computed keys in metadata maps (`{ [SETTINGS_TABS.ACCOUNT]: ... }`).
+Use `Enumwaii` for every closed set used by a component, hook, URL state, select, default, or test fixture. Import the owning accessor and use members such as `SETTINGS_TABS.ACCOUNT`; do not introduce `z.enum`, raw string unions, duplicated literals, or `Record<string, ...>` maps for enum-backed values. Use `emToZodSchema(enumeration)` in form validation and computed keys in metadata maps (`{ [SETTINGS_TABS.ACCOUNT]: ... }`).
 
 ## Size And Composition Limits
 
@@ -404,20 +404,18 @@ Declare workflow steps and other closed UI state with `Enumwaii`; compare agains
 Use nuqs for shareable, bookmarkable UI state (filters, tabs, modals):
 
 ```typescript
-import { parseAsStringEnum, useQueryState } from 'nuqs';
-import { Enumwaii } from '@koneko/enumwaii/enumwaii';
-import z from 'zod';
+import { useQueryState } from 'nuqs';
+import { em } from 'enumwaii';
+import { createEnumwaiiQueryParser } from 'enumwaii/nuqs';
 
 // These values are intentionally lowercase because they are URL-facing.
-const settingsTabsEnumwaii = new Enumwaii('SettingsTab', ['profile', 'settings', 'billing']);
+const settingsTabsEnumwaii = em(['profile', 'settings', 'billing']);
 const SETTINGS_TABS = settingsTabsEnumwaii.enum;
-const SETTINGS_TAB_VALUES = settingsTabsEnumwaii.rawValues;
-const settingsTabSchema = settingsTabsEnumwaii.schema;
 
 export function SettingsTabs() {
   const [tab, setTab] = useQueryState(
     'tab',
-    parseAsStringEnum(SETTINGS_TAB_VALUES).withDefault(SETTINGS_TABS.profile)
+    createEnumwaiiQueryParser(settingsTabsEnumwaii).withDefault(SETTINGS_TABS.profile)
   );
 
   return (

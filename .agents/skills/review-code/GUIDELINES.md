@@ -67,7 +67,7 @@ function calculateTotal(items: Item[]) {
 
 ### No `enum`, No `z.enum`, Prefer `Enumwaii`
 
-Use `Enumwaii` from `@startername/enumwaii/enumwaii` for every reusable closed set. It keeps members as plain strings at runtime while rejecting raw literals and values from unrelated enums at the type level. See the **enumwaii** skill — mandatory reading before touching any enum-like value. Internal values MUST be `CONSTANT_CASE`.
+Use `em` from `enumwaii` for every reusable closed set. It keeps members as plain strings at runtime while rejecting raw literals and values from unrelated enums at the type level. See the **enumwaii** skill — mandatory reading before touching any enum-like value. Internal values MUST be `CONSTANT_CASE`.
 
 **Bad:**
 
@@ -88,12 +88,13 @@ export const userRolesSchema = z.enum(['ADMIN', 'USER', 'GUEST']);
 **Good:**
 
 ```typescript
-import { Enumwaii, type InferEnumwaii } from '@startername/enumwaii/enumwaii';
+import { em } from 'enumwaii';
+import { emToZodSchema } from 'enumwaii/zod';
 
-const userRolesEnumwaii = new Enumwaii('UserRole', ['ADMIN', 'USER', 'GUEST']);
+const userRolesEnumwaii = em(['ADMIN', 'USER', 'GUEST']);
 export const USER_ROLES = userRolesEnumwaii.enum;
-export type UserRole = InferEnumwaii<typeof userRolesEnumwaii>;
-export const userRoleSchema = userRolesEnumwaii.schema;
+export type UserRole = (typeof userRolesEnumwaii)['~type'];
+export const userRoleSchema = emToZodSchema(userRolesEnumwaii);
 
 // Usage
 if (user.role === USER_ROLES.ADMIN) { ... }
@@ -1210,10 +1211,10 @@ const type = 'notification';
 **Good:**
 
 ```typescript
-const statusEnumwaii = new Enumwaii('Status', ['PENDING', 'COMPLETED', 'FAILED']);
+const statusEnumwaii = em(['PENDING', 'COMPLETED', 'FAILED']);
 export const STATUS = statusEnumwaii.enum;
 
-const typeEnumwaii = new Enumwaii('NotificationType', ['NOTIFICATION', 'ALERT', 'MESSAGE']);
+const typeEnumwaii = em(['NOTIFICATION', 'ALERT', 'MESSAGE']);
 export const TYPES = typeEnumwaii.enum;
 
 if (status === STATUS.PENDING) { ... }

@@ -18,7 +18,7 @@ Type-safe forms with TanStack Form + Zod validation + custom hooks.
 7. **ALWAYS convert empty strings to `undefined`** for optional fields before submit
 8. **ALWAYS initialize arrays** with typed defaults: `[] as Type[]`
 9. **ALWAYS make forms editable by default**. Do not create `Edit` button. Just display the form with editable fields. If you want to show a read-only view, create a separate `View` component. But if the place needs to be editable, just make it editable. Don't hide the editability behind an extra click.
-10. **ALWAYS use `Enumwaii`** for closed-set fields. Define `new Enumwaii('StableName', [...])`, export its accessor, `InferEnumwaii` type, and `.schema`, then use accessor members in defaults, options, payloads, and tests. Use computed enum members for metadata keys. Do not use raw strings, `string`, duplicate unions, `z.enum`, or `schema.enum.VALUE` at call sites. URL/query-facing values may preserve their required spelling through the enum's named external values and `.rawValues` only at the serialization boundary. See the **enumwaii** skill.
+10. **ALWAYS use `Enumwaii`** for closed-set fields. Define `em([...])`, export its accessor, `(typeof enumeration)["~type"]` type, and Zod adapter schema, then use accessor members in defaults, options, payloads, and tests. Use computed enum members for metadata keys. Do not use raw strings, `string`, duplicate unions, `z.enum`, or `schema.enum.VALUE` at call sites. URL/query-facing values may preserve their required spelling through the enum's named external values and `.rawValues` only at the serialization boundary. See the **enumwaii** skill.
 
 ## Custom Form Hook
 
@@ -333,6 +333,8 @@ function PresetCreateDialog() {
 
 ```typescript
 // features/characters/schemas/character.schema.ts
+import { em } from 'enumwaii';
+import { emToZodSchema } from 'enumwaii/zod';
 import { z } from 'zod';
 
 export const characterFormSchema = z.object({
@@ -344,10 +346,10 @@ export const characterFormSchema = z.object({
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
 
-const characterVisibilitiesEnumwaii = new Enumwaii('CharacterVisibility', ['PUBLIC', 'PRIVATE']);
+const characterVisibilitiesEnumwaii = em(['PUBLIC', 'PRIVATE']);
 export const CHARACTER_VISIBILITIES = characterVisibilitiesEnumwaii.enum;
-export type CharacterVisibility = InferEnumwaii<typeof characterVisibilitiesEnumwaii>;
-export const characterVisibilitySchema = characterVisibilitiesEnumwaii.schema;
+export type CharacterVisibility = (typeof characterVisibilitiesEnumwaii)['~type'];
+export const characterVisibilitySchema = emToZodSchema(characterVisibilitiesEnumwaii);
 
 // For edit forms, extend the base schema
 export const characterEditSchema = characterFormSchema.extend({
@@ -355,7 +357,7 @@ export const characterEditSchema = characterFormSchema.extend({
 });
 ```
 
-For an enum-backed form field, import the named enumwaii accessor (for example `PRESET_TYPES` from `@startername/shared/constants/presets`) and use its members in `defaultValues`, select options, submit payloads, and test fixtures. Use the enumwaii `.schema` only for validation and the inferred type for annotations; never write raw values or reach through the schema for members. See the **enumwaii** skill.
+For an enum-backed form field, import the named enumwaii accessor (for example `PRESET_TYPES` from `@startername/shared/constants/presets`) and use its members in `defaultValues`, select options, submit payloads, and test fixtures. Use `emToZodSchema(enumeration)` only for validation and the inferred type for annotations; never write raw values or reach through the schema for members. See the **enumwaii** skill.
 
 ## Available Field Components
 

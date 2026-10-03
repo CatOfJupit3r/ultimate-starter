@@ -42,7 +42,7 @@ export class UserService {
 
   public async updateUserProfile(userId: string, bio: string) {
     const updatedProfile = await this.userProfileRepository.upsert(userId, { bio });
-    return expectDefined(updatedProfile, errorMessages(errorCodes.USER_PROFILE_UPSERT_FAILED));
+    return expectDefined(updatedProfile, errorMessages.get(errorCodes.USER_PROFILE_UPSERT_FAILED));
   }
 
   public async updateUserBadge(userId: string, badgeId: BadgeId) {
@@ -58,7 +58,7 @@ export class UserService {
     }
 
     const updatedProfile = await this.userProfileRepository.upsert(userId, { selectedBadge: badgeId });
-    return expectDefined(updatedProfile, errorMessages(errorCodes.USER_BADGE_UPDATE_FAILED));
+    return expectDefined(updatedProfile, errorMessages.get(errorCodes.USER_BADGE_UPDATE_FAILED));
   }
 
   public async regeneratePublicCode(userId: string) {

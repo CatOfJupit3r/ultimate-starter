@@ -54,7 +54,7 @@ export const devImpersonatePlugin = () =>
         async (ctx) => {
           if (process.env.NODE_ENV === 'production') {
             throw APIError.fromStatus('FORBIDDEN', {
-              message: errorMessages(errorCodes.DEV_IMPERSONATION_NOT_ALLOWED),
+              message: errorMessages.get(errorCodes.DEV_IMPERSONATION_NOT_ALLOWED),
             });
           }
 
@@ -62,7 +62,7 @@ export const devImpersonatePlugin = () =>
 
           if (!targetUser) {
             throw APIError.fromStatus('NOT_FOUND', {
-              message: errorMessages(errorCodes.USER_NOT_FOUND),
+              message: errorMessages.get(errorCodes.USER_NOT_FOUND),
             });
           }
 
@@ -78,7 +78,7 @@ export const devImpersonatePlugin = () =>
 
           if (!session) {
             throw APIError.fromStatus('INTERNAL_SERVER_ERROR', {
-              message: errorMessages(errorCodes.IMPERSONATION_SESSION_CREATION_FAILED),
+              message: errorMessages.get(errorCodes.IMPERSONATION_SESSION_CREATION_FAILED),
             });
           }
 

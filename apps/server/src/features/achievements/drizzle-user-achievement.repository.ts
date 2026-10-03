@@ -55,6 +55,6 @@ export class DrizzleUserAchievementRepository implements iUserAchievementReposit
     if (inserted) return this.userAchievementResolver.toUserAchievementResponse(inserted);
 
     const existing = await this.findByAchievement(userId, achievementId);
-    return expectDefined(existing, errorMessages(errorCodes.USER_ACHIEVEMENT_UPSERT_FAILED));
+    return expectDefined(existing, errorMessages.get(errorCodes.USER_ACHIEVEMENT_UPSERT_FAILED));
   }
 }

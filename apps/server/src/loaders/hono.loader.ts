@@ -4,6 +4,7 @@ import { OpenAPIReferencePlugin } from '@orpc/openapi/plugins';
 import { onError } from '@orpc/server';
 import { RPCHandler } from '@orpc/server/fetch';
 import { ZodToJsonSchemaConverter } from '@orpc/zod';
+import { em } from 'enumwaii';
 import { Hono } from 'hono';
 import type { Context as HonoContext } from 'hono';
 import { contextStorage } from 'hono/context-storage';
@@ -11,9 +12,6 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { isEmpty } from 'lodash-es';
 import { container } from 'tsyringe';
-
-import { Enumwaii } from '@startername/enumwaii/enumwaii';
-import type { InferEnumwaii } from '@startername/enumwaii/enumwaii';
 
 import env from '@~/constants/env';
 import { AuthService } from '@~/features/auth/auth.service';
@@ -28,10 +26,10 @@ interface iCreateContextOptions {
   context: HonoContext<iRequestContext>;
 }
 
-const orpcTransportsEnumwaii = new Enumwaii('ORPCTransport', ['API', 'RPC']);
+const orpcTransportsEnumwaii = em(['API', 'RPC']);
 
 const ORPC_TRANSPORTS = orpcTransportsEnumwaii.enum;
-type ORPCTransport = InferEnumwaii<typeof orpcTransportsEnumwaii>;
+type ORPCTransport = (typeof orpcTransportsEnumwaii)['~type'];
 
 function contextGenerator() {
   return async function createContext({ context }: iCreateContextOptions) {
